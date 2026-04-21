@@ -46,6 +46,10 @@ class UserLoginSeeder extends Seeder
             User::create($userData);
         }
 
+        $cek = User::where('username_machine', 'isal123')->first();
+        $cek->location = 1;
+        $cek->save();
+
         $this->command->info('✅ Users table seeded successfully!');
         $this->command->info('   Login with username_machine + password_machine:');
         $this->command->info('   • device_admin / admin123');

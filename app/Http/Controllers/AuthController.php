@@ -19,7 +19,7 @@ class AuthController extends Controller
         ]);
 
         // Find user by username_machine
-        $user = User::where('username_machine', $request->username_machine)->first();
+        $user = User::with('getLocation')->where('username_machine', $request->username_machine)->first();
 
         // Check password_machine (must be hashed with bcrypt)
         if (!$user || !Hash::check($request->password_machine, $user->password_machine)) {
@@ -29,18 +29,19 @@ class AuthController extends Controller
             ], 401);
         }
 
-        if ($user->is_login_device == 1) {
-            return response()->json([
-                'success' => false,
-                'message' => 'sudah login harap logout dulu'
-            ], 400);
-        }
+        // if ($user->is_login_device == 1) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'sudah login harap logout dulu'
+        //     ], 400);
+        // }
 
         // Create Sanctum token (for Android app)
         $token = $user->createToken('android-device-login')->plainTextToken;
 
         // Mark device as logged in
         $user->update(['is_login_device' => 1]);
+
 
         return response()->json([
             'success' => true,
@@ -50,6 +51,7 @@ class AuthController extends Controller
                 'fullname' => $user->fullname,
                 'role' => $user->role,
                 'username_machine' => $user->username_machine,
+                'lokasi' => $user->getLocation
             ],
             'token' => $token,
             'token_type' => 'Bearer'

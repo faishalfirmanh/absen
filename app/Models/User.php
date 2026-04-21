@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\WorkLocation;
 
 class User extends Authenticatable
 {
@@ -23,10 +24,15 @@ class User extends Authenticatable
         'password',
         'username_machine',
         'password_machine',
-        'is_login_device'
+        'is_login_device',
+        'location'
     ];
 
     public $timestamps = false;
+
+    public $appends = [
+        'location_name'
+    ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -38,6 +44,21 @@ class User extends Authenticatable
         'remember_token',
         'password_machine',
     ];
+
+
+    public function getLocationNameAttribute()
+    {
+        return $this->getLocation ? $this->getLocation->location_name : '';
+    }
+
+    public function getLocation()
+    {
+        return $this->hasOne(
+            WorkLocation::class,
+            'location_id',
+            'location',
+        );
+    }
 
     /**
      * The attributes that should be cast.
