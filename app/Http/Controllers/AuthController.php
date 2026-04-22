@@ -11,6 +11,15 @@ class AuthController extends Controller
     /**
      * API Login using username_machine + password_machine
      */
+
+    public function viewLogin()
+    {
+        return response()->json([
+            'success' => false,
+            'message' => 'view login json'
+        ], 404);
+
+    }
     public function login(Request $request)
     {
         $request->validate([
