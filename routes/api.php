@@ -29,7 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'attendance'])->group(function () {
-    Route::post('/attendance', [AttendanceController::class, 'store'])->name('absen');
+    Route::post('attendance', [AttendanceController::class, 'store'])->name('absen');
     Route::get('getImage/{user_id}/{date?}/{limit?}', [AttendanceController::class, 'getImage'])->name('ambil_gambar')
         ->where([
             'user_id' => '[0-9]+',

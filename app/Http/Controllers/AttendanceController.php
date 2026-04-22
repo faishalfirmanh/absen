@@ -160,7 +160,7 @@ class AttendanceController extends Controller
         $base_url = asset('storage/uploads/photos_absence/');
 
         // Pattern: {user_id}_{date}_*.png
-        $pattern = $upload_path . $user_id . '_' . $date . '_*.webp';
+        $pattern = $upload_path . $user_id . '_' . $date . '*.webp';
         $files = glob($pattern);
 
         if (empty($files)) {
