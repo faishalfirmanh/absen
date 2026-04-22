@@ -28,8 +28,8 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'attendance'])->group(function () {
-    Route::post('/attendance', [AttendanceController::class, 'store']);
-    Route::get('getImage/{user_id}/{date?}/{limit?}', [AttendanceController::class, 'getImage'])
+    Route::post('/attendance', [AttendanceController::class, 'store'])->name('absen');
+    Route::get('getImage/{user_id}/{date?}/{limit?}', [AttendanceController::class, 'get_image'])->name('getimage')
         ->where([
             'user_id' => '[0-9]+',
             'date' => '[0-9]+',
