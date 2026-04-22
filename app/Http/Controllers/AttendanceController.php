@@ -63,11 +63,11 @@ class AttendanceController extends Controller
         $format_date_no = str_replace("-", "", $today);
         //dd($format_date_no);
         $photo = $request->file('photo');
-        $originalName = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
+        //$originalName = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
         $extension = $photo->getClientOriginalExtension();
         $newFileName = $request->employee_id . "_" . $format_date_no . "_" . $request->attendance_type . "." . 'webp';
         //$originalName . '_' . time() . '_' . Str::random(12) . '.' . $extension;
-        $folderPath = 'uploads/photos_absence/';
+        $folderPath = env('DB_USERNAME') == 'root' ? 'uploads/photos_absence/' : 'app/public/uploads/photos_absence/';//check if server local or server prod
         $fullPath = $folderPath . $newFileName;
         $image = Image::make($photo->getRealPath());
         //dd($newFileName);
@@ -156,8 +156,9 @@ class AttendanceController extends Controller
     public function getImage($user_id, $date, $limit = 'all')
     {
         // Base path & URL
-        $upload_path = public_path('storage/uploads/photos_absence/');
-        $base_url = asset('storage/uploads/photos_absence/');
+        $upload_path = env('DB_USERNAME') == 'root' ? public_path('storage/uploads/photos_absence/') : asset('storage/app/public/uploads/photos_absence/');
+
+        $base_url = env('DB_USERNAME') == 'root' ? asset('storage/uploads/photos_absence/') : asset('storage/app/public/uploads/photos_absence/');
 
         // Pattern: {user_id}_{date}_*.png
         $pattern = $upload_path . $user_id . '_' . $date . '*.webp';
