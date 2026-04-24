@@ -256,9 +256,7 @@ class AttendanceController extends Controller
             return $this->error($validator->errors(), 422);
         }
 
-        $request['divisi_custom'] = $request->data_user->role;
-        $request['jabatan_custom'] = 'Staff';
-        $request['nama_custom'] = $request->data_user->fullname;
+
         //$request['ttd_user'] = '333';//$request->data_user->fullname;
 
 
@@ -271,12 +269,38 @@ class AttendanceController extends Controller
         ], 201);
 
     }
+
+
+    public function updateApproval(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric|exists:pengajuan_izin,id',
+            'status' => 'required|string|in:Pending,Approved,Rejected',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->error($validator->errors(), 422);
+        }
+
+        $pengajuan = PengajuanIzin::where('id', $request->id)->first();
+        $pengajuan->status = $request->status;
+        $pengajuan->save();
+
+        return $this->autoResponse($pengajuan);
+
+    }
+
+
     private function submitIzin(array $validated, Request $request)
     {
 
         // Set user_id dari user yang login (paling aman)
         $validated['user_id'] = $request->employee_id;
 
+        $validated['divisi_custom'] = $request->data_user->role;
+        $validated['jabatan_custom'] = 'Staff';
+        $validated['nama_custom'] = $request->data_user->fullname;
         // Default status
         $validated['status'] = 'Pending';
 

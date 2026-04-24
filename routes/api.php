@@ -27,8 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Route izin dipindah ke atas + pakai leading slash
 
 
-        Route::post('/attendance', [AttendanceController::class, 'store'])
-            ->name('absen');
+        Route::post('/attendance', [AttendanceController::class, 'store'])->name('absen');
 
         Route::get('/getImage/{user_id}/{date?}/{limit?}', [AttendanceController::class, 'getImage'])
             ->name('ambil_gambar')
@@ -41,5 +40,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('/izin-absen', [AttendanceController::class, 'storeIzin'])
             ->name('save_izin');
+        Route::post('/update-izin', [AttendanceController::class, 'updateApproval'])->name('updateIzin');
     });
 });
