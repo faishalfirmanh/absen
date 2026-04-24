@@ -19,6 +19,7 @@ class AttendanceMiddleware
 
         // ← AUTOMATICALLY add employee_id from logged-in user
         $request->merge(['employee_id' => $request->user()->id]);
+        $request->merge(['data_user' => $request->user()]);
         $request->merge(['location_id' => $request->user()->location]);
 
         return $next($request);

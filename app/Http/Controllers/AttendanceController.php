@@ -2,18 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePengajuanIzinRequest;
+use App\Models\PengajuanIzin;
+use App\Traits\ApiResponse;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Models\WorkLocation;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use Illuminate\Http\JsonResponse;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class AttendanceController extends Controller
 {
+    use ApiResponse;
     public function store(Request $request)
     {
 
@@ -226,5 +231,93 @@ class AttendanceController extends Controller
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 
         return $earthRadius * $c;
+    }
+
+
+    public function storeIzin(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            // 'nama_custom' => 'required|string|max:150',
+            'jenis' => 'required|in:Cuti,Izin Sakit,Izin Keperluan',
+            'tgl_mulai' => 'required|date',
+            'tgl_selesai' => 'required|date|after_or_equal:tgl_mulai',
+            'alasan' => 'required|string',
+            'bukti_sakit' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120', // max 5MB
+            //'kota_surat' => 'required|string|max:100',
+            //'tgl_surat' => 'required|date',
+            // 'isi_surat_custom' => 'nullable|string',
+            //'ttd_user' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',     // max 2MB
+        ], [
+            'jenis.in' => 'Jenis hanya boleh Cuti, Izin Sakit, atau Izin Keperluan.',
+            'tgl_selesai.after_or_equal' => 'Tanggal selesai tidak boleh sebelum tanggal mulai.',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->error($validator->errors(), 422);
+        }
+
+        $request['divisi_custom'] = $request->data_user->role;
+        $request['jabatan_custom'] = 'Staff';
+        $request['nama_custom'] = $request->data_user->fullname;
+        //$request['ttd_user'] = '333';//$request->data_user->fullname;
+
+
+        $validated = $validator->validated();
+        $data = $this->submitIzin($validated, $request);
+        return response()->json([
+            'success' => true,
+            'message' => 'Pengajuan izin berhasil disubmit',
+            'data' => $data
+        ], 201);
+
+    }
+    private function submitIzin(array $validated, Request $request)
+    {
+
+        // Set user_id dari user yang login (paling aman)
+        $validated['user_id'] = $request->employee_id;
+
+        // Default status
+        $validated['status'] = 'Pending';
+
+        if ($request->hasFile('bukti_sakit')) {
+            // $buktiPath = $request->file('bukti_sakit')
+            //     ->store('bukti_sakit', 'public'); // simpan di storage/app/public/bukti_sakit
+            // $validated['bukti_sakit'] = $buktiPath;
+
+            $today = Carbon::today()->format('Y-m-d');
+            $format_date_no = str_replace("-", "", $today);
+            $photo = $request->file('bukti_sakit');
+            $extension = $photo->getClientOriginalExtension();
+            $newFileName = $request->employee_id . "_" . $format_date_no . "_" . 'izin' . "." . 'webp';
+
+            $folderPath = env('DB_USERNAME') == 'root' ? 'uploads/izin_sakit/' : 'app/public/uploads/izin_sakit/';//check if server local or server prod
+            $fullPath = $folderPath . $newFileName;
+            $image = Image::make($photo->getRealPath());
+            $image->resize(800, null, function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            });
+
+            $maxSizeKB = 100;   // target maksimal 100 KB
+            $quality = 85;
+
+            while (true) {
+                $encoded = $image->encode($extension, $quality);
+
+                if (strlen($encoded) / 1024 <= $maxSizeKB || $quality <= 10) {
+                    break;
+                }
+                $quality -= 5;
+            }
+
+            Storage::disk('public')->put($fullPath, $encoded);
+            $url = Storage::url($fullPath);
+            $validated['bukti_sakit'] = url('/') . $url;
+        }
+
+        $pengajuan = PengajuanIzin::create($validated);
+
+        return $pengajuan;
     }
 }

@@ -15,26 +15,31 @@ use App\Http\Controllers\AttendanceController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/view_login', [AuthController::class, 'viewLogin'])->name('login');
-
 Route::middleware('auth:sanctum')->group(function () {
+
     Route::post('/logout', [AuthController::class, 'logout']);
 
-});
+    // ← PINDAHKAN ROUTE INI KE PALING ATAS
+    Route::middleware(['attendance'])->group(function () {
 
-Route::middleware(['auth:sanctum', 'attendance'])->group(function () {
-    Route::post('attendance', [AttendanceController::class, 'store'])->name('absen');
-    Route::get('getImage/{user_id}/{date?}/{limit?}', [AttendanceController::class, 'getImage'])->name('ambil_gambar')
-        ->where([
-            'user_id' => '[0-9]+',
-            'date' => '[0-9]+',
-            'limit' => '[0-9]+|all',
-        ])
-        ->defaults('limit', 'all');
+        // Route izin dipindah ke atas + pakai leading slash
+
+
+        Route::post('/attendance', [AttendanceController::class, 'store'])
+            ->name('absen');
+
+        Route::get('/getImage/{user_id}/{date?}/{limit?}', [AttendanceController::class, 'getImage'])
+            ->name('ambil_gambar')
+            ->where([
+                'user_id' => '[0-9]+',
+                'date' => '[0-9]+',
+                'limit' => '[0-9]+|all',
+            ])
+            ->defaults('limit', 'all');
+
+        Route::post('/izin-absen', [AttendanceController::class, 'storeIzin'])
+            ->name('save_izin');
+    });
 });
