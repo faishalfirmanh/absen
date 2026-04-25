@@ -38,6 +38,11 @@ Route::middleware('auth:sanctum')->group(function () {
             ])
             ->defaults('limit', 'all');
 
+
+        Route::get('/findizin', [AttendanceController::class, 'getIzinById'])
+            ->name('findizin');
+        Route::get('/list_izin', [AttendanceController::class, 'listIzin'])
+            ->name('list_izin');
         Route::post('/izin-absen', [AttendanceController::class, 'storeIzin'])
             ->name('save_izin');
         Route::post('/update-izin', [AttendanceController::class, 'updateApproval'])->name('updateIzin');

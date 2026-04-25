@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Repository\AttendanceRepository;
+use App\Http\Repository\IzinRepository;
 use App\Http\Requests\StorePengajuanIzinRequest;
 use App\Models\PengajuanIzin;
 use App\Traits\ApiResponse;
 use Carbon\Carbon;
+
 use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Models\WorkLocation;
@@ -15,10 +18,21 @@ use Illuminate\Http\JsonResponse;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class AttendanceController extends Controller
 {
     use ApiResponse;
+
+
+    protected $repo, $repo_izin;
+
+    public function __construct(AttendanceRepository $repo, IzinRepository $repo_izin)
+    {
+        $this->repo = $repo;
+        $this->repo_izin = $repo_izin;
+    }
+
     public function store(Request $request)
     {
 
@@ -267,6 +281,47 @@ class AttendanceController extends Controller
             'message' => 'Pengajuan izin berhasil disubmit',
             'data' => $data
         ], 201);
+
+    }
+
+    public function getIzinById(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|integer|exists:pengajuan_izin,id'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->error($validator->errors(), 422);
+        }
+
+        $data = $this->repo_izin->whereData(['id' => $request->id])->first();
+        return $this->autoResponse($data);
+    }
+
+    public function listIzin(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'page' => 'required|integer',
+            'keyword' => 'nullable|string',
+            'kolom_name' => 'required|string',
+            'limit' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->error($validator->errors(), 422);
+        }
+
+        //     $pass = Hash::make('isal123');
+        // dd($pass);
+        $where = $request->data_user->role == 'HRD' ? [] : ['user_id' => $request->employee_id];
+
+        if ($request->keyword != null) {
+            $data = $this->repo_izin->searchData($where, $request->limit, $request->page, $request->kolom_name, strtoupper($request->keyword));
+        } else {
+            $data = $this->repo_izin->getAllDataWithDefault($where, $request->limit, $request->page, 'created_at', 'DESC');//getDataPaginate("name",10,$request->keyword);
+        }
+        return $this->autoResponse($data);
 
     }
 
