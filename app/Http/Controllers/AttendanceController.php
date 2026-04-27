@@ -19,7 +19,7 @@ use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Facades\DB;
 class AttendanceController extends Controller
 {
     use ApiResponse;
@@ -36,7 +36,8 @@ class AttendanceController extends Controller
     public function store(Request $request)
     {
 
-        $employeeId = Auth::id();
+        $ips = $request->ips();
+
         $today = Carbon::today()->format('Y-m-d');
 
         $attendanceCount = Attendance::where('employee_id', $request->employee_id)
@@ -153,6 +154,7 @@ class AttendanceController extends Controller
             'rejection_reason' => $rejection_reason,
             'photo_url' => $request->photo_url,
             'notes' => $request->notes,
+            'ip_address' => $ips[0]
         ]);
 
         return response()->json([
@@ -171,6 +173,131 @@ class AttendanceController extends Controller
             ]
         ], 201);
     }
+
+    public function getAllAttendance(Request $request)
+    {
+        $query = DB::table('view_absensi_karyawan');
+
+        if ($request->data_user->role !== 'HRD') {
+            return response()->json([
+                'errors' => "tidak bisa akses anda bukan hrd"
+            ], 422);
+        }
+
+        if ($request->filled('date')) {
+            $query->where('tanggal', $request->date);
+        }
+
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('tanggal', [$request->start_date, $request->end_date]);
+        }
+
+        // Search fullname (opsional)
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where('fullname', 'LIKE', "%{$search}%");
+        }
+
+        // Limit / Jumlah data per halaman
+        $perPage = (int) $request->input('limit', 15); // default 15
+        if ($perPage < 1)
+            $perPage = 15;
+
+        // Pagination
+        $data = $query->paginate($perPage);
+
+        // Response JSON rapi
+        return response()->json([
+            'success' => true,
+            'message' => 'Data absensi berhasil diambil',
+            'data' => $data->items(),           // data per halaman
+            'pagination' => [
+                'current_page' => $data->currentPage(),
+                'last_page' => $data->lastPage(),
+                'per_page' => $data->perPage(),
+                'total' => $data->total(),
+                'from' => $data->firstItem(),
+                'to' => $data->lastItem(),
+            ],
+            'links' => [
+                'first' => $data->url(1),
+                'last' => $data->url($data->lastPage()),
+                'prev' => $data->previousPageUrl(),
+                'next' => $data->nextPageUrl(),
+            ]
+        ], 200);
+    }
+
+
+    public function getLastImageByUser(Request $request)
+    {
+
+        $type = $request->input('type', 'check_in'); // tetap support manual type jika diperlukan
+        $userId = $request->employee_id;
+
+        if (empty($userId)) {
+            return response()->json(['url_image' => null]);
+        }
+
+        $isLocal = env('DB_USERNAME') === 'root';
+
+        // Base path yang benar
+        $basePath = $isLocal
+            ? 'uploads/photos_absence/'           // LOCAL (sesuai screenshot)
+            : 'app/public/uploads/photos_absence/'; // SERVER
+
+        $disk = Storage::disk('public');
+
+        try {
+            $files = $disk->files($basePath);
+        } catch (\Exception $e) {
+            return response()->json(['url_image' => null]);
+        }
+
+        // Ambil semua file yang sesuai userId (baik check_in maupun check_out)
+        $matchingFiles = collect($files)->filter(function ($filePath) use ($userId) {
+            $filename = basename($filePath);
+            return str_starts_with($filename, $userId . '_') &&
+                (str_contains($filename, '_check_in.') || str_contains($filename, '_check_out.'));
+        });
+
+        if ($matchingFiles->isEmpty()) {
+            return response()->json(['url_image' => null]);
+        }
+
+        // Sort descending berdasarkan nama file (tanggal + urutan paling baru di atas)
+        $sortedFiles = $matchingFiles->sortByDesc(function ($filePath) {
+            return basename($filePath);
+        })->values();
+
+        // Ambil file terakhir (paling baru)
+        $latestFileName = basename($sortedFiles->first());
+
+        // Jika ada check_out di antara file-file tersebut, prioritaskan check_out
+        $checkOutFile = $sortedFiles->first(function ($filePath) {
+            return str_contains(basename($filePath), '_check_out.');
+        });
+
+        $finalFile = $checkOutFile ?? $sortedFiles->first();
+
+        if (!$finalFile) {
+            return response()->json(['url_image' => null]);
+        }
+
+        $fullRelativePath = $basePath . basename($finalFile);
+
+        // Generate URL yang benar
+        $urlImage = Storage::url($fullRelativePath);
+
+        return response()->json([
+            'url_image' => $urlImage,
+            'filename' => basename($finalFile),
+            'type' => str_contains(basename($finalFile), '_check_out.') ? 'check_out' : 'check_in'
+        ]);
+
+    }
+
+
 
     public function getImage($user_id, $date, $limit = 'all')
     {

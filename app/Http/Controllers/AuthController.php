@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 class AuthController extends Controller
 {
     /**
@@ -60,7 +61,8 @@ class AuthController extends Controller
                 'fullname' => $user->fullname,
                 'role' => $user->role,
                 'username_machine' => $user->username_machine,
-                'lokasi' => $user->getLocation
+                'lokasi' => $user->getLocation,
+                // 'last_url_image' => $this->getLastImageByUser($request)
             ],
             'token' => $token,
             'token_type' => 'Bearer'

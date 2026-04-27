@@ -39,6 +39,10 @@ Route::middleware('auth:sanctum')->group(function () {
             ->defaults('limit', 'all');
 
 
+        Route::get('/all-attendance', [AttendanceController::class, 'getAllAttendance'])
+            ->name('all-attendance');
+        Route::get('/lastImage', [AttendanceController::class, 'getLastImageByUser'])
+            ->name('lastImage');
         Route::get('/findizin', [AttendanceController::class, 'getIzinById'])
             ->name('findizin');
         Route::get('/list_izin', [AttendanceController::class, 'listIzin'])

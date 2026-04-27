@@ -16,7 +16,7 @@ class UserLoginSeeder extends Seeder
         $users = [
             [
                 'username' => 'admin',
-                'password' => Hash::make('password123'),     // regular password (backup)
+                //'password' => Hash::make('password123'),     // regular password (backup)
                 'fullname' => 'Administrator',
                 'username_machine' => 'device_admin',
                 'password_machine' => Hash::make('admin123'),         // ← used for Android login
@@ -25,7 +25,7 @@ class UserLoginSeeder extends Seeder
 
             [
                 'username' => 'hrd',
-                'password' => Hash::make('password123'),
+               // 'password' => Hash::make('password123'),
                 'fullname' => 'HRD Manager',
                 'username_machine' => 'device_hrd',
                 'password_machine' => Hash::make('hrd123'),
@@ -34,7 +34,7 @@ class UserLoginSeeder extends Seeder
 
             [
                 'username' => 'isal',
-                'password' => Hash::make('isal123'),
+               // 'password' => Hash::make('isal123'),
                 'fullname' => 'faishal firmnan hakim',
                 'username_machine' => 'isal123',
                 'password_machine' => Hash::make('isal123'),
