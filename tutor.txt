@@ -1,0 +1,28 @@
+
+run cmd
+# From your project root
+python3 storage/app/scripts/face_compare.py \
+  storage/app/scripts/is1.png \
+  storage/app/scripts/is2.png
+
+
+mkdir -p storage/app/tmp/face_compare
+chmod -R 775 storage/app/tmp
+
+
+curl -X POST http://127.0.0.1:8000/api/attendance \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer 64|95HXiqYOwHjCmfVhqQJbhUdjQN6lXjef1E1GdZmC" \
+  -F "employee_id=60" \
+  -F "attendance_type=check_in" \
+  -F "submitted_latitude=-7.51010110" \
+  -F "submitted_longitude=112.54197000" \
+  -F "location_id=1" \
+  -F "old_photo=@storage/app/scripts/is1.png" \
+  -F "photo=@storage/app/scripts/is2.png"
+
+
+  curl -X POST http://127.0.0.1:8000/api/login \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{	"username_machine":"isal123", 	"password_machine":"isal123"}'

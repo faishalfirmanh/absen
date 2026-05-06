@@ -35,6 +35,210 @@ class AttendanceController extends Controller
 
     public function store(Request $request)
     {
+        $ips = $request->ips();
+        $today = Carbon::today()->format('Y-m-d');
+
+        $attendanceCount = Attendance::where('employee_id', $request->employee_id)
+            ->where('attendance_date', $today)
+            ->count();
+
+        $validator = Validator::make($request->all(), [
+            'attendance_type' => [
+                'required',
+                'in:check_in,check_out',
+                function ($attribute, $value, $fail) use ($attendanceCount) {
+                    if ($attendanceCount >= 2) {
+                        $fail('Anda sudah melakukan check-in dan check-out hari ini. Tidak dapat absen lagi.');
+                    } elseif ($attendanceCount === 0 && $value !== 'check_in') {
+                        $fail('Belum ada absensi hari ini. Harus menggunakan attendance_type = check_in.');
+                    } elseif ($attendanceCount === 1 && $value !== 'check_out') {
+                        $fail('Anda sudah check_in hari ini. Harus menggunakan attendance_type = check_out.');
+                    }
+                },
+            ],
+            'submitted_latitude' => 'required|numeric',
+            'submitted_longitude' => 'required|numeric',
+            'device_id' => 'nullable|string|max:100',
+            'device_model' => 'nullable|string|max:100',
+            'device_brand' => 'nullable|string|max:50',
+            'android_version' => 'nullable|string|max:20',
+            'app_version' => 'nullable|string|max:20',
+            'gps_accuracy' => 'nullable|numeric',
+            'photo_url' => 'nullable|string',
+            'notes' => 'nullable|string',
+            'old_photo' => 'required|image|mimes:jpeg,png,jpg,svg,webp',//bisa di tambah max size img
+            'photo' => 'required|image|mimes:jpeg,png,jpg,svg,webp',//bisa di tambah max size img
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->toArray(),
+            ], 500);
+        }
+
+        // =========================================================
+        // FACE COMPARISON — old_photo (reference) vs photo (live)
+        // =========================================================
+        $oldPhoto = $request->file('old_photo');   // reference / KTP / employee photo
+        $livePhoto = $request->file('photo');        // selfie taken right now
+
+        $livePhotoRealPath = $livePhoto->getRealPath();
+
+        // Save both to a temp folder so Python can read them
+        $tmpDir = storage_path('app/tmp/face_compare');
+        if (!is_dir($tmpDir)) {
+            mkdir($tmpDir, 0755, true);
+        }
+
+        $tmpOld = $tmpDir . '/' . uniqid('old_') . '.' . $oldPhoto->getClientOriginalExtension();
+        $tmpLive = $tmpDir . '/' . uniqid('live_') . '.' . $livePhoto->getClientOriginalExtension();
+
+        copy($oldPhoto->getRealPath(), $tmpOld);
+        copy($livePhotoRealPath, $tmpLive);
+
+
+        $scriptPath = storage_path('app/scripts/face_compare.py');
+        $pythonBin = env('PYTHON_BIN', 'python3');
+        $threshold = 0.6;
+
+
+
+        $cmd = sprintf(
+            '%s %s %s %s --threshold %s --json 2>&1',
+            escapeshellcmd($pythonBin),
+            escapeshellarg($scriptPath),
+            escapeshellarg($tmpOld),
+            escapeshellarg($tmpLive),
+            $threshold
+        );
+
+        $output = shell_exec($cmd);
+        $faceResult = json_decode($output, true);
+
+        @unlink($tmpOld);
+        @unlink($tmpLive);
+
+
+        if (json_last_error() !== JSON_ERROR_NONE || $faceResult === null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memproses pengenalan wajah. Coba lagi.',
+                'debug' => env('APP_DEBUG') ? $output : null,   // only expose in debug mode
+            ], 500);
+        }
+
+        // If faces do NOT match — reject attendance
+        if ($faceResult['result'] === false) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Wajah tidak cocok dengan data referensi. Absensi ditolak. ❌',
+                'confidence' => $faceResult['confidence'] ?? null,
+                'distance' => $faceResult['distance'] ?? null,
+                'reason' => $faceResult['reason'] ?? null,
+            ], 403);
+        }
+
+        // =========================================================
+        // Face matched ✅ — continue with normal attendance logic
+        // =========================================================
+
+        $format_date_no = str_replace("-", "", $today);
+        $photo = $request->file('photo');
+        $extension = $photo->getClientOriginalExtension();
+        $newFileName = $request->employee_id . "_" . $format_date_no . "_" . $request->attendance_type . ".webp";
+
+        $folderPath = env('DB_USERNAME') == 'root'
+            ? 'uploads/photos_absence/'
+            : 'app/public/uploads/photos_absence/';
+
+        $fullPath = $folderPath . $newFileName;
+        $image = Image::make($photo->getRealPath());
+
+        $image->resize(800, null, function ($constraint) {
+            $constraint->aspectRatio();
+            $constraint->upsize();
+        });
+
+        $maxSizeKB = 100;
+        $quality = 85;
+
+        while (true) {
+            $encoded = $image->encode($extension, $quality);
+            if (strlen($encoded) / 1024 <= $maxSizeKB || $quality <= 10) {
+                break;
+            }
+            $quality -= 5;
+        }
+
+        Storage::disk('public')->put($fullPath, $encoded);
+        $url = Storage::url($fullPath);
+
+        $employee_id = $request->employee_id;
+        $location = WorkLocation::findOrFail($request->location_id);
+
+        $distance = $this->haversineDistance(
+            $location->latitude,
+            $location->longitude,
+            $request->submitted_latitude,
+            $request->submitted_longitude
+        );
+
+        $status = $distance <= $location->radius_meters ? 'approved' : 'rejected';
+        $rejection_reason = $status === 'rejected' ? 'Di luar radius kantor' : null;
+
+        if ($distance > 25) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal: jarak lebih dari 25 meter.',
+                'distance_meters' => round($distance, 2),
+            ], 400);
+        }
+
+        $attendance = Attendance::create([
+            'employee_id' => $employee_id,
+            'location_id' => $request->location_id,
+            'attendance_type' => $request->attendance_type,
+            'attendance_date' => $today,
+            'submitted_latitude' => $request->submitted_latitude,
+            'submitted_longitude' => $request->submitted_longitude,
+            'distance_meters' => round($distance, 2),
+            'device_id' => $request->device_id,
+            'device_model' => $request->device_model,
+            'device_brand' => $request->device_brand,
+            'android_version' => $request->android_version,
+            'app_version' => $request->app_version,
+            'gps_accuracy' => $request->gps_accuracy,
+            'status' => $status,
+            'rejection_reason' => $rejection_reason,
+            'photo_url' => $request->photo_url,
+            'notes' => $request->notes,
+            'ip_address' => $ips[0],
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => $status === 'approved'
+                ? 'Absensi berhasil dicatat ✅'
+                : 'Absensi DITOLAK ❌ (di luar area kantor)',
+            'data' => $attendance,
+            'distance_meters' => round($distance, 2),
+            'face_match' => [                              // optional: expose face result to client
+                'result' => $faceResult['result'],
+                'confidence' => $faceResult['confidence'],
+            ],
+            'image' => [
+                'file_name' => $newFileName,
+                'path' => $fullPath,
+                'url' => $url,
+                'size_kb' => round(strlen($encoded) / 1024, 2),
+                'quality' => $quality,
+            ],
+        ], 201);
+    }
+
+    public function storeOld(Request $request)
+    {
 
         $ips = $request->ips();
 
