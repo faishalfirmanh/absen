@@ -15,40 +15,35 @@ use App\Http\Controllers\AttendanceController;
 |
 */
 
-Route::post('/login', [AuthController::class, 'login']);
-Route::get('/view_login', [AuthController::class, 'viewLogin'])->name('login');
-Route::middleware('auth:sanctum')->group(function () {
 
-    Route::post('/logout', [AuthController::class, 'logout']);
+Route::post('/error_res_login', [AuthController::class, 'viewLogin'])->name('login');
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+Route::post('login', [AuthController::class, 'login'])->name('login_post');
 
-    // ← PINDAHKAN ROUTE INI KE PALING ATAS
-    Route::middleware(['attendance'])->group(function () {
+Route::middleware(['auth:sanctum', 'absen_mid'])->group(function () {
 
-        // Route izin dipindah ke atas + pakai leading slash
-
-
-        Route::post('/attendance', [AttendanceController::class, 'store'])->name('absen');
-
-        Route::get('/getImage/{user_id}/{date?}/{limit?}', [AttendanceController::class, 'getImage'])
-            ->name('ambil_gambar')
-            ->where([
-                'user_id' => '[0-9]+',
-                'date' => '[0-9]+',
-                'limit' => '[0-9]+|all',
-            ])
-            ->defaults('limit', 'all');
+    // Route izin dipindah ke atas + pakai leading slash
+    Route::post('/attendance', [AttendanceController::class, 'store'])->name('absen');
+    Route::get('/getImage/{user_id}/{date?}/{limit?}', [AttendanceController::class, 'getImage'])
+        ->name('ambil_gambar')
+        ->where([
+            'user_id' => '[0-9]+',
+            'date' => '[0-9]+',
+            'limit' => '[0-9]+|all',
+        ])
+        ->defaults('limit', 'all');
 
 
-        Route::get('/all-attendance', [AttendanceController::class, 'getAllAttendance'])
-            ->name('all-attendance');
-        Route::get('/lastImage', [AttendanceController::class, 'getLastImageByUser'])
-            ->name('lastImage');
-        Route::get('/findizin', [AttendanceController::class, 'getIzinById'])
-            ->name('findizin');
-        Route::get('/list_izin', [AttendanceController::class, 'listIzin'])
-            ->name('list_izin');
-        Route::post('/izin-absen', [AttendanceController::class, 'storeIzin'])
-            ->name('save_izin');
-        Route::post('/update-izin', [AttendanceController::class, 'updateApproval'])->name('updateIzin');
-    });
+    Route::get('/all-attendance', [AttendanceController::class, 'getAllAttendance'])
+        ->name('all-attendance');
+    Route::get('/lastImage', [AttendanceController::class, 'getLastImageByUser'])
+        ->name('lastImage');
+    Route::get('/findizin', [AttendanceController::class, 'getIzinById'])
+        ->name('findizin');
+    Route::get('/list_izin', [AttendanceController::class, 'listIzin'])
+        ->name('list_izin');
+    Route::post('/izin-absen', [AttendanceController::class, 'storeIzin'])
+        ->name('save_izin');
+    Route::post('/update-izin', [AttendanceController::class, 'updateApproval'])->name('updateIzin');
+
 });

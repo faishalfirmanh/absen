@@ -10,10 +10,14 @@ class AttendanceMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->user()) {
+
+        $user = auth()->user();
+
+        dd($user);
+        // Jika belum login
+        if (!$user) {
             return response()->json([
-                'success' => false,
-                'message' => 'Anda harus login terlebih dahulu!'
+                'message' => 'Unauthorized. Silakan login terlebih dahulu.'
             ], 401);
         }
 
