@@ -12,7 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Models\WorkLocation;
-use Illuminate\Support\Facades\Auth;
+
 use Validator;
 
 use Intervention\Image\Facades\Image;
@@ -32,7 +32,152 @@ class AttendanceController extends Controller
         $this->repo_izin = $repo_izin;
     }
 
+    public function sendPesan()
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.fonnte.com/send',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => array(
+                'target' => '6281336953950',
+                'message' => 'test message',
+                'countryCode' => '62', //optional
+            ),
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: ad3YSZeyfGFkeF4Vo6Dt' //change TOKEN to your actual token
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        echo $response;
+    }
+
+
     public function store(Request $request)
+    {
+        $ips = $request->ips();
+        $today = Carbon::today()->format('Y-m-d');
+
+        // =================================================================
+        // 1. Validasi Request
+        // =================================================================
+        $attendanceCount = Attendance::where('employee_id', $request->employee_id)
+            ->where('attendance_date', $today)
+            ->count();
+
+        $validator = Validator::make($request->all(), [
+            'attendance_type' => [
+                'required',
+                'in:check_in,check_out',
+                function ($attribute, $value, $fail) use ($attendanceCount) {
+                    if ($attendanceCount >= 2) {
+                        $fail('Anda sudah melakukan check-in dan check-out hari ini. Tidak dapat absen lagi.');
+                    } elseif ($attendanceCount === 0 && $value !== 'check_in') {
+                        $fail('Belum ada absensi hari ini. Harus menggunakan attendance_type = check_in.');
+                    } elseif ($attendanceCount === 1 && $value !== 'check_out') {
+                        $fail('Anda sudah check_in hari ini. Harus menggunakan attendance_type = check_out.');
+                    }
+                },
+            ],
+            'submitted_latitude' => 'required|numeric',
+            'submitted_longitude' => 'required|numeric',
+            'location_id' => 'required',
+            'device_id' => 'nullable|string|max:100',
+            'device_model' => 'nullable|string|max:100',
+            'device_brand' => 'nullable|string|max:50',
+            'android_version' => 'nullable|string|max:20',
+            'app_version' => 'nullable|string|max:20',
+            'gps_accuracy' => 'nullable|numeric',
+            'notes' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->toArray(),
+            ], 400);
+        }
+
+        // =================================================================
+        // 2. Cek Jarak Lokasi (GPS)
+        // =================================================================
+        $location = WorkLocation::findOrFail($request->location_id);
+        $distance = $this->haversineDistance(
+            $location->latitude,
+            $location->longitude,
+            $request->submitted_latitude,
+            $request->submitted_longitude
+        );
+
+        if ($distance > 25) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal: jarak lebih dari 25 meter.',
+                'distance_meters' => round($distance, 2),
+            ], 400);
+        }
+
+        $status = $distance <= $location->radius_meters ? 'approved' : 'rejected';
+        $rejection_reason = $status === 'rejected' ? 'Di luar radius kantor' : null;
+
+        // =================================================================
+        // 3. DATABASE TRANSACTION (Simpan Data Absensi)
+        // =================================================================
+        DB::beginTransaction();
+
+        try {
+            $attendance = Attendance::create([
+                'employee_id' => $request->employee_id,
+                'location_id' => $request->location_id,
+                'attendance_type' => $request->attendance_type,
+                'attendance_date' => $today,
+                'submitted_latitude' => $request->submitted_latitude,
+                'submitted_longitude' => $request->submitted_longitude,
+                'distance_meters' => round($distance, 2),
+                'device_id' => $request->device_id,
+                'device_model' => $request->device_model,
+                'device_brand' => $request->device_brand,
+                'android_version' => $request->android_version,
+                'app_version' => $request->app_version,
+                'gps_accuracy' => $request->gps_accuracy,
+                'status' => $status,
+                'rejection_reason' => $rejection_reason,
+                'notes' => $request->notes,
+                'ip_address' => $ips[0] ?? null,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => $status === 'approved'
+                    ? 'Absensi berhasil dicatat ✅'
+                    : 'Absensi DITOLAK ❌ (di luar area kantor)',
+                'data' => $attendance,
+                'distance_meters' => round($distance, 2),
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem, data absensi gagal disimpan.',
+                'error' => env('APP_DEBUG') ? $e->getMessage() : null
+            ], 500);
+        }
+    }
+
+    public function store2(Request $request)//with face recognation
     {
         $ips = $request->ips();
         $today = Carbon::today()->format('Y-m-d');
