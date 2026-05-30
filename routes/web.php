@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\DokumentController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Hash;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +18,18 @@ use Illuminate\Support\Facades\Route;
 Route::get('/login', function () {
     return 111; //view('welcome');
 })->name('login');
+
+Route::get('/', function () {
+    return 'hallo word'; //view('welcome');
+});
+
+Route::get('welcome/check_document', function () {
+    return view('vaksin');
+});
+
+Route::get('tes', function () {
+    return Hash::make('isal123');
+});
+
+
+Route::get('vaksin', [DokumentController::class, 'cetakPdf']);
