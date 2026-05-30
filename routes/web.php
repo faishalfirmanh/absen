@@ -15,9 +15,9 @@ use Illuminate\Support\Facades\Hash;
 |
 */
 
-Route::get('/login', function () {
+Route::get('/testing', function () {
     return 111; //view('welcome');
-})->name('login');
+})->name('testing');
 
 Route::get('/', function () {
     return 'hallo word'; //view('welcome');
@@ -27,9 +27,9 @@ Route::get('welcome/check_document', function () {
     return view('vaksin');
 });
 
-Route::get('tes', function () {
-    return Hash::make('isal123');
-});
+// Route::get('tes', function () {
+//     return Hash::make('isal123');
+// });
 
 
 // Route::get('vaksin', [DokumentController::class, 'cetakPdf']);
