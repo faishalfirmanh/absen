@@ -13,7 +13,6 @@ class AttendanceMiddleware
 
         $user = auth()->user();
 
-        dd($user);
         // Jika belum login
         if (!$user) {
             return response()->json([

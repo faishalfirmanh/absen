@@ -32,4 +32,4 @@ Route::get('tes', function () {
 });
 
 
-Route::get('vaksin', [DokumentController::class, 'cetakPdf']);
+// Route::get('vaksin', [DokumentController::class, 'cetakPdf']);

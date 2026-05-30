@@ -19,6 +19,7 @@ use App\Http\Controllers\AttendanceController;
 Route::post('/error_res_login', [AuthController::class, 'viewLogin'])->name('login');
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 Route::post('login', [AuthController::class, 'login'])->name('login_post');
+Route::get('kirim', [AttendanceController::class, 'sendPesan']);
 
 Route::middleware(['auth:sanctum', 'absen_mid'])->group(function () {
 
