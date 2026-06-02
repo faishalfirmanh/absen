@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\LiburController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,7 +23,18 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logo
 Route::post('login', [AuthController::class, 'login'])->name('login_post');
 Route::get('kirim', [AttendanceController::class, 'sendPesan']);
 
+Route::get('report_bulan', [ReportController::class, 'monthlyReport']);
+Route::get('report_tahun', [ReportController::class, 'yearlyReport']);
+
 Route::middleware(['auth:sanctum', 'absen_mid'])->group(function () {
+
+
+    Route::prefix('master-libur')->group(function () {
+        Route::post('save', [LiburController::class, 'store'])->name('save_libur');
+        Route::post('update/{id}', [LiburController::class, 'update'])->name('update_libur');
+        Route::get('all', [LiburController::class, 'index'])->name('get_all_libur');
+        Route::get('byId', [LiburController::class, 'show'])->name('get_byID_libur');
+    });
 
     // Route izin dipindah ke atas + pakai leading slash
     Route::post('/attendance', [AttendanceController::class, 'store'])->name('absen');
