@@ -48,104 +48,218 @@ class ReportController extends Controller
         return $aa;
 
     }
+
+
+    private static function getWorkingDaysOfMonth(int $year, int $month): array
+    {
+        // Holidays → keyed array untuk O(1) lookup (bukan in_array O(n))
+        $holidays = Libur::whereYear('date_holiday', $year)
+            ->whereMonth('date_holiday', $month)
+            ->pluck('date_holiday')
+            ->mapWithKeys(fn($d) => [Carbon::parse($d)->format('Y-m-d') => true])
+            ->toArray();
+
+        $result = [];
+        $daysInMonth = Carbon::createFromDate($year, $month, 1)->daysInMonth;
+
+        for ($day = 1; $day <= $daysInMonth; $day++) {
+            $date = Carbon::createFromDate($year, $month, $day);
+            $dateStr = $date->format('Y-m-d');
+
+            // BUG FIX #3: Mon–Sat (skip Sunday only), bukan Mon–Fri
+            if (!$date->isSunday() && !isset($holidays[$dateStr])) {
+                $result[] = $dateStr;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * BUG FIX #2 — tambah parameter $year
+     * BUG FIX #6 — jadikan static
+     * BUG FIX #7 — delegasi ke getWorkingDaysOfMonth, tidak duplikasi logika
+     */
+
+
+    // ============================================================
+    // MONTHLY REPORT
+    // ============================================================
     public function monthlyReport(Request $request)
     {
-        // 1. Tentukan periode report (Misal: per bulan dan tahun)
-        // Default menggunakan bulan & tahun saat ini jika tidak ada filter
-        $month = $request->month ?? date('m');
-        $year = $request->year ?? date('Y');
+        // ─── 1. PERIODE ──────────────────────────────────────────
+        $month = (int) ($request->month ?? date('n'));
+        $year = (int) ($request->year ?? date('Y'));
 
+        $daysInMonth = Carbon::createFromDate($year, $month, 1)->daysInMonth;
 
+        // BUG FIX #7 — panggil sekali, pakai untuk dua tujuan
+        $workingDays = self::getWorkingDaysOfMonth($year, $month); // array Y-m-d
+        $hariEfektif = count($workingDays);
 
-        // 2. AMBIL DATA MASTER USER
-        // Asumsi modelnya bernama User dan tabelnya users
-        $users = User::orderBy('fullname', 'asc')->get();
+        // ─── 2. USER ─────────────────────────────────────────────
+        $users = User::orderBy('fullname')->get()->keyBy('id');
+        $userIds = $users->keys()->toArray();
 
-        // 3. AMBIL & HITUNG DATA ABSENSI (Hanya Check In)
-        // Menggunakan selectRaw agar DB langsung menghitung total hadir per user
-        $attendances = Attendance::whereYear('attendance_date', $year)
+        // ─── 3. ABSENSI ──────────────────────────────────────────
+        // BUG FIX #1 (root cause) — pakai ->toBase() agar query mengembalikan
+        // stdClass, bukan Eloquent model. Dengan ini attendance_date dan
+        // attendance_time PASTI string, tidak pernah di-cast ke Carbon object.
+        $rawAttendances = Attendance::whereYear('attendance_date', $year)
             ->whereMonth('attendance_date', $month)
-            ->where('attendance_type', 'check_in')
-            ->selectRaw('employee_id, COUNT(*) as total_hadir')
-            ->groupBy('employee_id')
-            ->pluck('total_hadir', 'employee_id');
-        // Hasil: [60 => 22, 61 => 20] (Format array: [employee_id => total_hadir])
+            ->whereIn('attendance_type', ['check_in', 'check_out'])
+            ->whereIn('employee_id', $userIds)
+            ->orderBy('attendance_date')
+            ->orderBy('attendance_time')
+            ->select('employee_id', 'attendance_date', 'attendance_type', 'attendance_time')
+            ->toBase()   // ← bypass Eloquent casting → stdClass, bukan model
+            ->get();
 
-        // 4. AMBIL DATA PENGAJUAN IZIN (Hanya yang Approved)
+        /*
+         * Struktur hasil:
+         * $attendanceByUserDate[uid][Y-m-d]['check_in']  = 'HH:MM:SS'
+         * $attendanceByUserDate[uid][Y-m-d]['check_out'] = 'HH:MM:SS'
+         */
+        $attendanceByUserDate = [];
+        foreach ($rawAttendances as $row) {
+            // BUG FIX #1 — cast eksplisit sebagai lapisan kedua keamanan
+            $uid = (string) $row->employee_id;
+            $date = (string) $row->attendance_date;
+            $type = (string) $row->attendance_type;
+            $time = (string) $row->attendance_time;
+
+            // Normalisasi: jaga-jaga jika DB kembalikan 'Y-m-d H:i:s'
+            if (strlen($date) > 10) {
+                $date = substr($date, 0, 10);
+            }
+
+            $attendanceByUserDate[$uid][$date][$type] = $time;
+        }
+
+        // ─── 4. PENGAJUAN IZIN ───────────────────────────────────
+        $periodStart = Carbon::createFromDate($year, $month, 1)->startOfDay();
+        $periodEnd = Carbon::createFromDate($year, $month, $daysInMonth)->endOfDay();
+
         $izins = PengajuanIzin::where('status', 'Approved')
-            ->where(function ($query) use ($month, $year) {
-                $query->whereMonth('tgl_mulai', $month)->whereYear('tgl_mulai', $year)
-                    ->orWhereMonth('tgl_selesai', $month)->whereYear('tgl_selesai', $year);
-            })->get();
+            ->whereIn('user_id', $userIds)
+            ->where(function ($q) use ($periodStart, $periodEnd) {
+                $q->where('tgl_mulai', '<=', $periodEnd)
+                    ->where('tgl_selesai', '>=', $periodStart);
+            })
+            ->get(['user_id', 'tgl_mulai', 'tgl_selesai', 'jenis']);
 
-        // 5. MAPPING HARI IZIN, SAKIT, & CUTI
-        // Karena izin bisa lebih dari 1 hari (tgl_mulai s/d tgl_selesai), kita harus memecahnya
-        $izinMap = [];
+        // ─── 5. MAPPING HARI IZIN / SAKIT / CUTI ────────────────
+        $izinMap = [];  // [uid => ['sakit'=>0, 'izin'=>0, 'cuti'=>0]]
+        $izinDates = [];  // [uid => ['Y-m-d' => true, ...]]
+
         foreach ($izins as $izin) {
-            // Catatan: Gunakan $izin->user_id atau $izin->employe_id sesuai nama kolom aslimu
-            $uid = $izin->employe_id ?? $izin->user_id;
+            $uid = (string) ($izin->user_id ?? $izin->user_id ?? null);
+            if (!$uid)
+                continue;
 
             $start = Carbon::parse($izin->tgl_mulai);
             $end = Carbon::parse($izin->tgl_selesai);
 
-            for ($date = $start; $date->lte($end); $date->addDay()) {
-                // Pastikan hanya menghitung hari yang jatuh pada bulan report ini
-                if ($date->format('m') == $month && $date->format('Y') == $year) {
+            // Klip ke batas bulan laporan
+            if ($start->lt($periodStart))
+                $start = $periodStart->copy();
+            if ($end->gt($periodEnd))
+                $end = $periodEnd->copy();
 
-                    if (!isset($izinMap[$uid])) {
-                        $izinMap[$uid] = ['sakit' => 0, 'izin' => 0, 'cuti' => 0];
-                    }
+            // PHP 7.4: ??= (null coalescing assignment)
+            $izinMap[$uid] ??= ['sakit' => 0, 'izin' => 0, 'cuti' => 0];
+            $izinDates[$uid] ??= [];
 
-                    if ($izin->jenis == 'Izin Sakit') {
+            for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
+                $dateKey = $date->format('Y-m-d');
+
+                switch ($izin->jenis) {
+                    case 'Izin Sakit':
                         $izinMap[$uid]['sakit']++;
-                    } elseif ($izin->jenis == 'Izin Keperluan') {
+                        break;
+                    case 'Izin Keperluan':
                         $izinMap[$uid]['izin']++;
-                    } elseif ($izin->jenis == 'Cuti') {
+                        break;
+                    case 'Cuti':
                         $izinMap[$uid]['cuti']++;
-                    }
+                        break;
                 }
+
+                $izinDates[$uid][$dateKey] = true;
             }
         }
 
-        // 6. RAKIT DATA FINAL UNTUK REPORT
+        // ─── 6. RAKIT DATA FINAL ─────────────────────────────────
         $reportData = [];
 
-        foreach ($users as $user) {
-            $uid = $user->id;
+        foreach ($users as $uid => $user) {
+            $uid = (string) $uid;
+            $userAttDates = $attendanceByUserDate[$uid] ?? [];
+            $userIzinDates = $izinDates[$uid] ?? [];
 
-            // Ambil data hadir (jika tidak ada di array, beri nilai 0)
-            $hadir = $attendances->get($uid) ?? 0;
+            // 6a. Hadir mesin (ada check_in di mesin)
+            $totalHadir = 0;
+            foreach ($userAttDates as $types) {
+                if (isset($types['check_in']))
+                    $totalHadir++;
+            }
 
-            // Ambil data izin/sakit/cuti
+            // 6b. Total jam masuk dari check_in–check_out (desimal jam)
+            $totalMenit = 0;
+            foreach ($userAttDates as $types) {
+                if (isset($types['check_in'], $types['check_out'])) {
+                    $in = Carbon::createFromTimeString($types['check_in']);
+                    $out = Carbon::createFromTimeString($types['check_out']);
+                    if ($out->gt($in)) {
+                        $totalMenit += $in->diffInMinutes($out);
+                    }
+                }
+            }
+            $totalJamMasuk = round($totalMenit / 60, 2);
+
+            // 6c. Tidak hadir mesin = hari kerja tanpa check_in & tanpa izin
+            $tidakHadirMesin = 0;
+            foreach ($workingDays as $wDay) {
+                if (!isset($userAttDates[$wDay]['check_in']) && !isset($userIzinDates[$wDay])) {
+                    $tidakHadirMesin++;
+                }
+            }
+
+            // 6d. Ringkasan izin
             $sakit = $izinMap[$uid]['sakit'] ?? 0;
             $izin = $izinMap[$uid]['izin'] ?? 0;
             $cuti = $izinMap[$uid]['cuti'] ?? 0;
 
-            // Kalkulasi sesuai rumus yang kamu minta
-            $total_tidak_masuk = $sakit + $izin + $cuti;
-            $total_masuk = $hadir - $total_tidak_masuk;
+            $totalTidakMasuk = $sakit + $izin + $cuti;
+
+            // BUG FIX #5 — clamp ke 0, hasil tidak boleh negatif
+            $totalMasuk = max(0, $totalHadir - $totalTidakMasuk);
 
             $reportData[] = [
-                'id_user' => $user->id,
+                'id_user' => $uid,
                 'nama_karyawan' => $user->fullname,
-                'hadir_mesin' => $hadir,
+                'hadir_mesin' => $totalHadir,
+                'total_jam_masuk' => $totalJamMasuk,
+                'tidak_hadir_mesin' => $tidakHadirMesin,
                 'sakit' => $sakit,
                 'izin' => $izin,
                 'cuti' => $cuti,
-                'total_masuk_kurangi_izin' => $total_masuk,
-                'total_tidak_masuk' => $total_tidak_masuk,
-                'hari_efektif' => self::getActiveDays($month)
+                'total_masuk_kurangi_izin' => $totalMasuk,
+                'total_tidak_masuk' => $totalTidakMasuk,
+                'hari_efektif' => $hariEfektif,
             ];
         }
 
-        // 7. RETURN RESPONSE
+        // ─── 7. RESPONSE ─────────────────────────────────────────
         return response()->json([
             'success' => true,
             'message' => 'Report generated successfully',
-            'periode' => "$year-$month",
-            'data' => $reportData
-        ], 200);
+            'periode' => sprintf('%04d-%02d', $year, $month),
+            'data' => $reportData,
+        ]);
     }
+
+
 
 
 
@@ -212,7 +326,7 @@ class ReportController extends Controller
         // 5. MAPPING HARI IZIN, SAKIT, & CUTI
         $izinMap = [];
         foreach ($izins as $izin) {
-            $uid = $izin->employe_id ?? $izin->user_id;
+            $uid = $izin->user_id ?? $izin->user_id;
 
             $start = Carbon::parse($izin->tgl_mulai);
             $end = Carbon::parse($izin->tgl_selesai);

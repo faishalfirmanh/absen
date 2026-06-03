@@ -23,11 +23,13 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logo
 Route::post('login', [AuthController::class, 'login'])->name('login_post');
 Route::get('kirim', [AttendanceController::class, 'sendPesan']);
 
-Route::get('report_bulan', [ReportController::class, 'monthlyReport']);
-Route::get('report_tahun', [ReportController::class, 'yearlyReport']);
+
 
 Route::middleware(['auth:sanctum', 'absen_mid'])->group(function () {
 
+
+    Route::get('report_bulan', [ReportController::class, 'monthlyReport']);
+    Route::get('report_tahun', [ReportController::class, 'yearlyReport']);
 
     Route::prefix('master-libur')->group(function () {
         Route::post('save', [LiburController::class, 'store'])->name('save_libur');

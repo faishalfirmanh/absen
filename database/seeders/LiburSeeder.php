@@ -17,9 +17,15 @@ class LiburSeeder extends Seeder
         // BEST PRACTICE: Jadikan 1 array associative (Tanggal => Keterangan)
         // Ini mencegah error selisih jumlah array dan lebih mudah dibaca
         $data_libur = [
+            '2026-05-01' => 'hari buruh',
+            '2026-05-14' => 'hari raya waisak',
+            '2026-05-27' => 'idul adha',
+            '2026-05-31' => 'hari raya waisak',
+            '2026-06-01' => 'kesaktian pancasila',
             '2026-06-16' => 'tahun baru islam',
-            '2026-06-17' => 'ultah man united',
-            '2026-06-18' => 'ultah persebaya'
+            '2026-08-17' => '17 agustus ',
+            '2026-08-25' => 'Maulid nabi  ',
+            '2026-12-25' => 'natal ',
         ];
 
         foreach ($data_libur as $date => $keterangan) {
