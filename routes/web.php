@@ -27,6 +27,10 @@ Route::get('welcome/check_document', function () {
     return view('vaksin');
 });
 
+Route::get('/pdf-vaksin', function () {
+    return view('sertif_vaksin');
+});
+
 // Route::get('tes', function () {
 //     return Hash::make('isal123');
 // });

@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
+use Validator;
 class AuthController extends Controller
 {
     /**
      * API Login using username_machine + password_machine
      */
-
+    use ApiResponse;
     public function viewLogin()
     {
         return response()->json([
@@ -85,5 +87,33 @@ class AuthController extends Controller
             'success' => true,
             'message' => 'Logout berhasil'
         ]);
+    }
+
+
+    public function getMe(Request $request)
+    {
+        $data = User::find($request->data_user->id);
+        return $this->autoResponse($data);
+    }
+    public function changeNewPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'old_password' => 'required|string',
+            'new_password' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->error($validator->errors(), 404);
+        }
+
+        $user = User::find($request->data_user->id);
+
+        if (!Hash::check($request->old_password, $user->password_machine)) {
+            return $this->error("password lama salah", 401);
+        }
+        $user->password_machine = Hash::make($request->new_password);
+        $user->save();
+
+        return $this->autoResponse("password berhasil diubah");
     }
 }

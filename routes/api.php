@@ -30,6 +30,8 @@ Route::middleware(['auth:sanctum', 'absen_mid'])->group(function () {
 
     Route::get('report_bulan', [ReportController::class, 'monthlyReport']);
     Route::get('report_tahun', [ReportController::class, 'yearlyReport']);
+    Route::get('get_user', [AuthController::class, 'getMe'])->name('get_me');//changeNewPassword
+    Route::post('save_new_password', [AuthController::class, 'changeNewPassword'])->name('changeNewPassword');
 
     Route::prefix('master-libur')->group(function () {
         Route::post('save', [LiburController::class, 'store'])->name('save_libur');

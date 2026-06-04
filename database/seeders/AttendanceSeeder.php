@@ -20,7 +20,7 @@ class AttendanceSeeder extends Seeder
         $locationId = 1;  // Asumsi ada location_id dari skema sebelumnya
 
         // Tentukan Bulan dan Tahun (Misal: Bulan saat ini)
-        $month = '05';//Carbon::now()->month;
+        $month = '06';//Carbon::now()->month;
         $year = Carbon::now()->year;
 
         // Ambil hari pertama di bulan tersebut untuk mengetahui total hari
@@ -55,7 +55,7 @@ class AttendanceSeeder extends Seeder
             // Asumsi jam masuk pukul 08:00:00
             $checkInTime = $currentDate->copy()->setTime(8, 0, 0);
             // Jam pulang pukul 16:00:00
-            $checkOutTime = $checkInTime->copy()->addHours(8);
+            $checkOutTime = $checkInTime->copy()->addHours(9);
 
             // Tambahkan Array Data Check In
             $attendances[] = [
