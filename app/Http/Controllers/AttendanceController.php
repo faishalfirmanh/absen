@@ -118,7 +118,7 @@ class AttendanceController extends Controller
             $request->submitted_longitude
         );
 
-        if ($distance > 25) {
+        if ($distance > $location->radius_meters) {
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal: jarak lebih dari 25 meter.',
