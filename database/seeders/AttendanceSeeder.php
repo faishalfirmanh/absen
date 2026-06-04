@@ -20,7 +20,7 @@ class AttendanceSeeder extends Seeder
         $locationId = 1;  // Asumsi ada location_id dari skema sebelumnya
 
         // Tentukan Bulan dan Tahun (Misal: Bulan saat ini)
-        $month = '06';//Carbon::now()->month;
+        $month = '05';//Carbon::now()->month;
         $year = Carbon::now()->year;
 
         // Ambil hari pertama di bulan tersebut untuk mengetahui total hari
