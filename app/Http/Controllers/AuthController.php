@@ -31,10 +31,20 @@ class AuthController extends Controller
         ]);
 
         // Find user by username_machine
-        $user = User::with('getLocation')->where('username_machine', $request->username_machine)->first();
+        $user = User::with('getLocation')
+            ->where(function ($q) use ($request) {
+                $q->where('username_machine', $request->username_machine)
+                    ->orWhere('username', $request->username_machine);
+            })
+            ->first();
+
+        $passwordValid = $user && (
+            Hash::check($request->password_machine, $user->password_machine ?? '') ||
+            Hash::check($request->password_machine, $user->password ?? '')
+        );
 
         // Check password_machine (must be hashed with bcrypt)
-        if (!$user || !Hash::check($request->password_machine, $user->password_machine)) {
+        if (!$passwordValid) {
             return response()->json([
                 'success' => false,
                 'message' => 'Username Machine atau Password Machine salah!'
