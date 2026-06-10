@@ -433,6 +433,56 @@ class AttendanceController extends Controller
             ], 500);
         }
     }
+
+    public function getAttendanceHistory(Request $request)
+    {
+        // 1. Validasi Input
+        $validator = Validator::make($request->all(), [
+            // Menggunakan regex untuk memastikan format string adalah YYYY-MM atau YYYY-MM-DD
+            'tanggal' => ['required', 'string', 'regex:/^\d{4}-\d{2}(-\d{2})?$/'],
+            'keyword' => 'nullable|string'
+        ], [
+            'tanggal.regex' => 'Format tanggal harus YYYY-MM-DD (harian) atau YYYY-MM (bulanan).'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->error($validator->errors(), 422); // Asumsi $this->error adalah custom response Anda
+        }
+
+        // 2. Inisiasi Query Builder
+        $query = DB::table('view_absensi_karyawan_v2');
+
+        $inputTanggal = $request->tanggal;
+
+        if (strlen($inputTanggal) === 7) {
+            // Jika formatnya "YYYY-MM" (panjang string 7 karakter)
+            $tahun = substr($inputTanggal, 0, 4); // Ambil 4 karakter pertama
+            $bulan = substr($inputTanggal, 5, 2); // Ambil 2 karakter terakhir
+
+            $query->whereYear('tanggal', $tahun)
+                ->whereMonth('tanggal', $bulan);
+        } else {
+            // Jika formatnya "YYYY-MM-DD" (panjang string 10 karakter)
+            $query->whereDate('tanggal', $inputTanggal);
+        }
+
+        if ($request->data_user->role !== 'HRD') {
+            // Pastikan kolomnya 'employee_id', bukan 'employe_id'
+            $query->where('employee_id', $request->employee_id);
+        }
+
+        // 5. Fitur Pencarian berdasarkan Keyword (fullname)
+        if ($request->filled('keyword')) {
+            $query->where('fullname', 'like', '%' . $request->keyword . '%');
+        }
+
+        // 6. Eksekusi Query dan simpan hasilnya
+        // Tambahkan pagination jika data dirasa akan banyak, atau gunakan ->get()
+        $data = $query->orderBy('tanggal', 'desc')->get();
+
+        // 7. Kembalikan Response (Asumsi autoReponse menerima format Collection/Array)
+        return $this->autoResponse($data);
+    }
     public function getAllAttendance(Request $request)
     {
         $query = DB::table('view_absensi_karyawan');

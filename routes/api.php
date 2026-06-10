@@ -51,6 +51,9 @@ Route::middleware(['auth:sanctum', 'absen_mid'])->group(function () {
         ])
         ->defaults('limit', 'all');
 
+    Route::get('attendance-history', [AttendanceController::class, 'getAttendanceHistory'])
+        ->name('attendance-history');
+
 
     Route::get('/all-attendance', [AttendanceController::class, 'getAllAttendance'])
         ->name('all-attendance');

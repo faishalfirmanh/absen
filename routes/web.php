@@ -31,9 +31,9 @@ Route::get('/pdf-vaksin', function () {
     return view('sertif_vaksin');
 });
 
-// Route::get('tes', function () {
-//     return Hash::make('isal123');
-// });
+Route::get('tes', function () {
+    return Hash::make('raiza123');
+});
 
 
 // Route::get('vaksin', [DokumentController::class, 'cetakPdf']);
