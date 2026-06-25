@@ -14,7 +14,9 @@
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.15",
         "laravel/tinker": "^2.5",
-        "simplesoftwareio/simple-qrcode": "^4.2"
+        "maatwebsite/excel": "^3.1",
+        "simplesoftwareio/simple-qrcode": "^4.2",
+        "zerosdev/nik-reader": "^1.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

@@ -3,6 +3,7 @@
 use App\Http\Controllers\DokumentController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\ApiJamaahExcelController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +23,10 @@ Route::get('/testing', function () {
 Route::get('/', function () {
     return 'hallo word'; //view('welcome');
 });
+
+Route::get('/jamaah', [ApiJamaahExcelController::class, 'cariJamaah']);
+Route::get('/jamaah-view', [ApiJamaahExcelController::class, 'indexAlamat']);
+Route::post('/jamaah/proses-alamat', [ApiJamaahExcelController::class, 'proses'])->name('proses-upload');
 
 Route::get('welcome/check_document', function () {
     return view('vaksin');
