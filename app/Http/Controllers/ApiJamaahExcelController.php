@@ -170,19 +170,25 @@ class ApiJamaahExcelController extends Controller
         }
 
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $spreadsheet->setHasMacros(false);
+        $spreadsheet->setMacrosCode(null);
+        $spreadsheet->setMacrosCertificate(null);
         $writer->save($outputPath);
 
         // Hapus file temp
         Storage::disk('local')->delete($tempPath);
 
         // Download hasil
-        if (ob_get_length()) {
+        // if (ob_get_length()) {
+        //     ob_end_clean();
+        // }
+
+        while (ob_get_level() > 0) {
             ob_end_clean();
         }
 
         return response()->download($outputPath, $outputFileName, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition' => 'attachment; filename="' . $outputFileName . '"',
             'Cache-Control' => 'max-age=0, no-cache, no-store, must-revalidate',
             'Pragma' => 'public',
             'Expires' => '0',
