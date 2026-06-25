@@ -176,8 +176,16 @@ class ApiJamaahExcelController extends Controller
         Storage::disk('local')->delete($tempPath);
 
         // Download hasil
+        if (ob_get_length()) {
+            ob_end_clean();
+        }
+
         return response()->download($outputPath, $outputFileName, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="' . $outputFileName . '"',
+            'Cache-Control' => 'max-age=0, no-cache, no-store, must-revalidate',
+            'Pragma' => 'public',
+            'Expires' => '0',
         ])->deleteFileAfterSend(true);
     }
 
