@@ -100,10 +100,11 @@ class ApiJamaahExcelController extends Controller
 
                 if ($jamaah) {
                     $bagianAlamat = array_filter([
-                        "Prov. " . optional($jamaah->getProv)->name,
-                        "Kota. " . optional($jamaah->getCity)->name,
-                        "Kec. " . optional($jamaah->getKec)->name,
-                        "Desa. " . optional($jamaah->getVillage)->name,
+                        optional($jamaah->getProv)->name,
+                        optional($jamaah->getCity)->name,
+                        optional($jamaah->getKec)->name,
+                        optional($jamaah->getVillage)->name,
+                        "" . $jamaah->alamat_jamaah ?? "-"
                     ]);
 
                     if (!empty($bagianAlamat)) {
