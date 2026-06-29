@@ -11,48 +11,59 @@ class UserLoginSeeder extends Seeder
     public function run()
     {
         $users = [
+            // [
+            //     'username' => 'admin',
+            //     'fullname' => 'Administrator',
+            //     'username_machine' => 'device_admin',
+            //     'password_machine' => Hash::make('admin123'),
+            //     'is_login_device' => false,
+            // ],
+            // [
+            //     'username' => 'hrd',
+            //     'fullname' => 'HRD Manager',
+            //     'username_machine' => 'device_hrd',
+            //     'password_machine' => Hash::make('hrd123'),
+            //     'is_login_device' => false,
+            // ],
+            // [
+            //     'username' => 'isal',
+            //     'fullname' => 'faishal firman hakim',
+            //     'username_machine' => 'isal123',
+            //     'password_machine' => Hash::make('isal123'),
+            //     'is_login_device' => false,
+            //     'location' => 1,
+            // ],
+            // [
+            //     'username' => 'accounting_haidar',
+            //     'username_machine' => 'haidar123',
+            //     'password_machine' => Hash::make('haidar123'),
+            //     'is_login_device' => false,
+            //     'location' => 1,
+            // ],
+            // [
+            //     'username' => 'digmarfahrul',
+            //     'username_machine' => 'fahrul123',
+            //     'password_machine' => Hash::make('fahrul123'),
+            //     'is_login_device' => false,
+            //     'location' => 1,
+            // ],
+            // [
+            //     'username' => 'hrdmila',
+            //     'username_machine' => 'mila123',
+            //     'password_machine' => Hash::make('mila123'),
+            //     'is_login_device' => false,
+            //     'location' => 1,
+            // ],
+
             [
-                'username' => 'admin',
-                'fullname' => 'Administrator',
-                'username_machine' => 'device_admin',
-                'password_machine' => Hash::make('admin123'),
-                'is_login_device' => false,
-            ],
-            [
-                'username' => 'hrd',
-                'fullname' => 'HRD Manager',
-                'username_machine' => 'device_hrd',
-                'password_machine' => Hash::make('hrd123'),
-                'is_login_device' => false,
-            ],
-            [
-                'username' => 'isal',
-                'fullname' => 'faishal firman hakim',
-                'username_machine' => 'isal123',
-                'password_machine' => Hash::make('isal123'),
+                'fullname' => 'moch yasin syauqi',
+                'username' => 'pak_yasin',
+                'password' => 'pakyasin123',
+                'username_machine' => 'pakyasin123',
+                'password_machine' => Hash::make('pakyasin123#'),
                 'is_login_device' => false,
                 'location' => 1,
-            ],
-            [
-                'username' => 'accounting_haidar',
-                'username_machine' => 'haidar123',
-                'password_machine' => Hash::make('haidar123'),
-                'is_login_device' => false,
-                'location' => 1,
-            ],
-            [
-                'username' => 'digmarfahrul',
-                'username_machine' => 'fahrul123',
-                'password_machine' => Hash::make('fahrul123'),
-                'is_login_device' => false,
-                'location' => 1,
-            ],
-            [
-                'username' => 'hrdmila',
-                'username_machine' => 'mila123',
-                'password_machine' => Hash::make('mila123'),
-                'is_login_device' => false,
-                'location' => 1,
+                'role' => 'HRD',
             ],
         ];
 
@@ -77,6 +88,8 @@ class UserLoginSeeder extends Seeder
 
                 // 4. Lakukan update data
                 $user->update($dataToUpdate);
+            } else {
+                User::create($userData);
             }
         }
 
