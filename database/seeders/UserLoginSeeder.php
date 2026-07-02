@@ -58,7 +58,7 @@ class UserLoginSeeder extends Seeder
             [
                 'fullname' => 'moch yasin syauqi',
                 'username' => 'pak_yasin',
-                'password' => 'pakyasin123',
+                'password' => Hash::make('pakyasin123'),
                 'username_machine' => 'pakyasin123',
                 'password_machine' => Hash::make('pakyasin123#'),
                 'is_login_device' => false,
