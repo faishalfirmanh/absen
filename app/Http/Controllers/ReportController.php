@@ -2,15 +2,31 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Repository\AttendanceRepository;
+use App\Http\Repository\IzinRepository;
+use App\Http\Repository\WaActivityRepository;
 use App\Models\User;
 use App\Models\Attendance;
 use App\Models\PengajuanIzin;
 use App\Models\Libur;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class ReportController extends Controller
 {
+
+    use ApiResponse;
+
+
+    protected $repo, $repo_izin, $repo_wa;
+
+    public function __construct(AttendanceRepository $repo, IzinRepository $repo_izin, WaActivityRepository $repo_wa)
+    {
+        $this->repo = $repo;
+        $this->repo_izin = $repo_izin;
+        $this->repo_wa = $repo_wa;
+    }
 
     public function getActiveDays($month_input)
     {
@@ -47,6 +63,13 @@ class ReportController extends Controller
 
         return $aa;
 
+    }
+
+
+    public function GetDetailWa($id)
+    {
+        $data = $this->repo_wa->WhereDataWith(['getUsers'], ['id' => $id])->first();
+        return $this->autoResponse($data);
     }
 
 

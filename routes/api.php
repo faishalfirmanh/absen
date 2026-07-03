@@ -27,6 +27,8 @@ Route::get('kirim', [AttendanceController::class, 'sendPesan']);
 
 Route::post('absen-no-auth', [AttendanceController::class, 'store'])->name('absen-no-auth');
 
+Route::get('detail-task-wa/{id}', [ReportController::class, 'GetDetailWa'])->name('detail-tast-no-auth');
+
 Route::middleware(['auth:sanctum', 'absen_mid'])->group(function () {
 
 
