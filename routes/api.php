@@ -31,6 +31,8 @@ Route::post('absen-no-auth', [AttendanceController::class, 'store'])->name('abse
 Route::get('detail-task-wa/{id}', [ReportController::class, 'GetDetailWa'])->name('detail-tast-no-auth');
 Route::get('report_bulan_no_auth', [ReportController::class, 'monthlyReport'])->name('report_bulan_noauth');
 
+Route::get('detail-absen/{iduser}', [AttendanceController::class, 'GetDetailAbsenUserId'])->name('detail-absen-user');
+
 
 Route::post('save_wa_scarap', [WaScrapController::class, 'saveWa'])->name('save_wa_scrap');
 

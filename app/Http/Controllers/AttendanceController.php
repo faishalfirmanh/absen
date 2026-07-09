@@ -17,6 +17,7 @@ use Validator;
 
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 use Illuminate\Support\Facades\DB;
 class AttendanceController extends Controller
@@ -483,6 +484,25 @@ class AttendanceController extends Controller
         // 7. Kembalikan Response (Asumsi autoReponse menerima format Collection/Array)
         return $this->autoResponse($data);
     }
+
+    public function GetDetailAbsenUserId(Request $request, $iduser)
+    {
+        $validator = Validator::make($request->all(), [
+            'key' => 'required|string'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->error($validator->errors(), 422);
+        }
+
+        if (!Str::contains($request->key, 'namiroh123')) {
+            return $this->error('Key tidak valid.', 422);
+        }
+        $getData = $this->repo->WhereDataWith(['workLocation', 'employee'], ['employee_id' => $iduser])->orderBy('attendance_time', 'desc')->get();
+        return $this->autoResponse($getData);
+    }
+
+
     public function getAllAttendance(Request $request)
     {
         $query = DB::table('view_absensi_karyawan');
