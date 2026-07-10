@@ -45,6 +45,10 @@ class User extends Authenticatable
         'password_machine',
     ];
 
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class, 'employee_id', 'id');
+    }
 
     public function getLocationNameAttribute()
     {
