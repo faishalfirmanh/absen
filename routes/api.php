@@ -36,6 +36,9 @@ Route::get('detail-absen/{iduser}', [AttendanceController::class, 'GetDetailAbse
 
 Route::post('save_wa_scarap', [WaScrapController::class, 'saveWa'])->name('save_wa_scrap');
 
+
+Route::post('get_detail_attendance', [AttendanceController::class, 'getDetailTimeAttendance'])->name('filter_detail_attendance');
+
 Route::middleware(['auth:sanctum', 'absen_mid'])->group(function () {
 
 

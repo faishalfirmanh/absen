@@ -178,6 +178,36 @@ class AttendanceController extends Controller
         }
     }
 
+    public function getDetailTimeAttendance(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'date_start' => 'required|date',
+            'date_end' => 'nullable|date',
+            'key' => 'required|string'
+
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->first()
+            ], 400);
+        }
+
+        if (!Str::contains($request->key, 'namiroh123')) {
+            return $this->error('Key tidak valid.', 422);
+        }
+
+        if ($request->date_end) {
+            $data = Attendance::whereBetween('attendance_date', [$request->date_start, $request->date_end])->orderByDesc('attendance_time')->get();
+        } else {
+            $data = Attendance::where('attendance_date', $request->date_start)->orderByDesc('attendance_time')->get();
+        }
+        return $this->autoResponse($data);
+
+
+    }
+
     public function store2(Request $request)//with face recognation
     {
         $ips = $request->ips();

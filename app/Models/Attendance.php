@@ -14,6 +14,18 @@ class Attendance extends Model
 
     public $timestamps = true;
 
+    protected $appends = [
+        'name_emp'
+    ];
+
+
+    public function getNameEmpAttribute()
+    {
+        return $this->employee->fullname;
+    }
+
+
+
     protected $fillable = [
         'employee_id',
         'location_id',
