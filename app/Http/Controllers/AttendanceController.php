@@ -181,83 +181,74 @@ class AttendanceController extends Controller
         }
     }
 
-    public function getDetailTimeAttendance(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'date_start' => 'required|date',
-            'date_end' => 'nullable|date',
-            'key' => 'required|string',
-        ]);
+   public function getDetailTimeAttendance(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'date_start' => 'required|date',
+        'date_end'   => 'nullable|date',
+        'key'        => 'required|string',
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'error' => $validator->errors()->first()
-            ], 400);
-        }
-
-        if (!Str::contains($request->key, 'namiroh123')) {
-            return $this->error('Key tidak valid.', 422);
-        }
-
-        $dateStart = Carbon::parse($request->date_start)->startOfDay();
-        $dateEnd = $request->date_end
-            ? Carbon::parse($request->date_end)->startOfDay()
-            : $dateStart->copy();
-
-        // Bikin daftar semua tanggal dalam rentang, biar tanggal yang
-        // tidak ada absensinya tetap muncul dengan "-"
-        $dateRange = collect(CarbonPeriod::create($dateStart, $dateEnd))
-            ->map(fn($date) => $date->format('Y-m-d'));
-
-        $attendances = Attendance::with('employee')
-            ->whereBetween('attendance_date', [
-                $dateStart->toDateString(),
-                $dateEnd->toDateString(),
-            ])
-            ->orderBy('attendance_time')
-            ->get();
-
-        // Kelompokkan: user_id -> tanggal -> kumpulan record di hari itu
-        $grouped = $attendances->groupBy('user_id')->map(function ($userAttendances) {
-            return $userAttendances->groupBy(
-                fn($item) => Carbon::parse($item->attendance_date)->format('Y-m-d')
-            );
-        });
-
-        $data = [];
-
-        foreach ($grouped as $userId => $byDate) {
-            $user = $byDate->first()->first()->employee;
-
-            $row = [
-                'user_id' => $userId,
-                'fullname' => $user->fullname ?? $user->name ?? '-',
-            ];
-
-            foreach ($dateRange as $date) {
-                $records = $byDate->get($date);
-
-                if ($records && $records->count() > 0) {
-                    $checkIn = Carbon::parse($records->first()->attendance_time)->format('Y-m-d H:i:s');
-                    $checkOut = $records->count() > 1
-                        ? Carbon::parse($records->last()->attendance_time)->format('Y-m-d H:i:s')
-                        : '-';
-                } else {
-                    $checkIn = '-';
-                    $checkOut = '-';
-                }
-
-                $row[$date] = [
-                    'check_in' => $checkIn,
-                    'check_out' => $checkOut,
-                ];
-            }
-
-            $data[] = $row;
-        }
-
-        return $this->autoResponse($data);
+    if ($validator->fails()) {
+        return response()->json([
+            'error' => $validator->errors()->first()
+        ], 400);
     }
+
+    if (!Str::contains($request->key, 'namiroh123')) {
+        return $this->error('Key tidak valid.', 422);
+    }
+
+    $dateStart = Carbon::parse($request->date_start)->startOfDay();
+    $dateEnd   = $request->date_end
+        ? Carbon::parse($request->date_end)->startOfDay()
+        : $dateStart->copy();
+
+    $dateRange = collect(CarbonPeriod::create($dateStart, $dateEnd))
+        ->map(fn ($date) => $date->format('Y-m-d'));
+
+    $attendances = Attendance::with('employee')
+        ->whereBetween('attendance_date', [
+            $dateStart->toDateString(),
+            $dateEnd->toDateString(),
+        ])
+        ->orderBy('attendance_time')
+        ->get();
+
+    // FIX: kolom sebenarnya adalah employee_id, bukan user_id
+    $grouped = $attendances->groupBy('employee_id')->map(function ($employeeAttendances) {
+        return $employeeAttendances->groupBy(
+            fn ($item) => Carbon::parse($item->attendance_date)->format('Y-m-d')
+        );
+    });
+
+    $data = [];
+
+    foreach ($grouped as $employeeId => $byDate) {
+        $user = $byDate->first()->first()->employee;
+
+        $row = [
+            'user_id'  => $employeeId,
+            'fullname' => $user->fullname ?? $user->name ?? '-',
+        ];
+
+        foreach ($dateRange as $date) {
+            $records = $byDate->get($date);
+
+            $checkInRecord  = $records ? $records->where('attendance_type', 'check_in')->first() : null;
+            $checkOutRecord = $records ? $records->where('attendance_type', 'check_out')->last() : null;
+
+            $row[$date] = [
+                'check_in'  => $checkInRecord ? Carbon::parse($checkInRecord->attendance_time)->format('Y-m-d H:i:s') : '-',
+                'check_out' => $checkOutRecord ? Carbon::parse($checkOutRecord->attendance_time)->format('Y-m-d H:i:s') : '-',
+            ];
+        }
+
+        $data[] = $row;
+    }
+
+    return $this->autoResponse($data);
+}
 
     public function store2(Request $request)//with face recognation
     {
