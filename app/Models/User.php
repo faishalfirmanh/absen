@@ -50,6 +50,17 @@ class User extends Authenticatable
         return $this->hasMany(Attendance::class, 'employee_id', 'id');
     }
 
+    public function waActivity()
+    {
+        return $this->hasMany(WaActivity::class, 'user_id', 'id');
+    }
+
+    public function waPlanActivity()
+    {
+        return $this->hasMany(WaActivity::class, 'user_id', 'id');
+    }
+
+
     public function getLocationNameAttribute()
     {
         return $this->getLocation ? $this->getLocation->location_name : '';

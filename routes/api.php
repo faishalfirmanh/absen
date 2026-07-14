@@ -32,6 +32,7 @@ Route::get('detail-task-wa/{id}', [ReportController::class, 'GetDetailWa'])->nam
 Route::get('report_bulan_no_auth', [ReportController::class, 'monthlyReport'])->name('report_bulan_noauth');
 
 Route::get('detail-absen/{iduser}', [AttendanceController::class, 'GetDetailAbsenUserId'])->name('detail-absen-user');
+Route::get('list-user-wactivity', [WaScrapController::class, 'getUser'])->name('get-user-activity');
 
 
 Route::post('save_wa_scarap', [WaScrapController::class, 'saveWa'])->name('save_wa_scrap');
