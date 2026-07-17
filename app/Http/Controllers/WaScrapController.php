@@ -77,7 +77,7 @@ class WaScrapController extends Controller
 
         $tgl = $request->date ?? date('Y-m-d');
 
-        $forcedExcludeRoles = ['Humas', 'Perlengkapan'];
+        $forcedExcludeRoles = ['Humas', 'Perlengkapan', 'Admin'];
         $excludeRoles = array_values(array_unique(array_merge($excludeRoles, $forcedExcludeRoles)));
         $users = $this->repo_user->WhereDataWith([
             'waActivity' => function ($q) use ($tgl) {
