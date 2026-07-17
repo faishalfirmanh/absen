@@ -254,13 +254,13 @@ class AttendanceController extends Controller
                         ->first();
 
                     if ($cariKet) {
-                        $ket_izin = $cariKet->jenis . ' - ' . $cariKet->alasan; // pakai '=', bukan '.='
+                        $ket_izin = $cariKet->jenis . ' - ';// . $cariKet->alasan; // pakai '=', bukan '.='
                     }
                 }
 
                 $row[$date] = [
                     'check_in' => $checkInRecord ? Carbon::parse($checkInRecord->attendance_time)->format('Y-m-d H:i:s') : $ket_izin,
-                    'check_out' => $checkOutRecord ? Carbon::parse($checkOutRecord->attendance_time)->format('Y-m-d H:i:s') : $ket_izin,
+                    'check_out' => $checkOutRecord ? Carbon::parse($checkOutRecord->attendance_time)->format('Y-m-d H:i:s') : '-',
                 ];
             }
 
