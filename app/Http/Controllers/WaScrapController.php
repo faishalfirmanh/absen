@@ -77,6 +77,8 @@ class WaScrapController extends Controller
 
         $tgl = $request->date ?? date('Y-m-d');
 
+        $forcedExcludeRoles = ['Humas', 'Perlengkapan'];
+        $excludeRoles = array_values(array_unique(array_merge($excludeRoles, $forcedExcludeRoles)));
         $users = $this->repo_user->WhereDataWith([
             'waActivity' => function ($q) use ($tgl) {
                 $q->whereDate('waktu_scan', $tgl);
@@ -95,7 +97,7 @@ class WaScrapController extends Controller
                         });
                 });
             },
-        ], [])
+        ], ['is_active' => true])
             ->when(!empty($excludeRoles), function ($query) use ($excludeRoles) {
                 $query->whereNotIn('role', $excludeRoles);
             })

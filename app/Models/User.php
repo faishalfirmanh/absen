@@ -25,7 +25,8 @@ class User extends Authenticatable
         'username_machine',
         'password_machine',
         'is_login_device',
-        'location'
+        'location',
+        'is_active'
     ];
 
     public $timestamps = false;
