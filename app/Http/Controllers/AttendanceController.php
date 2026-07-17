@@ -237,19 +237,30 @@ class AttendanceController extends Controller
 
                 $checkInRecord = $records ? $records->where('attendance_type', 'check_in')->first() : null;
                 $checkOutRecord = $records ? $records->where('attendance_type', 'check_out')->last() : null;
+
                 $ket_izin = '-';
-                if ($checkInRecord->attendance_time == null && $checkOutRecord->attendance_time == null) {
+
+                // optional() aman dipakai walau $checkInRecord/$checkOutRecord null, tidak ada warning
+                if (empty(optional($checkInRecord)->attendance_time) && empty(optional($checkOutRecord)->attendance_time)) {
+                    // pakai $date, BUKAN $checkInRecord->attendance_date (bisa null persis di kasus ini)
                     $cariKet = PengajuanIzin::where('user_id', $employeeId)
-                        ->whereDate('tgl_mulai', $checkInRecord->attendance_date)
-                        ->orwhereDate('tgl_selesai', $checkInRecord->attendance_date)->first();
+                        ->where(function ($q) use ($date) {
+                            $q->whereDate('tgl_mulai', '<=', $date)
+                                ->where(function ($q2) use ($date) {
+                                    $q2->whereDate('tgl_selesai', '>=', $date)
+                                        ->orWhereNull('tgl_selesai');
+                                });
+                        })
+                        ->first();
+
                     if ($cariKet) {
-                        $ket_izin .= $cariKet->jenis . "-" . $cariKet->alasan;
+                        $ket_izin = $cariKet->jenis . ' - ' . $cariKet->alasan; // pakai '=', bukan '.='
                     }
                 }
 
                 $row[$date] = [
                     'check_in' => $checkInRecord ? Carbon::parse($checkInRecord->attendance_time)->format('Y-m-d H:i:s') : $ket_izin,
-                    'check_out' => $checkOutRecord ? Carbon::parse($checkOutRecord->attendance_time)->format('Y-m-d H:i:s') : '',
+                    'check_out' => $checkOutRecord ? Carbon::parse($checkOutRecord->attendance_time)->format('Y-m-d H:i:s') : $ket_izin,
                 ];
             }
 
