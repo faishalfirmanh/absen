@@ -50,6 +50,12 @@ class User extends Authenticatable
         return $this->hasMany(Attendance::class, 'employee_id', 'id');
     }
 
+
+    public function getIzin()
+    {
+        return $this->hasMany(PengajuanIzin::class, 'user_id', 'id');
+    }
+
     public function waActivity()
     {
         return $this->hasMany(WaActivity::class, 'user_id', 'id');

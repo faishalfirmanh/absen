@@ -66,6 +66,12 @@ class Attendance extends Model
         return $this->belongsTo(User::class, 'employee_id', 'id');
     }
 
+
+
+    public function overtime()
+    {
+        return $this->hasOne(Overtime::class, 'id', 'attendance_id');
+    }
     /**
      * Relationship: Attendance belongs to Work Location
      */
