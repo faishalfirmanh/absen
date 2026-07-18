@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Repository\AttendanceRepository;
 use App\Http\Repository\IzinRepository;
 
+use App\Models\Overtime;
 use App\Models\PengajuanIzin;
 use App\Traits\ApiResponse;
 
@@ -65,6 +66,31 @@ class AttendanceController extends Controller
         echo $response;
     }
 
+    private function formatJamMenit(int $totalMenit): string
+    {
+        $jam = intdiv($totalMenit, 60);
+        $menit = $totalMenit % 60;
+        return sprintf('%d:%02d', $jam, $menit);
+    }
+
+
+    function hitungOvertimeTitikMenit(string $jamKerja, int $jamStandar = 8): string
+    {
+        [$jam, $menit] = explode(':', $jamKerja);
+        $totalMenitKerja = ((int) $jam * 60) + (int) $menit;
+        $totalMenitStandar = $jamStandar * 60;
+
+        $selisihMenit = $totalMenitKerja - $totalMenitStandar;
+
+        if ($selisihMenit <= 0) {
+            return '0.00'; // tidak ada overtime / kurang dari standar
+        }
+
+        $jamOvertime = intdiv($selisihMenit, 60);
+        $menitOvertime = $selisihMenit % 60;
+
+        return sprintf('%d.%02d', $jamOvertime, $menitOvertime);
+    }
 
     public function store(Request $request)
     {
@@ -132,6 +158,34 @@ class AttendanceController extends Controller
 
         $status = $distance <= $location->radius_meters ? 'approved' : 'rejected';
         $rejection_reason = $status === 'rejected' ? 'Di luar radius kantor' : null;
+        $time_now = Carbon::now('Asia/Jakarta');
+        $selisihJam = null;
+        $sel_jam_v1 = null;
+
+        if (env('CONFIG_LIMIT_ABSEN')) {//JIKA BERNILAI FALSE TIDAK DI JALANKAN
+            if ($request->attendance_type == 'check_out') {
+
+                $checkInUser = Attendance::where('employee_id', $request->employee_id)
+                    ->where('attendance_date', $today)
+                    ->where('attendance_type', 'check_in')->first();
+                $checkinTime = $checkInUser->attendance_time->setTimezone('Asia/Jakarta')
+                    ?? Carbon::parse($checkInUser->getRawOriginal('attendance_time'), 'Asia/Jakarta');
+                // Lebih aman & pasti benar: parse ulang dari raw value
+                $checkinTime = Carbon::parse($checkInUser->getRawOriginal('attendance_time'), 'Asia/Jakarta');
+
+                $selisihMenit = $checkinTime->diffInMinutes($time_now);
+                $sel_jam_v1 = round($selisihMenit / 60, 2);
+
+                if ($sel_jam_v1 <= 8) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Gagal: checkout pulang, kurang dari 8 jam',
+                        'waktu' => $selisihJam,
+                    ], 400);
+                }
+                $selisihJam = self::formatJamMenit($selisihMenit);
+            }
+        }
 
         // =================================================================
         // 3. DATABASE TRANSACTION (Simpan Data Absensi)
@@ -159,6 +213,17 @@ class AttendanceController extends Controller
                 'ip_address' => $ips[0] ?? null,
             ]);
 
+
+            if (env('CONFIG_LIMIT_ABSEN')) {//JIKA BERNILAI FALSE TIDAK DI JALANKAN
+                if ($request->attendance_type == 'check_out' && $sel_jam_v1 >= 8) {
+                    $final_overtima = self::hitungOvertimeTitikMenit($selisihJam);
+                    Overtime::create([
+                        'attendance_id' => $attendance->attendance_id,
+                        'overtime_hour' => round($final_overtima, 2),
+                    ]);
+                }
+            }
+
             DB::commit();
 
             return response()->json([
@@ -185,7 +250,7 @@ class AttendanceController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'date_start' => 'required|date',
-            'date_end' => 'nullable|date',
+            'date_end' => 'nullable|date|after_or_equal:date_start',
             'key' => 'required|string',
         ]);
 
@@ -207,7 +272,7 @@ class AttendanceController extends Controller
         $dateRange = collect(CarbonPeriod::create($dateStart, $dateEnd))
             ->map(fn($date) => $date->format('Y-m-d'));
 
-        $attendances = Attendance::with('employee')
+        $attendances = Attendance::with('employee', 'overtime')
             ->whereBetween('attendance_date', [
                 $dateStart->toDateString(),
                 $dateEnd->toDateString(),
@@ -215,7 +280,6 @@ class AttendanceController extends Controller
             ->orderBy('attendance_time')
             ->get();
 
-        // FIX: kolom sebenarnya adalah employee_id, bukan user_id
         $grouped = $attendances->groupBy('employee_id')->map(function ($employeeAttendances) {
             return $employeeAttendances->groupBy(
                 fn($item) => Carbon::parse($item->attendance_date)->format('Y-m-d')
@@ -225,11 +289,11 @@ class AttendanceController extends Controller
         $data = [];
 
         foreach ($grouped as $employeeId => $byDate) {
-            $user = $byDate->first()->first()->employee;
+            $user = optional($byDate->first()->first())->employee;
 
             $row = [
                 'user_id' => $employeeId,
-                'fullname' => $user->fullname ?? $user->name ?? '-',
+                'fullname' => optional($user)->fullname ?? optional($user)->name ?? '-',
             ];
 
             foreach ($dateRange as $date) {
@@ -240,9 +304,7 @@ class AttendanceController extends Controller
 
                 $ket_izin = '-';
 
-                // optional() aman dipakai walau $checkInRecord/$checkOutRecord null, tidak ada warning
                 if (empty(optional($checkInRecord)->attendance_time) && empty(optional($checkOutRecord)->attendance_time)) {
-                    // pakai $date, BUKAN $checkInRecord->attendance_date (bisa null persis di kasus ini)
                     $cariKet = PengajuanIzin::where('user_id', $employeeId)
                         ->where(function ($q) use ($date) {
                             $q->whereDate('tgl_mulai', '<=', $date)
@@ -254,13 +316,18 @@ class AttendanceController extends Controller
                         ->first();
 
                     if ($cariKet) {
-                        $ket_izin = $cariKet->jenis . ' - ';// . $cariKet->alasan; // pakai '=', bukan '.='
+                        $ket_izin = $cariKet->jenis . ' - ';
                     }
                 }
+
+                // Overtime diambil per-tanggal dari record check-out (sesuaikan ke $checkInRecord kalau ternyata itu yg benar)
+                $overtimeHour = optional(optional($checkOutRecord)->overtime)->overtime_hour;
+                $tot_lembur = self::formatLembur($overtimeHour);
 
                 $row[$date] = [
                     'check_in' => $checkInRecord ? Carbon::parse($checkInRecord->attendance_time)->format('Y-m-d H:i:s') : $ket_izin,
                     'check_out' => $checkOutRecord ? Carbon::parse($checkOutRecord->attendance_time)->format('Y-m-d H:i:s') : '-',
+                    'tot_lembur' => $tot_lembur,
                 ];
             }
 
@@ -268,6 +335,28 @@ class AttendanceController extends Controller
         }
 
         return $this->autoResponse($data);
+    }
+
+    function formatLembur($overtimeHour): string
+    {
+        if ($overtimeHour === null || $overtimeHour === '') {
+            return '-';
+        }
+
+        // Normalisasi ke 2 desimal dulu (jaga-jaga kalau presisi kolom 3 digit spt "0.550")
+        $raw = number_format((float) $overtimeHour, 2, '.', ''); // "0.550" -> "0.55"
+        [$jamStr, $menitStr] = array_pad(explode('.', $raw), 2, '00');
+
+        $jam = (int) $jamStr;
+        $menit = (int) $menitStr;
+
+        if ($jam <= 0 && $menit <= 0) {
+            return '-';
+        }
+        if ($jam > 0 && $menit > 0) {
+            return "{$jam} jam {$menit} menit";
+        }
+        return $jam > 0 ? "{$jam} jam" : "{$menit} menit";
     }
 
     public function store2(Request $request)//with face recognation

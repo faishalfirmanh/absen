@@ -70,7 +70,7 @@ class Attendance extends Model
 
     public function overtime()
     {
-        return $this->hasOne(Overtime::class, 'id', 'attendance_id');
+        return $this->hasOne(Overtime::class, 'attendance_id', 'attendance_id');
     }
     /**
      * Relationship: Attendance belongs to Work Location

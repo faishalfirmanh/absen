@@ -11,4 +11,10 @@ class Overtime extends Model
 
     protected $table = 'overtime';
 
+    protected $fillable = [
+        'attendance_id',
+        'overtime_hour',
+    ];
+
+    public $timestamps = false;
 }
