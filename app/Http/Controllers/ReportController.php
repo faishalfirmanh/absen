@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Repository\AttendanceRepository;
 use App\Http\Repository\IzinRepository;
+use App\Http\Repository\PaketGeneralRepo;
 use App\Http\Repository\WaActivityRepository;
 use App\Models\User;
 use App\Models\Attendance;
@@ -12,20 +13,42 @@ use App\Models\Libur;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Validator;
 
+use Illuminate\Support\Str;
 class ReportController extends Controller
 {
 
     use ApiResponse;
 
 
-    protected $repo, $repo_izin, $repo_wa;
+    protected $repo, $repo_izin, $repo_wa, $repo_paket;
 
-    public function __construct(AttendanceRepository $repo, IzinRepository $repo_izin, WaActivityRepository $repo_wa)
+    public function __construct(AttendanceRepository $repo, IzinRepository $repo_izin, WaActivityRepository $repo_wa, PaketGeneralRepo $repo_paket)
     {
         $this->repo = $repo;
         $this->repo_izin = $repo_izin;
         $this->repo_wa = $repo_wa;
+        $this->repo_paket = $repo_paket;
+    }
+
+
+    public function listPaket(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'key' => 'required|in:namiroh123#'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->error($validator->errors(), 422);
+        }
+
+        if (!Str::contains($request->key, 'namiroh123#')) {
+            return $this->error('Key tidak valid.', 422);
+        }
+
+        $datanya = $this->repo_paket->getDataPaketnya('detailsHotels');
+        return $this->autoResponse($datanya);
     }
 
     public function getActiveDays($month_input)

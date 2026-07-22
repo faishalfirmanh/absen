@@ -30,4 +30,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    //untuk google api sheet
+    'google_sheets' => [
+        'credentials_path' => storage_path('app/google/service-account.json'),
+        'spreadsheet_id' => env('GOOGLE_SHEET_ID'),
+        'range' => env('GOOGLE_SHEET_RANGE'),
+        'app_name' => env('APP_NAME', 'Laravel') . ' Sheet Sync',
+        'sync_token' => env('SHEET_SYNC_TOKEN'),
+    ],
+
 ];

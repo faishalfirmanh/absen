@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\LiburController;
+use App\Http\Controllers\Api\SyncGeneralPaketUmrohController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -24,6 +25,11 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logo
 Route::post('login', [AuthController::class, 'login'])->name('login_post');
 Route::get('kirim', [AttendanceController::class, 'sendPesan']);
 
+
+Route::middleware('throttle:5,1')->get('/sync/paket-umroh', SyncGeneralPaketUmrohController::class);
+
+
+Route::get('get-paket', [ReportController::class, 'listPaket'])->name('listPaketExcel');
 
 
 Route::post('absen-no-auth', [AttendanceController::class, 'store'])->name('absen-no-auth');
