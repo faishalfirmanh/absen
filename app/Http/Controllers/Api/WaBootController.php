@@ -10,6 +10,8 @@ use App\Http\Controllers\Controller;
 class WaBootController extends Controller
 {
     use ApiResponse;
+
+
     public function handle(Request $request)
     {
         // 1. Ambil data dari Webhook Fonnte
@@ -17,8 +19,8 @@ class WaBootController extends Controller
             'raw_body' => $request->getContent(),
             'parsed_input' => $request->all(),
         ]);
-        $sender = $request->input('sender'); // Nomor WA jamaah
-        $message = $request->input('message'); // Pesan yang diketik jamaah
+        $sender = $request->input('sender');
+        $message = $request->input('message');
 
         if (!$sender || !$message) {
             $raw = json_decode($request->getContent(), true);
@@ -49,21 +51,19 @@ class WaBootController extends Controller
                 "Jika ada jamaah bertanya yang jawabannya tidak ada di JSON tersebut, " .
                 "mohon maaf dan katakan bahwa Anda belum memiliki informasi tersebut.";
 
-            // URL API Gemini Pro (menggunakan gemini-1.5-pro yang mendukung system instruction)
+            // Model gemini-1.5-pro sudah retired (shutdown), ganti ke model yang masih aktif
+            $geminiModel = 'gemini-2.5-flash';
             $geminiApiKey = env('GEMINI_API_KEY');
-            $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key={$geminiApiKey}";
+            $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/{$geminiModel}:generateContent?key={$geminiApiKey}";
 
-            // Request ke Google Gemini API
             $aiResponse = Http::withHeaders([
                 'Content-Type' => 'application/json',
             ])->post($geminiUrl, [
-                        // System Instruction (Konteks peran AI)
                         'systemInstruction' => [
                             'parts' => [
                                 ['text' => $systemPrompt]
                             ]
                         ],
-                        // Pesan dari jamaah
                         'contents' => [
                             [
                                 'role' => 'user',
@@ -72,15 +72,22 @@ class WaBootController extends Controller
                                 ]
                             ]
                         ],
-                        // Pengaturan AI
                         'generationConfig' => [
-                            'temperature' => 0.7 // 0.0 lebih kaku, 1.0 lebih kreatif
+                            'temperature' => 0.7
                         ]
                     ]);
 
             $aiResult = $aiResponse->json();
 
-            // Membaca teks balasan dari struktur JSON Gemini
+            // Kalau candidates kosong, log respons mentahnya supaya ketahuan penyebabnya
+            // (model deprecated lagi, quota habis, safety block, dll) tanpa harus nebak
+            if (!isset($aiResult['candidates'][0]['content']['parts'][0]['text'])) {
+                Log::error('Gemini tidak mengembalikan candidates', [
+                    'http_status' => $aiResponse->status(),
+                    'raw_response' => $aiResult,
+                ]);
+            }
+
             $balasanAI = $aiResult['candidates'][0]['content']['parts'][0]['text'] ?? 'Maaf, sistem AI kami sedang sibuk. Coba lagi nanti.';
 
             // 4. Kirim Balasan ke Jamaah via Fonnte
@@ -96,7 +103,6 @@ class WaBootController extends Controller
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
-
     // Fungsi bantuan untuk mengirim pesan ke Fonnte
     private function sendFonnteMessage($target, $message)
     {
