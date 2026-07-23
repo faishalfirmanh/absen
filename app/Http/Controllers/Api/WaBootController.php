@@ -1,21 +1,35 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-
+use App\Http\Controllers\Controller;
 class WaBootController extends Controller
 {
+    use ApiResponse;
     public function handle(Request $request)
     {
         // 1. Ambil data dari Webhook Fonnte
+        Log::info('Fonnte webhook masuk', [
+            'raw_body' => $request->getContent(),
+            'parsed_input' => $request->all(),
+        ]);
         $sender = $request->input('sender'); // Nomor WA jamaah
         $message = $request->input('message'); // Pesan yang diketik jamaah
 
-        // Abaikan jika tidak ada pesan atau pengirim
         if (!$sender || !$message) {
+            $raw = json_decode($request->getContent(), true);
+            $sender = $sender ?: ($raw['sender'] ?? null);
+            $message = $message ?: ($raw['message'] ?? null);
+        }
+
+        if (!$sender || !$message) {
+            Log::warning('Webhook Fonnte diabaikan: sender/message kosong', [
+                'body' => $request->getContent(),
+            ]);
             return response()->json(['status' => 'ignored']);
         }
 
@@ -75,7 +89,9 @@ class WaBootController extends Controller
             return response()->json(['status' => 'success']);
 
         } catch (\Exception $e) {
-            Log::error('Error WA Bot: ' . $e->getMessage());
+            Log::error('Error WA Bot: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
             $this->sendFonnteMessage($sender, 'Maaf, terjadi gangguan pada server kami saat memproses permintaan Anda.');
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
@@ -84,11 +100,32 @@ class WaBootController extends Controller
     // Fungsi bantuan untuk mengirim pesan ke Fonnte
     private function sendFonnteMessage($target, $message)
     {
-        Http::withHeaders([
+        $response = Http::withHeaders([
             'Authorization' => env('FONNTE_TOKEN'),
         ])->post('https://api.fonnte.com/send', [
                     'target' => $target,
                     'message' => $message,
                 ]);
+
+        // Log respons Fonnte supaya kelihatan kalau ada error
+        // (token salah, format target salah, kuota habis, dll)
+        Log::info('Fonnte send response', [
+            'target' => $target,
+            'status' => $response->status(),
+            'body' => $response->json(),
+        ]);
+
+        return $response;
+    }
+
+    public function tesSend($target, $message)
+    {
+        $cek = Http::withHeaders([
+            'Authorization' => env('FONNTE_TOKEN'),
+        ])->post('https://api.fonnte.com/send', [
+                    'target' => $target,
+                    'message' => $message,
+                ]);
+        return $this->autoResponse($cek);
     }
 }
