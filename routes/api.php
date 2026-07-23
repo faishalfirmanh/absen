@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\WaBootController;
 use App\Http\Controllers\WaScrapController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,7 @@ Route::middleware('throttle:5,1')->get('/sync/paket-umroh', SyncGeneralPaketUmro
 
 
 Route::get('get-paket', [ReportController::class, 'listPaket'])->name('listPaketExcel');
+Route::post('/webhook/fonnte', [WaBootController::class, 'handle']);
 
 
 Route::post('absen-no-auth', [AttendanceController::class, 'store'])->name('absen-no-auth');
