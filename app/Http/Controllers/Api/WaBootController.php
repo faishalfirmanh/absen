@@ -37,7 +37,7 @@ class WaBootController extends Controller
 
         try {
             // 2. Hit API untuk mendapatkan JSON Paket
-            $paketResponse = Http::post('https://absennamiroh.alhidayah.id/api/get-paket', [
+            $paketResponse = Http::get('https://absennamiroh.alhidayah.id/api/get-paket', [
                 'key' => 'namiroh123#'
             ]);
 
