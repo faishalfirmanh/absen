@@ -31,7 +31,7 @@ Route::middleware('throttle:5,1')->get('/sync/paket-umroh', SyncGeneralPaketUmro
 
 
 Route::get('get-paket', [ReportController::class, 'listPaket'])->name('listPaketExcel');
-Route::post('/webhook/fonnte', [WaBootController::class, 'handle']);
+Route::post('/webhook/fonnte', [WaBootController::class, 'handleV2']);
 Route::get('tes-kirim/{target}/{message}', [WaBootController::class, 'tesSend']);
 
 
