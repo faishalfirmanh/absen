@@ -17,7 +17,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('sheet:sync-paket-umroh')
-            ->dailyAt('20:00')
+            ->dailyAt('10:00')
             ->timezone('Asia/Jakarta') // penting! tanpa ini, Laravel pakai timezone default app
             ->withoutOverlapping();
     }
