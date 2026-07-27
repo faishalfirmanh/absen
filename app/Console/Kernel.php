@@ -16,10 +16,28 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        // $schedule->command('sheet:sync-paket-umroh')
+        //     ->dailyAt('10:00')
+        //     ->timezone('Asia/Jakarta') // penting! tanpa ini, Laravel pakai timezone default app
+        //     ->withoutOverlapping();
+
+        // $schedule->command('jamaah:import-sheet')
+        //     ->dailyAt('10:00')
+        //     ->withoutOverlapping()
+        //     ->appendOutputTo(storage_path('logs/jamaah-import.log'));
+
         $schedule->command('sheet:sync-paket-umroh')
             ->dailyAt('10:00')
-            ->timezone('Asia/Jakarta') // penting! tanpa ini, Laravel pakai timezone default app
-            ->withoutOverlapping();
+            ->timezone('Asia/Jakarta')
+            ->withoutOverlapping(30)
+            ->appendOutputTo(storage_path('logs/sync-paket-umroh.log'))
+            ->emailOutputOnFailure('admin@domain.com');
+
+        $schedule->command('jamaah:import-sheet')
+            ->dailyAt('06:00')
+            ->timezone('Asia/Jakarta')
+            ->withoutOverlapping(30)
+            ->appendOutputTo(storage_path('logs/jamaah-import.log'));
     }
 
     /**

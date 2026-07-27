@@ -17,6 +17,55 @@ class WaBootController extends Controller
     private const NO_ANSWER_TEXT = 'Mohon maaf, untuk pertanyaan ini kami belum memiliki jawabannya. Tim CS kami akan segera membantu Anda 🙏';
 
 
+    //jamaah
+    private function isJamaahNameQuery(string $message): bool
+    {
+        $text = Str::lower($message);
+
+        $keywords = [
+            'nama saya',
+            'atas nama',
+            'a.n',
+            'jamaah bernama',
+            'sudah terdaftar',
+            'sudah daftar',
+            'status pendaftaran',
+            'status jamaah',
+            'cek nama',
+            'cek jamaah',
+            'apakah nama',
+            'terdaftar atas nama',
+        ];
+
+        return Str::contains($text, $keywords);
+    }
+
+    private function loadJamaahContext(): array
+    {
+        return Cache::remember('wa_bot_jamaah_data', now()->addHours(6), function () {
+            // glob, bukan nama file statis — supaya bulan depan tinggal taruh
+            // jamaah_agustus_2026.json di folder yang sama tanpa ubah kode
+            $files = glob(base_path('data_jamaah/jamaah_*.json'));
+
+            if (empty($files)) {
+                Log::warning('Tidak ada file jamaah_*.json ditemukan di data_jamaah/');
+                return [];
+            }
+
+            $allJamaah = [];
+            foreach ($files as $file) {
+                $data = json_decode(file_get_contents($file), true);
+                if (is_array($data)) {
+                    $allJamaah = array_merge($allJamaah, $data);
+                } else {
+                    Log::warning('Gagal parse file jamaah: ' . basename($file));
+                }
+            }
+
+            return $allJamaah;
+        });
+    }
+    //jamaah
     private function isPaketRelated(string $message): bool
     {
         $text = Str::lower($message);
@@ -232,6 +281,23 @@ class WaBootController extends Controller
             $context = "=== FAQ UMUM NAMIROH TOUR ===\n"
                 . json_encode($this->loadFaqContext(), JSON_UNESCAPED_UNICODE)
                 . "\n\n";
+
+
+            //jamaah
+            if ($this->isJamaahNameQuery($message)) {
+                $jamaahData = $this->loadJamaahContext();
+                if (!empty($jamaahData)) {
+                    $context .= "=== DATA JAMAAH TERDAFTAR ===\n"
+                        . json_encode($jamaahData, JSON_UNESCAPED_UNICODE)
+                        . "\n\n";
+                } else {
+                    Log::warning('Pertanyaan terdeteksi soal nama jamaah tapi data jamaah kosong', [
+                        'message' => $message,
+                    ]);
+                }
+            }
+            //jamaah
+
 
             if ($this->isPaketRelated($message)) {
                 $paketData = $this->loadPaketContext();

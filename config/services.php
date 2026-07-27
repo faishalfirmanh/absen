@@ -37,6 +37,7 @@ return [
         'range' => env('GOOGLE_SHEET_RANGE'),
         'app_name' => env('APP_NAME', 'Laravel') . ' Sheet Sync',
         'sync_token' => env('SHEET_SYNC_TOKEN'),
+        'jamaah_id' => env('GOOGLE_SHEET_JAMAAH_ID'),
     ],
 
 ];
