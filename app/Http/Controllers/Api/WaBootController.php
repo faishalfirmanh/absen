@@ -161,102 +161,47 @@ class WaBootController extends Controller
         });
     }
 
-    //v2-old
-    public function handleVold(Request $request)
+    private function isJamaahListRequest(string $message): bool
     {
-        // 1. Ambil data dari Webhook Fonnte
-        Log::info('Fonnte webhook masuk', [
-            'raw_body' => $request->getContent(),
-            'parsed_input' => $request->all(),
-        ]);
+        $text = Str::lower($message);
 
-        $sender = $request->input('sender');
-        $message = $request->input('message');
-        $device = $request->input('device'); // nomor CS yang menerima chat ini
+        $keywords = [
+            'apakah ada nama jamaah',
+            'list jamaah pada paket',
+            'daftar jamaah pada paket',
+            'list jamaah',
+            'daftar jamaah',
+            'daftar nama jamaah',
+            'list peserta',
+            'daftar peserta',
+            'siapa saja yang terdaftar',
+        ];
 
-        if (!$sender || !$message || !$device) {
-            $raw = json_decode($request->getContent(), true);
-            $sender = $sender ?: ($raw['sender'] ?? null);
-            $message = $message ?: ($raw['message'] ?? null);
-            $device = $device ?: ($raw['device'] ?? null);
-        }
-
-        if (!$sender || !$message) {
-            Log::warning('Webhook Fonnte diabaikan: sender/message kosong', [
-                'body' => $request->getContent(),
-            ]);
-            return response()->json(['status' => 'ignored']);
-        }
-
-        // Tentukan token pengirim berdasarkan nomor CS yang menerima chat
-        $token = $this->resolveToken($device);
-
-        try {
-            // 2. Hit API untuk mendapatkan JSON Paket
-            $paketResponse = Http::get('https://absennamiroh.alhidayah.id/api/get-paket', [
-                'key' => 'namiroh123#'
-            ]);
-
-            $dataPaket = $paketResponse->json();
-            $stringDataPaket = json_encode($dataPaket);
-
-            // 3. Siapkan Prompt untuk AI (Gemini)
-            $systemPrompt = "Anda adalah Customer Service AI yang ramah dari Namiroh Tour. " .
-                "Tugas Anda menjawab pertanyaan jamaah mengenai paket umrah/tour. " .
-                "Gunakan HANYA data JSON berikut sebagai sumber informasi: " . $stringDataPaket . ". " .
-                "Jika ada jamaah bertanya yang jawabannya tidak ada di JSON tersebut, " .
-                "mohon maaf dan katakan bahwa Anda belum memiliki informasi tersebut.";
-
-            $geminiModel = 'gemini-2.5-flash';
-            $geminiApiKey = env('GEMINI_API_KEY');
-            $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/{$geminiModel}:generateContent?key={$geminiApiKey}";
-
-            $aiResponse = Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post($geminiUrl, [
-                        'systemInstruction' => [
-                            'parts' => [
-                                ['text' => $systemPrompt]
-                            ]
-                        ],
-                        'contents' => [
-                            [
-                                'role' => 'user',
-                                'parts' => [
-                                    ['text' => $message]
-                                ]
-                            ]
-                        ],
-                        'generationConfig' => [
-                            'temperature' => 0.7
-                        ]
-                    ]);
-
-            $aiResult = $aiResponse->json();
-
-            if (!isset($aiResult['candidates'][0]['content']['parts'][0]['text'])) {
-                Log::error('Gemini tidak mengembalikan candidates', [
-                    'http_status' => $aiResponse->status(),
-                    'raw_response' => $aiResult,
-                ]);
-            }
-
-            $balasanAI = $aiResult['candidates'][0]['content']['parts'][0]['text'] ?? 'Maaf, sistem AI kami sedang sibuk. Coba lagi nanti.';
-
-            // 4. Kirim Balasan ke Jamaah via Fonnte, dari device yang sama dengan yang dia chat
-            $this->sendFonnteMessageV2($sender, $balasanAI, $token);
-
-            return response()->json(['status' => 'success']);
-
-        } catch (\Exception $e) {
-            Log::error('Error WA Bot: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-            ]);
-            $this->sendFonnteMessageV2($sender, 'Maaf, terjadi gangguan pada server kami saat memproses permintaan Anda.', $token);
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
-        }
+        return Str::contains($text, $keywords);
     }
 
+    private function buildJamaahListReply(string $originalQuery): string
+    {
+        $jamaah = $this->loadJamaahContext();
+
+        if (empty($jamaah)) {
+            return 'Maaf, data jamaah belum tersedia saat ini.';
+        }
+
+        $text = Str::lower($originalQuery);
+
+        $filtered = collect($jamaah)->filter(function ($j) use ($text) {
+            return $j['nama_program'] && Str::contains($text, Str::lower($j['nama_program']));
+        })->values();
+
+        if ($filtered->isEmpty()) {
+            return 'Mohon sebutkan nama paket yang dimaksud, misal: "daftar jamaah paket AN NAMIROH".';
+        }
+
+        $lines = $filtered->map(fn($j, $i) => ($i + 1) . '. ' . ($j['nama'] ?? '-') . ' — ' . ($j['nama_program'] ?? '-'));
+
+        return "Berikut daftar jamaah:\n" . $lines->implode("\n");
+    }
 
     public function handleV2(Request $request)
     {
@@ -286,6 +231,30 @@ class WaBootController extends Controller
 
         // Tentukan token pengirim berdasarkan nomor CS yang menerima chat
         $token = $this->resolveToken($device);
+        $pendingKey = 'wa_pending_jamaah_list_' . $this->normalizeNumber($sender);
+        $pending = Cache::get($pendingKey);
+
+
+        if ($pending) {
+            Cache::forget($pendingKey);
+            if (trim($message) === 'namiroh2002') {
+                $this->sendFonnteMessageV2($sender, $this->buildJamaahListReply($pending['query']), $token);
+            } else {
+                $this->sendFonnteMessageV2($sender, 'Maaf, password salah.', $token);
+            }
+            return response()->json(['status' => 'success']);
+        }
+
+
+        if ($this->isJamaahListRequest($message)) {
+            Cache::put($pendingKey, ['query' => $message], now()->addMinutes(5));
+            $this->sendFonnteMessageV2(
+                $sender,
+                'Untuk melihat daftar jamaah, mohon masukkan password terlebih dahulu 🙏',
+                $token
+            );
+            return response()->json(['status' => 'success']);
+        }
 
         try {
             // 2. Susun context secara dinamis
@@ -407,9 +376,21 @@ class WaBootController extends Controller
         return preg_replace('/\D/', '', (string) $number);
     }
 
+
+
+    private function stripPhoneNumbers(string $text): string
+    {
+        // Pola khas nomor HP Indonesia: 08xxx / 62xxx / +62xxx, boleh diselingi spasi/strip/titik
+        $text = preg_replace('/(?:\+?62|0)8[\d\-\.\s]{6,13}\d/', '[nomor disembunyikan]', $text);
+        $text = preg_replace('/\b\d{9,}\b/', '[nomor disembunyikan]', $text);
+
+        return $text;
+    }
+
     // Fungsi bantuan untuk mengirim pesan ke Fonnte
     private function sendFonnteMessageV2($target, $message, ?string $token = null)
     {
+        $message = $this->stripPhoneNumbers($message);
         $response = Http::withHeaders([
             'Authorization' => $token ?: config('fonnte.default_token'),
         ])->post('https://api.fonnte.com/send', [
