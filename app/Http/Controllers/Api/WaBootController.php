@@ -233,6 +233,7 @@ class WaBootController extends Controller
         $token = $this->resolveToken($device);
         $pendingKey = 'wa_pending_jamaah_list_' . $this->normalizeNumber($sender);
         $pending = Cache::get($pendingKey);
+        Log::info('Cek pending jamaah list', ['key' => $pendingKey, 'pending' => $pending]);
 
 
         if ($pending) {
