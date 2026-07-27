@@ -23,6 +23,9 @@ class WaBootController extends Controller
         $text = Str::lower($message);
 
         $keywords = [
+            'apakah ada nama jamaah',
+            'list jamaah pada paket',
+            'daftar jamaah pada paket',
             'nama saya',
             'atas nama',
             'a.n',
@@ -40,11 +43,10 @@ class WaBootController extends Controller
         return Str::contains($text, $keywords);
     }
 
+
     private function loadJamaahContext(): array
     {
         return Cache::remember('wa_bot_jamaah_data', now()->addHours(6), function () {
-            // glob, bukan nama file statis — supaya bulan depan tinggal taruh
-            // jamaah_agustus_2026.json di folder yang sama tanpa ubah kode
             $files = glob(base_path('data_jamaah/jamaah_*.json'));
 
             if (empty($files)) {
@@ -62,7 +64,16 @@ class WaBootController extends Controller
                 }
             }
 
-            return $allJamaah;
+
+            // Whitelist: hanya nama & paket yang dikirim ke AI.
+            // Sesuaikan key 'nama' dan 'nama_program' di bawah kalau nama field
+            // di JSON asli kamu beda (misal 'nama_jamaah', 'paket', dst).
+            return array_map(function ($j) {
+                return [
+                    'nama' => $j['nama'] ?? null,
+                    'nama_program' => $j['nama_program'] ?? ($j['paket'] ?? null),
+                ];
+            }, $allJamaah);
         });
     }
     //jamaah
