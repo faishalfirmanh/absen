@@ -144,7 +144,7 @@ class ReportController extends Controller
         $hariEfektif = count($workingDays);
 
         // ─── 2. USER ─────────────────────────────────────────────
-        $users = User::orderBy('fullname')->get()->keyBy('id');
+        $users = User::orderBy('fullname')->where('is_active', 1)->get()->keyBy('id');
         $userIds = $users->keys()->toArray();
 
         // ─── 3. ABSENSI ──────────────────────────────────────────
