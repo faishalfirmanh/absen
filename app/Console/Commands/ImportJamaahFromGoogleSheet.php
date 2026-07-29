@@ -15,7 +15,7 @@ class ImportJamaahFromGoogleSheet extends Command
      */
     protected $signature = 'jamaah:import-sheet';
 
-    protected $description = 'Import data jamaah dari Google Sheet (xlsx) ke file JSON bulanan di folder data_jamaah';
+    protected $description = 'Import data jamaah dari semua sheet bernama bulan di Google Sheet ke file JSON per bulan di folder data_jamaah';
 
     /**
      * Mapping nama bulan dalam Bahasa Indonesia.
@@ -39,12 +39,16 @@ class ImportJamaahFromGoogleSheet extends Command
 
     public function handle(): int
     {
-        $bulanAngka = (int) now()->format('n');
+        // Tahun yang dipakai untuk semua file JSON = tahun berjalan.
+        // Catatan: kalau ada sheet bulan yang sebenarnya mewakili tahun berbeda
+        // (mis. sheet JANUARI untuk tahun depan), nilai ini perlu disesuaikan manual.
         $tahun = (int) now()->format('Y');
-        $namaBulan = $this->namaBulanIndo[$bulanAngka];
-        $sheetName = strtoupper($namaBulan); // ex: JULI
 
-        $this->info("Mulai import data jamaah bulan {$namaBulan} {$tahun} (sheet: {$sheetName})...");
+        // Reverse map: "JULI" => "Juli", "AGUSTUS" => "Agustus", dst.
+        $bulanUpperToNama = array_combine(
+            array_map('strtoupper', $this->namaBulanIndo),
+            $this->namaBulanIndo
+        );
 
         // ------------------------------------------------------------------
         // 1. Ambil ID Google Sheet dari konfigurasi
@@ -60,7 +64,7 @@ class ImportJamaahFromGoogleSheet extends Command
         $tempPath = storage_path('app/tmp_jamaah_sheet_' . now()->timestamp . '.xlsx');
 
         // ------------------------------------------------------------------
-        // 2. Download file xlsx dari Google Sheet
+        // 2. Download file xlsx dari Google Sheet (satu kali, seluruh workbook)
         // ------------------------------------------------------------------
         try {
             $response = Http::timeout(60)->get($exportUrl);
@@ -79,7 +83,7 @@ class ImportJamaahFromGoogleSheet extends Command
         file_put_contents($tempPath, $response->body());
 
         // ------------------------------------------------------------------
-        // 3. Load workbook & ambil sheet sesuai nama bulan
+        // 3. Load workbook
         // ------------------------------------------------------------------
         try {
             $spreadsheet = IOFactory::load($tempPath);
@@ -90,92 +94,109 @@ class ImportJamaahFromGoogleSheet extends Command
             return self::FAILURE;
         }
 
-        $sheet = $spreadsheet->getSheetByName($sheetName);
-
-        if (!$sheet) {
-            $this->error("Sheet dengan nama '{$sheetName}' tidak ditemukan di dalam Google Sheet.");
-            @unlink($tempPath);
-            return self::FAILURE;
-        }
-
         // ------------------------------------------------------------------
-        // 4. Baca data: kolom B (paket), D (nama), G (no hp)
-        //    Khusus bulan Juli mulai baris 767, bulan lain mulai baris 2.
-        // ------------------------------------------------------------------
-        $startRow = ($sheetName === 'JULI') ? 767 : 2;
-        $highestRow = $sheet->getHighestRow();
-        $dataJamaah = [];
-        $usedIds = [];
-
-        for ($row = $startRow; $row <= $highestRow; $row++) {
-            $paket = trim((string) $sheet->getCell('B' . $row)->getFormattedValue());
-            $nama = trim((string) $sheet->getCell('D' . $row)->getFormattedValue());
-            $noHp = trim((string) $sheet->getCell('G' . $row)->getFormattedValue());
-
-            // Lewati baris yang kosong (tidak ada paket maupun nama)
-            if ($paket === '' && $nama === '') {
-                continue;
-            }
-
-            $dataJamaah[] = [
-                'id_jamaah' => $this->generateUniqueId($usedIds),
-                'paket' => $paket,
-                'nama_jamaah' => $nama,
-                'no_hp' => $noHp,
-            ];
-        }
-
-        @unlink($tempPath);
-
-        if (empty($dataJamaah)) {
-            $this->warn('Tidak ada baris data yang ditemukan pada sheet ini.');
-        }
-
-        // ------------------------------------------------------------------
-        // 5. Pastikan folder data_jamaah ada (setara level folder app/)
+        // 4. Pastikan folder data_jamaah ada (setara level folder app/)
         // ------------------------------------------------------------------
         $folderPath = base_path('data_jamaah');
 
         if (!is_dir($folderPath)) {
             if (!mkdir($folderPath, 0755, true) && !is_dir($folderPath)) {
                 $this->error("Gagal membuat folder: {$folderPath}");
+                @unlink($tempPath);
                 return self::FAILURE;
             }
             $this->info("Folder 'data_jamaah' berhasil dibuat: {$folderPath}");
         }
 
         // ------------------------------------------------------------------
-        // 6. Pastikan file json bulan ini ada, jika belum akan dibuat
+        // 5. Loop semua sheet di workbook, hanya proses sheet bernama bulan
         // ------------------------------------------------------------------
-        $fileName = 'jamaah_' . strtolower($namaBulan) . '_' . $tahun . '.json';
-        $filePath = $folderPath . DIRECTORY_SEPARATOR . $fileName;
+        $ringkasan = [];
 
-        if (!file_exists($filePath)) {
-            touch($filePath);
-            $this->info("File '{$fileName}' belum ada, berhasil dibuat.");
+        foreach ($spreadsheet->getSheetNames() as $sheetName) {
+            $key = strtoupper(trim($sheetName));
+
+            if (!isset($bulanUpperToNama[$key])) {
+                $this->comment("Melewati sheet '{$sheetName}' (bukan nama bulan).");
+                continue;
+            }
+
+            $namaBulan = $bulanUpperToNama[$key]; // ex: "Juli"
+            $sheet = $spreadsheet->getSheetByName($sheetName);
+
+            $this->info("Memproses sheet '{$sheetName}'...");
+
+            // Khusus bulan Juli mulai baris 767, bulan lain mulai baris 2.
+            $startRow = ($key === 'JULI') ? 767 : 2;
+            $highestRow = $sheet->getHighestRow();
+
+            $dataJamaah = [];
+            $usedIds = [];
+
+            for ($row = $startRow; $row <= $highestRow; $row++) {
+                $paket = trim((string) $sheet->getCell('B' . $row)->getFormattedValue());
+                $nama = trim((string) $sheet->getCell('D' . $row)->getFormattedValue());
+                $noHp = trim((string) $sheet->getCell('G' . $row)->getFormattedValue());
+
+                // Lewati baris yang kosong (tidak ada paket maupun nama)
+                if ($paket === '' && $nama === '') {
+                    continue;
+                }
+
+                $dataJamaah[] = [
+                    'id_jamaah' => $this->generateUniqueId($usedIds),
+                    'paket' => $paket,
+                    'nama_jamaah' => $nama,
+                    'no_hp' => $noHp,
+                ];
+            }
+
+            // Pastikan file json bulan ini ada, jika belum akan dibuat
+            $fileName = 'jamaah_' . strtolower($namaBulan) . '_' . $tahun . '.json';
+            $filePath = $folderPath . DIRECTORY_SEPARATOR . $fileName;
+
+            if (!file_exists($filePath)) {
+                touch($filePath);
+                $this->info("File '{$fileName}' belum ada, berhasil dibuat.");
+            }
+
+            // Tulis (overwrite) hasil import ke file json
+            file_put_contents(
+                $filePath,
+                json_encode($dataJamaah, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+            );
+
+            $ringkasan[] = [
+                'sheet' => $sheetName,
+                'file' => $fileName,
+                'total' => count($dataJamaah),
+            ];
+
+            $this->info("-> {$fileName}: " . count($dataJamaah) . ' data jamaah tersimpan.');
+
+            Log::info('[jamaah:import-sheet] Sheet selesai diproses', [
+                'sheet' => $sheetName,
+                'file' => $filePath,
+                'total' => count($dataJamaah),
+            ]);
         }
 
-        // ------------------------------------------------------------------
-        // 7. Tulis (overwrite) hasil import ke file json
-        // ------------------------------------------------------------------
-        file_put_contents(
-            $filePath,
-            json_encode($dataJamaah, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-        );
+        @unlink($tempPath);
 
-        $this->info('Selesai. Total ' . count($dataJamaah) . " data jamaah tersimpan di: {$filePath}");
+        if (empty($ringkasan)) {
+            $this->warn('Tidak ada sheet bernama bulan yang ditemukan di Google Sheet ini.');
+            return self::FAILURE;
+        }
 
-        Log::info('[jamaah:import-sheet] Import selesai', [
-            'file' => $filePath,
-            'total' => count($dataJamaah),
-        ]);
+        $this->info('Selesai. Total ' . count($ringkasan) . ' sheet bulan berhasil di-import:');
+        $this->table(['Sheet', 'File JSON', 'Jumlah Data'], $ringkasan);
 
         return self::SUCCESS;
     }
 
     /**
      * Generate id_jamaah unik berupa random number string (10 digit),
-     * dijamin tidak duplikat dalam satu kali proses import.
+     * dijamin tidak duplikat dalam satu sheet yang sedang diproses.
      */
     protected function generateUniqueId(array &$usedIds): string
     {
