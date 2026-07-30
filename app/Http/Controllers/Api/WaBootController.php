@@ -44,6 +44,39 @@ class WaBootController extends Controller
     }
 
 
+private function findJamaahByNameFuzzy(string $message): array
+{
+    $jamaah = $this->loadJamaahContext();
+    if (empty($jamaah)) {
+        return [];
+    }
+
+    // Buang frasa umum pertanyaan supaya tersisa kira-kira nama yang dicari
+    $needle = Str::lower($message);
+    $stripPhrases = [
+        'apakah ada jamaah atas nama', 'apakah ada nama jamaah', 'cari jamaah atas nama',
+        'terdaftar atas nama', 'status pendaftaran', 'jamaah bernama', 'status jamaah',
+        'atas nama', 'cek jamaah', 'sudah terdaftar', 'sudah daftar', 'apakah nama',
+        'cek nama', 'a.n',
+    ];
+    $needle = trim(preg_replace('/\s+/', ' ', str_replace($stripPhrases, '', $needle)));
+
+    if ($needle === '') {
+        return [];
+    }
+
+    return collect($jamaah)->filter(function ($j) use ($needle) {
+        if (empty($j['nama'])) {
+            return false;
+        }
+        $nama = Str::lower($j['nama']);
+        // cocok dua arah: nama di data mengandung kata dicari, atau sebaliknya (partial match)
+        return Str::contains($nama, $needle) || Str::contains($needle, $nama);
+    })->values()->all();
+}
+
+
+
     private function loadJamaahContext(): array
     {
         return Cache::remember('wa_bot_jamaah_data', now()->addHours(6), function () {
@@ -70,8 +103,8 @@ class WaBootController extends Controller
             // di JSON asli kamu beda (misal 'nama_jamaah', 'paket', dst).
             return array_map(function ($j) {
                 return [
-                    'nama' => $j['nama'] ?? null,
-                    'nama_program' => $j['nama_program'] ?? ($j['paket'] ?? null),
+                     'nama' => $j['nama_jamaah'] ?? ($j['nama'] ?? null),
+                'nama_program' => $j['paket'] ?? ($j['nama_program'] ?? null),
                 ];
             }, $allJamaah);
         });
@@ -266,16 +299,15 @@ class WaBootController extends Controller
 
             //jamaah
             if ($this->isJamaahNameQuery($message)) {
-                $jamaahData = $this->loadJamaahContext();
-                if (!empty($jamaahData)) {
-                    $context .= "=== DATA JAMAAH TERDAFTAR ===\n"
-                        . json_encode($jamaahData, JSON_UNESCAPED_UNICODE)
-                        . "\n\n";
-                } else {
-                    Log::warning('Pertanyaan terdeteksi soal nama jamaah tapi data jamaah kosong', [
-                        'message' => $message,
-                    ]);
-                }
+                $matches = $this->findJamaahByNameFuzzy($message);
+    if (!empty($matches)) {
+        $context .= "=== HASIL PENCARIAN JAMAAH (sudah difilter sesuai nama yang ditanyakan) ===\n"
+            . json_encode($matches, JSON_UNESCAPED_UNICODE)
+            . "\n\n";
+    } else {
+        $context .= "=== HASIL PENCARIAN JAMAAH ===\nTidak ditemukan jamaah dengan nama tersebut di data.\n\n";
+        Log::warning('Pertanyaan nama jamaah tidak ada match di PHP filter', ['message' => $message]);
+    }
             }
             //jamaah
 
