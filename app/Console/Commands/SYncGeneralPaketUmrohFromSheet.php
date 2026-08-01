@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Services\GeneralPaketUmrohSyncService;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -21,11 +22,12 @@ class SYncGeneralPaketUmrohFromSheet extends Command
         $stats = $service->sync();
 
         $this->info(
-            "Selesai. Paket baru: {$stats['parent_baru']}, Paket update: {$stats['parent_update']}, "
+            Carbon::now() .
+            " | Selesai. Paket baru: {$stats['parent_baru']}, Paket update: {$stats['parent_update']}, "
             . "Detail hotel: {$stats['detail']}, Dilewati: {$stats['skipped']}"
         );
 
-        Log::info('Sync paket umroh dari Google Sheet selesai (cron scheduler)', $stats);
+        Log::info(Carbon::now() . '| Sync paket umroh dari Google Sheet selesai (cron scheduler)', $stats);
 
         return self::SUCCESS;
     }

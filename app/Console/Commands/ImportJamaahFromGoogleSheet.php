@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -117,14 +118,14 @@ class ImportJamaahFromGoogleSheet extends Command
             $key = strtoupper(trim($sheetName));
 
             if (!isset($bulanUpperToNama[$key])) {
-                $this->comment("Melewati sheet '{$sheetName}' (bukan nama bulan).");
+                $this->comment(Carbon::now() . " | Melewati sheet '{$sheetName}' (bukan nama bulan).");
                 continue;
             }
 
             $namaBulan = $bulanUpperToNama[$key]; // ex: "Juli"
             $sheet = $spreadsheet->getSheetByName($sheetName);
 
-            $this->info("Memproses sheet '{$sheetName}'...");
+            $this->info(Carbon::now() . "| Memproses sheet '{$sheetName}'...");
 
             // Khusus bulan Juli mulai baris 767, bulan lain mulai baris 2.
             $startRow = ($key === 'JULI') ? 767 : 2;
@@ -172,9 +173,9 @@ class ImportJamaahFromGoogleSheet extends Command
                 'total' => count($dataJamaah),
             ];
 
-            $this->info("-> {$fileName}: " . count($dataJamaah) . ' data jamaah tersimpan.');
+            $this->info(Carbon::now() . "-> {$fileName}: " . count($dataJamaah) . ' data jamaah tersimpan.');
 
-            Log::info('[jamaah:import-sheet] Sheet selesai diproses', [
+            Log::info(Carbon::now() . ' | [jamaah:import-sheet] Sheet selesai diproses', [
                 'sheet' => $sheetName,
                 'file' => $filePath,
                 'total' => count($dataJamaah),
