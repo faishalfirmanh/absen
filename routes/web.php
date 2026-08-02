@@ -32,6 +32,10 @@ Route::get('welcome/check_document', function () {
     return view('vaksin');
 });
 
+Route::get('vs', function () {
+    return view('va.pdf_check');
+});
+
 Route::get('/pdf-vaksin', function () {
     return view('sertif_vaksin');
 });

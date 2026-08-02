@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 	<head>
@@ -33,8 +32,8 @@
 
 		<!-- Vendor CSS -->
           {{-- <link rel="stylesheet" href="{{ asset('vendor/bootstrap.min.css') }}"> --}}
+		  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
 		<link rel="stylesheet" href="https://sinkarkes.kemkes.go.id/assets/vendor/bootstrap/css/bootstrap.min.css">
-		<link rel="stylesheet" href="https://sinkarkes.kemkes.go.id/assets/vendor/font-awesome/css/font-awesome.min.css">
 		<link rel="stylesheet" href="https://sinkarkes.kemkes.go.id/assets/vendor/simple-line-icons/css/simple-line-icons.min.css">
 		<link rel="stylesheet" href="https://sinkarkes.kemkes.go.id/assets/vendor/owl.carousel/assets/owl.carousel.min.css">
 		<link rel="stylesheet" href="https://sinkarkes.kemkes.go.id/assets/vendor/owl.carousel/assets/owl.theme.default.min.css">
@@ -65,12 +64,6 @@
 		<!-- Head Libs -->
 		<script src="https://sinkarkes.kemkes.go.id/assets/vendor/modernizr/modernizr.min.js"></script>
 		<script src="https://sinkarkes.kemkes.go.id/assets/vendor/jquery/jquery.min.js"></script>
-		
-		<script>
-			var refreshCaptchaURL = "https://sinkarkes.kemkes.go.id/vaksinasi_int/vaksinasi_int_public/refresh_captcha";
-		</script>
-		
-		
 
 	</head>
 	<body>
@@ -101,19 +94,6 @@
 											</div>
 										</form>
 									</div>
-<!--									<nav class="header-nav-top">
-										<ul class="nav nav-pills">
-											<li class="hidden-xs">
-												<a href="https://sinkarkes.kemkes.go.id/portal/profil/visi_misi"><i class="fa fa-angle-right"></i> Tentang Kami</a>
-											</li>
-											<li class="hidden-xs">
-												<a href="https://sinkarkes.kemkes.go.id/contact/contact_us"><i class="fa fa-angle-right"></i> Kontak Kami</a>
-											</li>
-											<li>
-												<span class="ws-nowrap"><i class="fa fa-phone"></i> (021) 4266-920</span>
-											</li>
-										</ul>
-									</nav>-->
 								</div>
 								<div class="header-row">
 									<div class="header-nav">
@@ -195,7 +175,7 @@
 		<div class="form-group">
 			<label class="col-md-4 control-label">Nomor Dokumen/IMO No/Barcode/No. Porsi</label>
 			<div class="col-md-8">
-				<input type="text" id="no_dokumen" name="no_dokumen" class="form-control" value="E26-000008897"/>
+				<input type="text" id="no_dokumen" name="no_dokumen" class="form-control" value="E26-000271822"/>
 			</div>
 		</div>
 		<div class="row">
@@ -208,41 +188,307 @@
 <section class="section section-default">
 	<div class="container">
 		<div id="result-block" style="display: none;"></div>
+
+		{{--
+			====== DATA STATIS / MOCK ======
+			Dua blok di bawah ini cuma dipakai sebagai "database" sementara di sisi
+			browser, selama endpoint welcome/check_document/search belum jadi.
+			- #tpl-icv-found  : ditampilkan kalau no_dokumen ketemu di staticFoundDocs
+			- #tpl-not-found  : ditampilkan kalau tidak ketemu
+
+			Nanti kalau endpoint backend-nya sudah siap:
+			1. Hapus dua div tpl-* ini (dan isi icv-nya bisa dipindah ke view
+			   terpisah, mis. resources/views/partials/icv.blade.php, lalu
+			   di-render dari controller).
+			2. Di JS paling bawah, ganti isi function doSearch() supaya balik
+			   pakai $.load(url, data, callback) seperti sebelumnya.
+		--}}
+		<div id="tpl-icv-found" style="display: none;">
+			<style>
+	.icv{
+		/* margin: 0 auto; */
+		padding: 20px;
+		background-color: #f5e19f;
+		position: relative;
+		background: rgb(141,178,227);
+		background: linear-gradient(36deg, rgba(141,178,227,1) 1%, rgba(245,225,159,1) 15%);
+	}
+	.icv .watermark{
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		height:230px;
+		opacity: 0.2;
+		filter: grayscale(100%) brightness(80%) contrast(120%);
+	}
+	.icv-header{
+		text-align: center;
+	}
+	.icv-header img{
+		margin-right: 10px;
+	}
+	.icv-header div{
+		margin-bottom: 5px;
+	}
+	.icv-header h3{
+		margin-top:19px;
+		margin-bottom: 0px;
+		font-size: 20px;
+		font-weight: bold;
+		line-height: 1.3;
+	}
+	.icv-header p{
+		font-size: 16px;
+		line-height: 1.3;
+	}
+	.icv-body{
+		margin-top: 20px;
+	}
+	.icv-body p{
+		padding: 0px;
+		margin: 0px 0px 5px 0px;
+	}
+	.text-bold{
+		font-weight: bold;
+	}
+	.icv .main-data{
+		border-bottom: 1px solid #f1d380;
+		padding-bottom: 5px;
+		margin-bottom: 5px;
+		position: relative;
+	}
+	.main-data img{
+		top:0;
+		right:0;
+		width: 133px;
+	}
+	.icv .data-detail{
+		font-size: 12px;
+	}
+	.data-detail p.title{
+		font-size: 12px;
+		font-weight: bold;
+		padding:0px;
+		margin: 0px;
+	}
+	.data-detail p{
+		padding:0px;
+		margin: 0px;
+	}
+	.icv-table{
+		width: 100%;
+		font-size: 10px;
+	}
+	.icv-table th, .icv-table td{
+		padding: 5px;
+		vertical-align:top;
+		line-height: 1.4;
+	}
+	.icv-table th{
+		font-weight: normal;
+		background-color: #e8d79c;
+	}
+	.icv-footer{
+		margin-top: 20px;
+		text-align:center;
+		font-size: 11px;
+	}
+	.icv-footer p{
+		padding:0px;
+		margin: 0px;
+		line-height: 1.4;
+	}
+			</style>
+			<div class="row">
+				<div class="col-md-6 col-md-offset-4 icv">
+					<img src="https://sinkarkes.kemkes.go.id/assets/img/logo1.png"  class="watermark"> <br>
+
+					<section class="icv-header">
+						<div>
+							<img src="https://sinkarkes.kemkes.go.id/assets/img/pancasila.png" alt="Logo Garuda" height="40"> <br>
+						</div>
+						<div>
+							<img src="https://sinkarkes.kemkes.go.id/assets/img/who.png" alt="Logo WHO" height="30">
+							<img src="https://sinkarkes.kemkes.go.id/assets/img/kemkes-landscape.png" alt="Logo Kemenkes" height="30">
+							<img src="https://sinkarkes.kemkes.go.id/assets/img/satusehat.png" alt="Logo Satusehat" height="30">
+						</div>
+						<h3>International Certificate of Vaccination (Prophylaxis)</h3>
+						<p>Certificat Internatiional de Vaccination ou de Prophylaxie</p>
+					</section>
+					<section class="icv-body">
+						<div class="main-data">
+							<table style="width: 100%">
+								<tr>
+									<td>
+										<p class="text-bold" id="name_j">ACHMAD RI***</p>
+										<p id="pass_id">Passport X6260***</p>
+										<p id="date_birth">18th October 2000</p>
+									</td>
+									<td style="width:146px; text-align: center">
+										<img src="https://sinkarkes.kemkes.go.id/welcome/check_document/qrcode?data=https://sinkarkes.kemkes.go.id/welcome/check_document?t=RTI2LTAwMDI3MTgyMi5pY3Y=" alt="">
+										E26-000271822
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="data-detail">
+							<p class="title">In accordance with the International Health Regulations</p>
+							<p>compormement au Reglement sanitaire international</p>
+							<table class="icv-table" style="margin-bottom: 20px">
+								<thead>
+									<tr>
+										<th>
+											<strong>Vaccine or Prophylaxis</strong><br>
+											Vaccin ou agent prophylactique
+										</th>
+										<th>
+											<strong>Manufacturer and Batch no. of vaccine or prophylaxis</strong><br>
+											Fabircant du vaccin ou de l'agent prophylactique prophylactique et numero du lot
+										</th>
+										<th>
+											<strong>Date</strong><br>
+											Date
+										</th>
+										<th>
+											<strong>Valid Until</strong><br>
+											Valiable jusqu'au
+										</th>
+										<th>
+											<strong>Administering Location & Supervising Clinician</strong><br>
+											Lieu d'administration et Clinicien superviseur
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="text-bold">MENINGITIS MENINGOCOCCUS</td>
+										<td>BIOFARMA B20241228</td>
+										<td>7th March 2026</td>
+										<td>21st March 2029</td>
+										<td>
+											Bandara Internasional I Gusti Ngurah Rai / RSU SURYA HUSADHA NUSA DUA / I Komang Nesa Trianta
+										</td>
+									</tr>
+									<tr>
+										<td class="text-bold">POLIO</td>
+										<td>BIOFARMA 21000725</td>
+										<td>7th March 2026</td>
+										<td>30th November -0001</td>
+										<td>
+											Bandara Internasional I Gusti Ngurah Rai / RSU SURYA HUSADHA NUSA DUA / I Komang Nesa Trianta
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<table class="icv-table">
+								<thead>
+									<tr>
+										<th>
+											<strong>Disease targeted</strong>
+										</th>
+										<th>
+											<strong>Date</strong>
+										</th>
+										<th>
+											<strong>Manufacture and Batch No. of vaccine or prophylaxis</strong>
+										</th>
+										<th>
+											<strong>Next Booster</strong>
+										</th>
+										<th>
+											<strong>Official stamp and signature</strong>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="text-bold"></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td class="text-bold"></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</section>
+					<section class="icv-footer">
+						<div class="pagination">
+							<strong>Penafisan (Disclaimer):</strong>
+							<p>Nomor kode ICV elektronik (eICV) berbeda dengan nomor seri ICV fisik</p>
+							<br>
+						</div>
+						<div class="issued">
+							<p class="text-bold">This certificate was issued by Ministry of Health of Indonesia</p>
+							<p>Ce certificat a été délivré par le ministère Indonésien de la Santé</p>
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+		<div id="tpl-not-found" style="display: none;">
+			<div style="padding: 60px 0; text-align: center;">
+				<p style="font-size: 16px; color: #777; margin: 0;">Maaf, dokumen yang Anda cari tidak dapat Kami temukan.</p>
+			</div>
+		</div>
 	</div>
 </section>
 <script>
-let jenis_dokumen = 'icv';
-let barcode = 'E26-000008897';
-$(document).ready(function() {
-	$('#jenis_dokumen').val(jenis_dokumen);
-	if(jenis_dokumen != '' && barcode != ''){
-		setTimeout(function(){
-			$('#btn_cari').trigger('click');
-		}, 1000);
-	}
-	console.log(jenis_dokumen, barcode);
-	$('#btn_cari').click(function(e) {
-		e.preventDefault();
-		var $this = $(this);
-		if ($this.find('i').hasClass('fa-spin')) return false;
-		$this.find('i').removeClass('fa-search')
-				.addClass('fa-refresh')
-				.addClass('fa-spin')
-				.prop('disabled', true);
-				$('#result-block').slideUp()
-				.load('{{ url("welcome/check_document/search") }}', $.param({
-					'jenis_dokumen': $('#jenis_dokumen').val(),
-					'no_dokumen': $('#no_dokumen').val()
-				}), function() {
-					$('#result-block').slideDown();
-					$('#btn_cari').find('i')
+	// ====== Search masih STATIS / MOCK (belum manggil backend) ======
+	// Nomor dokumen yang dianggap "ketemu" untuk demo ini.
+	// Tinggal tambah string baru ke array ini kalau mau nambah contoh lain.
+	var staticFoundDocs = ['E26-000271822'];
+
+	$(document).ready(function() {
+
+		function doSearch() {
+			var $btn = $('#btn_cari');
+			if ($btn.find('i').hasClass('fa-spin')) return false;
+
+			$btn.find('i').removeClass('fa-search')
+					.addClass('fa-refresh')
+					.addClass('fa-spin')
+					.prop('disabled', true);
+
+			var noDokumen = $.trim($('#no_dokumen').val()).toUpperCase();
+
+			$('#result-block').slideUp(200, function() {
+				// setTimeout ini cuma buat simulasi delay pencarian, boleh dihapus
+				setTimeout(function() {
+					var found = staticFoundDocs.indexOf(noDokumen) !== -1;
+					var html = found ? $('#tpl-icv-found').html() : $('#tpl-not-found').html();
+
+					$('#result-block').html(html).slideDown();
+
+					$btn.find('i')
 							.removeClass('fa-refresh')
 							.removeClass('fa-spin')
 							.addClass('fa-search')
 							.prop('disabled', false);
-				});
-	})
-})
+				}, 500);
+			});
+		}
+
+		// Auto-cari sekali saat halaman pertama kali dibuka, kalau nomor dokumen sudah terisi
+		var jenisDokumen = $('#jenis_dokumen').val();
+		var noDokumenAwal = $('#no_dokumen').val();
+		if (jenisDokumen != '' && noDokumenAwal != '') {
+			setTimeout(doSearch, 1000);
+		}
+
+		$('#btn_cari').click(function(e) {
+			e.preventDefault();
+			doSearch();
+		});
+	});
 </script>			</div>
 			<footer id="footer" class="">
 				
@@ -252,20 +498,14 @@ $(document).ready(function() {
 						
 						<div class="col-md-3">
 							<div class="contact-details">
-						<!--	<div id="service-boxes" class="container"  style="background-image: url(assets/img/watermark.png);"> -->
 								<h4><i class="fa fa-life-ring"></i>&nbsp;&nbsp;Help Desk</h4>
 								<p>Direktorat Surveilans dan Karantina Kesehatan <br/>Direktorat Jenderal Pencegahan dan Pengendalian Penyakit<br/>Kementerian Kesehatan RI</p>
 								<ul class="contact">
 									<li><p><i class="fa fa-building"></i> Kantor Ditjen P2P<br />Kementerian Kesehatan Republik Indonesia Gedung dr. M. Adhyatma lantai 6</p></li>
 									<li><p><i class="fa fa-map-marker"></i> Jl. HR Rasuna Said Kav. X-5 No. 4-9<br />Jakarta Selatan</p></li>
-                                    <!--
-									<li><p><i class="fa fa-phone"></i> </p></li>
-									<li><p><i class="fa fa-fax"></i> </p></li>
-                                    !-->
-									<li><p><i class="fa fa-envelope"></i><a href="/cdn-cgi/l/email-protection#dba8b2b5b0baa9b0bea8f5b0beb6b0bea8f5bcb4f5b2bf" target="_top">sinkarkes.kemkes.go.id</a></p></li>
+									<li><p><i class="fa fa-envelope"></i> sinkarkes.kemkes.go.id</p></li>
 								</ul>
-							<!--</div>-->
-						</div>
+							</div>
 						</div>
 						<div class="col-md-3">
 							<div>
@@ -319,8 +559,6 @@ $(document).ready(function() {
 							<div class="col-md-4">
 								<nav id="sub-menu">
 									<ul>
-									<!--	<li><a href="https://sinkarkes.kemkes.go.id/portal/welcome/faq">FAQ's</a></li>
-										<li><a href="https://sinkarkes.kemkes.go.id/portal/welcome/sitemap">Sitemap</a></li> -->
 										<li><a href="https://sinkarkes.kemkes.go.id/contact/contact_us">Kontak Kami</a></li>
 									</ul>
 								</nav>
@@ -332,7 +570,7 @@ $(document).ready(function() {
 		</div>
 		
 		<!-- Vendor -->
-		<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://sinkarkes.kemkes.go.id/assets/vendor/jquery.appear/jquery.appear.min.js"></script>
+		<script src="https://sinkarkes.kemkes.go.id/assets/vendor/jquery.appear/jquery.appear.min.js"></script>
 		<script src="https://sinkarkes.kemkes.go.id/assets/vendor/jquery.easing/jquery.easing.min.js"></script>
 		<script src="https://sinkarkes.kemkes.go.id/assets/vendor/jquery-cookie/jquery-cookie.min.js"></script>
 		<script src="https://sinkarkes.kemkes.go.id/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
@@ -361,18 +599,5 @@ $(document).ready(function() {
 		<!-- Theme Initialization Files -->
 		<script src="https://sinkarkes.kemkes.go.id/assets/js/portal/theme.init.js"></script>
 
-		<!-- Google Analytics: Change UA-XXXXX-X to be your site's ID. Go to https://www.google.com/analytics/ for more information.
-		<script>
-			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-		
-			ga('create', 'UA-12345678-1', 'auto');
-			ga('send', 'pageview');
-		</script>
-		 -->
-	<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"e2a765f324f4412da187da8b414d804f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
-		
