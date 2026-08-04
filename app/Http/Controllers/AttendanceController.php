@@ -360,10 +360,12 @@ class AttendanceController extends Controller
 
     private function storeCheckInOut(Request $request)
     {
+
         $timeIn = Carbon::parse($request->attendance_time_in, 'Asia/Jakarta');
         $timeOut = Carbon::parse($request->attendance_time_out, 'Asia/Jakarta');
 
-        $this->repo->CreateOrUpdate(
+
+        $savedIn = $this->repo->CreateOrUpdate(
             $this->buildAttendancePayload($request, 'check_in', $timeIn),
             null
         );
@@ -372,6 +374,9 @@ class AttendanceController extends Controller
             $this->buildAttendancePayload($request, 'check_out', $timeOut),
             null
         );
+
+        $this->forceAttendanceTime($savedIn, $timeIn);
+        $this->forceAttendanceTime($savedOut, $timeOut);
 
         $diffMinutes = $timeIn->diffInMinutes($timeOut);
         $diffHours = round($diffMinutes / 60, 2);
