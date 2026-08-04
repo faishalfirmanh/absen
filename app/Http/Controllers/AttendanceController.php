@@ -246,6 +246,154 @@ class AttendanceController extends Controller
         }
     }
 
+    public function saveAttendance(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'employee_id' => 'required|integer|exists:users,id',
+            'type' => 'required|integer|in:0,1,2', // 0 = check_in, 1 = check_out, 2 = check_in & check_out sekaligus
+            'location_id' => 'required|integer|exists:work_locations,location_id',
+            'attendance_time' => 'nullable|date|required_if:type,0,1',
+            'attendance_time_in' => 'nullable|date|required_if:type,2',
+            'attendance_time_out' => 'nullable|date|required_if:type,2|after:attendance_time_in',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'error' => $validator->errors()->first(),
+            ], 400);
+        }
+
+        try {
+            $saved = DB::transaction(function () use ($request) {
+                switch ((int) $request->type) {
+                    case 0:
+                        return $this->storeCheckIn($request);
+                    case 1:
+                        return $this->storeCheckOut($request);
+                    case 2:
+                        return $this->storeCheckInOut($request);
+                }
+            });
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 400);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Absensi berhasil disimpan',
+            'data' => $saved,
+        ]);
+    }
+
+    private function storeCheckIn(Request $request)
+    {
+        $time = $this->resolveTime($request->attendance_time);
+        return $this->repo->CreateOrUpdate(
+            $this->buildAttendancePayload($request, 'check_in', $time),
+            null
+        );
+    }
+
+
+    private function storeCheckOut(Request $request)
+    {
+        $time = $this->resolveTime($request->attendance_time);
+
+        $checkIn = Attendance::where('employee_id', $request->employee_id)
+            ->where('attendance_date', $time->format('Y-m-d'))
+            ->where('attendance_type', 'check_in')
+            ->first();
+
+        if (!$checkIn) {
+            throw new \Exception('Gagal: data check-in untuk tanggal ini tidak ditemukan');
+        }
+
+        // Parse dari raw value supaya tidak kena mutasi timezone otomatis dari cast model.
+        $checkInTime = Carbon::parse($checkIn->getRawOriginal('attendance_time'), 'Asia/Jakarta');
+
+        $diffMinutes = $checkInTime->diffInMinutes($time);
+        $diffHours = round($diffMinutes / 60, 2);
+
+        if (env('CONFIG_LIMIT_ABSEN') && $diffHours <= 8) {
+            throw new \Exception('Gagal: checkout pulang, kurang dari 8 jam');
+        }
+
+        $saved = $this->repo->CreateOrUpdate(
+            $this->buildAttendancePayload($request, 'check_out', $time),
+            null
+        );
+
+        if (env('CONFIG_LIMIT_ABSEN') && $diffHours > 8) {
+            $this->createOvertime($saved->attendance_id, $diffMinutes);
+        }
+
+        return $saved;
+    }
+
+
+    private function storeCheckInOut(Request $request)
+    {
+        $timeIn = Carbon::parse($request->attendance_time_in, 'Asia/Jakarta');
+        $timeOut = Carbon::parse($request->attendance_time_out, 'Asia/Jakarta');
+
+        $this->repo->CreateOrUpdate(
+            $this->buildAttendancePayload($request, 'check_in', $timeIn),
+            null
+        );
+
+        $savedOut = $this->repo->CreateOrUpdate(
+            $this->buildAttendancePayload($request, 'check_out', $timeOut),
+            null
+        );
+
+        $diffMinutes = $timeIn->diffInMinutes($timeOut);
+        $diffHours = round($diffMinutes / 60, 2);
+
+        if (env('CONFIG_LIMIT_ABSEN') && $diffHours > 8) {
+            $this->createOvertime($savedOut->attendance_id, $diffMinutes);
+        }
+
+        return $savedOut;
+    }
+
+
+    private function buildAttendancePayload(Request $request, string $attendanceType, Carbon $time): array
+    {
+        return [
+            'employee_id' => (int) $request->employee_id,
+            'location_id' => (int) $request->location_id,
+            'submitted_latitude' => 111.1111,
+            'submitted_longitude' => 112.54197030,
+            'status' => 'approved',
+            'notes' => 'absen by admin',
+            'attendance_time' => $time->format('Y-m-d H:i:s'),
+            'attendance_date' => $time->format('Y-m-d'),
+            'attendance_type' => $attendanceType,
+        ];
+    }
+
+    private function resolveTime(?string $rawTime): Carbon
+    {
+        return $rawTime
+            ? Carbon::parse($rawTime, 'Asia/Jakarta')
+            : Carbon::now('Asia/Jakarta');
+    }
+
+    private function createOvertime(int $attendanceId, int $diffMinutes): void
+    {
+        $selisihJam = self::formatJamMenit($diffMinutes);
+        $overtimeHour = self::hitungOvertimeTitikMenit($selisihJam);
+
+        Overtime::create([
+            'attendance_id' => $attendanceId,
+            'overtime_hour' => round($overtimeHour, 2),
+        ]);
+    }
+
     public function getDetailTimeAttendance(Request $request)
     {
         $validator = Validator::make($request->all(), [
