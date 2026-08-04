@@ -292,12 +292,33 @@ class AttendanceController extends Controller
     private function storeCheckIn(Request $request)
     {
         $time = $this->resolveTime($request->attendance_time);
-        return $this->repo->CreateOrUpdate(
+        $saved = $this->repo->CreateOrUpdate(
             $this->buildAttendancePayload($request, 'check_in', $time),
             null
         );
+
+        $this->forceAttendanceTime($saved, $time);
+        return $saved;
     }
 
+
+    private function forceAttendanceTime($attendance, Carbon $time): void
+    {
+        if (!$attendance instanceof \Illuminate\Database\Eloquent\Model) {
+            return;
+        }
+
+        DB::table($attendance->getTable())
+            ->where($attendance->getKeyName(), $attendance->getKey())
+            ->update([
+                'attendance_time' => $time->format('Y-m-d H:i:s'),
+                'attendance_date' => $time->format('Y-m-d'),
+            ]);
+
+        // Sinkronkan juga instance in-memory-nya, biar response JSON ke FE benar.
+        $attendance->attendance_time = $time->format('Y-m-d H:i:s');
+        $attendance->attendance_date = $time->format('Y-m-d');
+    }
 
     private function storeCheckOut(Request $request)
     {
@@ -326,6 +347,8 @@ class AttendanceController extends Controller
             $this->buildAttendancePayload($request, 'check_out', $time),
             null
         );
+
+        $this->forceAttendanceTime($saved, $time);
 
         if (env('CONFIG_LIMIT_ABSEN') && $diffHours > 8) {
             $this->createOvertime($saved->attendance_id, $diffMinutes);
@@ -366,10 +389,10 @@ class AttendanceController extends Controller
         return [
             'employee_id' => (int) $request->employee_id,
             'location_id' => (int) $request->location_id,
-            'submitted_latitude' => 111.1111,
+            'submitted_latitude' => -7.51003002,
             'submitted_longitude' => 112.54197030,
             'status' => 'approved',
-            'notes' => 'absen by admin',
+            'notes' => ' absen by admin ',
             'attendance_time' => $time->format('Y-m-d H:i:s'),
             'attendance_date' => $time->format('Y-m-d'),
             'attendance_type' => $attendanceType,
