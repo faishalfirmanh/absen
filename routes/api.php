@@ -47,6 +47,9 @@ Route::get('list-user-wactivity', [WaScrapController::class, 'getUser'])->name('
 Route::post('save_wa_scarap', [WaScrapController::class, 'saveWa'])->name('save_wa_scrap');
 
 
+Route::get('work_location', [AttendanceController::class, 'getLocation'])->name('getLocation');
+
+
 Route::post('saveAbsenAdmin', [AttendanceController::class, 'saveAttendance'])->name('save_absen_admin');
 
 Route::post('get_detail_attendance', [AttendanceController::class, 'getDetailTimeAttendance'])->name('filter_detail_attendance');

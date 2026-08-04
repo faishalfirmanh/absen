@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Repository\AttendanceRepository;
 use App\Http\Repository\IzinRepository;
 
+use App\Http\Repository\WorkLocationRepo;
 use App\Models\Overtime;
 use App\Models\PengajuanIzin;
 use App\Traits\ApiResponse;
@@ -29,12 +30,16 @@ class AttendanceController extends Controller
     use ApiResponse;
 
 
-    protected $repo, $repo_izin;
+    protected $repo, $repo_izin, $repo_location;
 
-    public function __construct(AttendanceRepository $repo, IzinRepository $repo_izin)
-    {
+    public function __construct(
+        AttendanceRepository $repo,
+        IzinRepository $repo_izin,
+        WorkLocationRepo $repo_location
+    ) {
         $this->repo = $repo;
         $this->repo_izin = $repo_izin;
+        $this->repo_location = $repo_location;
     }
 
     public function sendPesan()
@@ -71,6 +76,23 @@ class AttendanceController extends Controller
         $jam = intdiv($totalMenit, 60);
         $menit = $totalMenit % 60;
         return sprintf('%d:%02d', $jam, $menit);
+    }
+
+
+    public function getLocation(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'key' => 'required|string|in:namiroh123',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->first()
+            ], 400);
+        }
+
+        $data = $this->repo_location->whereData([])->get();
+        return $this->autoResponse($data);
     }
 
 
@@ -356,6 +378,7 @@ class AttendanceController extends Controller
 
         return $saved;
     }
+
 
 
     private function storeCheckInOut(Request $request)
