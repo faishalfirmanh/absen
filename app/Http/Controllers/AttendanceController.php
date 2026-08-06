@@ -361,9 +361,9 @@ class AttendanceController extends Controller
         $diffMinutes = $checkInTime->diffInMinutes($time);
         $diffHours = round($diffMinutes / 60, 2);
 
-        if (env('CONFIG_LIMIT_ABSEN') && $diffHours <= 8) {
-            throw new \Exception('Gagal: checkout pulang, kurang dari 8 jam');
-        }
+        // if (env('CONFIG_LIMIT_ABSEN') && $diffHours <= 8) {
+        //     throw new \Exception('Gagal: checkout pulang, kurang dari 8 jam');
+        // }
 
         $saved = $this->repo->CreateOrUpdate(
             $this->buildAttendancePayload($request, 'check_out', $time),
