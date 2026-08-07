@@ -4,7 +4,7 @@ use App\Http\Controllers\DokumentController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\ApiJamaahExcelController;
-
+use Illuminate\Support\Facades\Storage;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,6 +15,14 @@ use App\Http\Controllers\ApiJamaahExcelController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/storage/{path}', function ($path) {
+    if (!Storage::disk('public')->exists($path)) {
+        abort(404);
+    }
+    return Storage::disk('public')->response($path);
+})->where('path', '.*');
+
 
 Route::get('/testing', function () {
     return 111; //view('welcome');
