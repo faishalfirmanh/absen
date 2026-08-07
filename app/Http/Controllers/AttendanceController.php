@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Models\WorkLocation;
 
+use Log;
 use Validator;
 
 use Intervention\Image\Facades\Image;
@@ -1263,29 +1264,47 @@ class AttendanceController extends Controller
             $extension = $photo->getClientOriginalExtension();
             $newFileName = $request->employee_id . "_" . $format_date_no . "_" . 'izin' . "." . 'webp';
 
-            $folderPath = env('DB_USERNAME') == 'root' ? 'uploads/izin_sakit/' : 'app/public/uploads/izin_sakit/';//check if server local or server prod
+            $folderPath = 'uploads/izin_sakit/';
             $fullPath = $folderPath . $newFileName;
-            $image = Image::make($photo->getRealPath());
-            $image->resize(800, null, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
+            $ext = strtolower($photo->getClientOriginalExtension());
+            try {
+                if ($ext === 'pdf') {
+                    // PDF: simpan apa adanya, jangan lewat Intervention Image
+                    $newFileName = $request->employee_id . "_" . $format_date_no . "_izin.pdf";
+                    $fullPath = $folderPath . $newFileName;
+                    $stored = Storage::disk('public')->put($fullPath, file_get_contents($photo->getRealPath()));
+                } else {
+                    // Gambar: resize + compress ke webp seperti sebelumnya
+                    $newFileName = $request->employee_id . "_" . $format_date_no . "_izin.webp";
+                    $fullPath = $folderPath . $newFileName;
 
-            $maxSizeKB = 100;   // target maksimal 100 KB
-            $quality = 85;
+                    $image = Image::make($photo->getRealPath());
+                    $image->resize(800, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    });
 
-            while (true) {
-                $encoded = $image->encode($extension, $quality);
+                    $maxSizeKB = 100;
+                    $quality = 85;
+                    do {
+                        $encoded = $image->encode('webp', $quality);
+                        $quality -= 5;
+                    } while (strlen($encoded) / 1024 > $maxSizeKB && $quality > 10);
 
-                if (strlen($encoded) / 1024 <= $maxSizeKB || $quality <= 10) {
-                    break;
+                    $stored = Storage::disk('public')->put($fullPath, $encoded);
                 }
-                $quality -= 5;
+
+                if (!$stored) {
+                    Log::error('Gagal menyimpan bukti_sakit', ['path' => $fullPath]);
+                    throw new \Exception('Gagal menyimpan file bukti sakit ke storage.');
+                }
+
+                $validated['bukti_sakit'] = url(Storage::url($fullPath));
+            } catch (\Throwable $e) {
+                Log::error('Upload bukti_sakit error: ' . $e->getMessage());
+                throw $e;
             }
 
-            Storage::disk('public')->put($fullPath, $encoded);
-            $url = Storage::url($fullPath);
-            $validated['bukti_sakit'] = url('/') . $url;
         }
 
         $pengajuan = PengajuanIzin::create($validated);
