@@ -119,6 +119,7 @@ class AttendanceController extends Controller
     {
         $ips = $request->ips();
         $today = Carbon::today()->format('Y-m-d');
+        Log::info('absen date ' . $today);
 
         // =================================================================
         // 1. Validasi Request
