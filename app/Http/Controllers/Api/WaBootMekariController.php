@@ -267,7 +267,123 @@ class WaBootMekariController extends Controller
     }
 
 
+    use App\Services\MekariAuthService;
+
     public function handleMekari(Request $request)
+    {
+        Log::info('Mekari webhook masuk', [
+            'raw_body' => $request->getContent(),
+        ]);
+
+        $payload = $request->all();
+        $dataEvent = $payload['data_event'] ?? null;
+
+        // Verifikasi otomatis saat register webhook (payload verify_info) juga
+        // otomatis lolos ke sini karena tidak match 'receive_message_from_customer'
+        if ($dataEvent !== 'receive_message_from_customer') {
+            return response()->json(['status' => 'ignored_event']);
+        }
+
+        $message = trim($payload['text'] ?? '');
+        $roomId = $payload['room_id'] ?? null;
+        $messageId = $payload['id'] ?? null;
+        $sender = $payload['room']['account_uniq_id'] ?? null;
+
+        if ($message === '' || !$roomId || !$sender) {
+            return response()->json(['status' => 'ignored_empty']);
+        }
+
+        // Dedup: cegah proses dobel kalau Qontak retry webhook yang sama
+        $dedupKey = 'mekari_wh_processed_' . $messageId;
+        if (Cache::has($dedupKey)) {
+            return response()->json(['status' => 'duplicate']);
+        }
+        Cache::put($dedupKey, true, now()->addMinutes(10));
+
+        $pendingKey = 'wa_pending_jamaah_list_' . $this->normalizeNumber($sender);
+        $pending = Cache::get($pendingKey);
+
+        if ($pending) {
+            Cache::forget($pendingKey);
+            $reply = trim($message) === 'namiroh2002'
+                ? $this->buildJamaahListReply($pending['query'])
+                : 'Maaf, password salah.';
+            $this->sendMekariMessage($roomId, $reply);
+            return response()->json(['status' => 'success']);
+        }
+
+        if ($this->isJamaahListRequest($message)) {
+            Cache::put($pendingKey, ['query' => $message], now()->addMinutes(5));
+            $this->sendMekariMessage($roomId, 'Untuk melihat daftar jamaah, mohon masukkan password terlebih dahulu 🙏');
+            return response()->json(['status' => 'success']);
+        }
+
+        try {
+            $context = "=== FAQ UMUM NAMIROH TOUR ===\n"
+                . json_encode($this->loadFaqContext(), JSON_UNESCAPED_UNICODE) . "\n\n";
+
+            if ($this->isJamaahNameQuery($message)) {
+                $matches = $this->findJamaahByNameFuzzy($message);
+                $context .= !empty($matches)
+                    ? "=== HASIL PENCARIAN JAMAAH ===\n" . json_encode($matches, JSON_UNESCAPED_UNICODE) . "\n\n"
+                    : "=== HASIL PENCARIAN JAMAAH ===\nTidak ditemukan jamaah dengan nama tersebut di data.\n\n";
+            }
+
+            if ($this->isPaketRelated($message)) {
+                $paketData = $this->loadPaketContext();
+                if (!empty($paketData)) {
+                    $context .= "=== DATA PAKET UMROH (real-time, hari ini: " . now()->toDateString() . ") ===\n"
+                        . json_encode($paketData, JSON_UNESCAPED_UNICODE) . "\n\n";
+                }
+            }
+
+            $systemPrompt = "Anda adalah Customer Service AI ..." . $context; // prompt panjangmu, tetap sama
+
+            $geminiModel = 'gemini-2.5-flash';
+            $geminiApiKey = env('GEMINI_API_KEY');
+            $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/{$geminiModel}:generateContent?key={$geminiApiKey}";
+
+            $aiResponse = Http::withHeaders(['Content-Type' => 'application/json'])->post($geminiUrl, [
+                'systemInstruction' => ['parts' => [['text' => $systemPrompt]]],
+                'contents' => [['role' => 'user', 'parts' => [['text' => $message]]]],
+                'generationConfig' => ['temperature' => 0.3],
+            ]);
+
+            $aiResult = $aiResponse->json();
+            $balasanAI = $aiResult['candidates'][0]['content']['parts'][0]['text']
+                ?? 'Maaf, sistem AI kami sedang sibuk. Coba lagi nanti.';
+
+            $this->sendMekariMessage($roomId, $balasanAI);
+            return response()->json(['status' => 'success']);
+        } catch (\Throwable $e) {
+            Log::error('Error WA Bot Mekari: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            $this->sendMekariMessage($roomId, 'Maaf, terjadi gangguan pada server kami saat memproses permintaan Anda.');
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+
+    private function sendMekariMessage(string $roomId, string $message)
+    {
+        $message = $this->stripPhoneNumbers($message);
+
+
+        $response = Http::withToken(config('mekari.omnichannel_token'))
+            ->post(config('mekari.chat_base_url') . "/v1/rooms/{$roomId}/messages", [
+                'type' => 'text',
+                'text' => $message,
+            ]);
+
+        Log::info('Mekari send response', [
+            'room_id' => $roomId,
+            'status' => $response->status(),
+            'body' => $response->json(),
+        ]);
+
+        return $response;
+    }
+
+
+    public function handleMekariOld(Request $request)
     {
         Log::info('Mekari webhook masuk', [
             'raw_body' => $request->getContent(),
@@ -426,7 +542,7 @@ class WaBootMekariController extends Controller
     /**
      * Mengirim pesan balasan AI ke user via API Mekari
      */
-    private function sendMekariMessage(string $target, string $message, array $config)
+    private function sendMekariMessageOLd(string $target, string $message, array $config)
     {
         $message = $this->stripPhoneNumbers($message);
         $target = $this->normalizeNumber($target);

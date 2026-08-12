@@ -6,4 +6,6 @@ return [
     'client_secret' => env('MEKARI_API_CLIENT_SECRET'),
     'channel_id' => env('MEKARI_WA_CHANNEL_ID'),
     'va_template_id' => env('MEKARI_VA_TEMPLATE_ID'),
+    'omnichannel_token' => env('MEKARI_TOKEN'),
+    'chat_base_url' => 'https://service-chat.qontak.com/api/open'
 ];
