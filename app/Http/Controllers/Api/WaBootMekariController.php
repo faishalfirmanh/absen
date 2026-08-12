@@ -244,6 +244,28 @@ class WaBootMekariController extends Controller
         ];
     }
 
+    public function chatbotApi(Request $request)
+    {
+        Log::info('Mekari Chatbot API masuk', [
+            'body' => $request->all()
+        ]);
+
+        $question = $request->input('question');
+
+        if (!$question) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Parameter question wajib diisi.'
+            ], 400);
+        }
+
+        return response()->json([
+            'success' => true,
+            'question' => $question,
+            'answer' => 'Saya menerima pertanyaan: ' . $question
+        ]);
+    }
+
 
     public function handleMekari(Request $request)
     {
