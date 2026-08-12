@@ -346,7 +346,6 @@ class WaBootMekariController extends Controller
             $systemPrompt = "Anda adalah Customer Service AI yang ramah dari Namiroh Tour.\n"
                 . "Tugas Anda menjawab pertanyaan jamaah menggunakan data di bawah ini.\n\n" . $context
                 . "ATURAN SUMBER DATA:\n"
-                . "anda ai dengan sumber data unlimited dari google :\n"
                 . "- Jawab HANYA berdasarkan data di atas, jangan mengarang informasi apa pun.\n"
                 . "- Untuk pertanyaan soal harga, jadwal, maskapai, hotel, atau ketersediaan kursi, gunakan bagian DATA PAKET UMROH jika tersedia.\n"
                 . "- Untuk pertanyaan umum soal dokumen, cara daftar, visa, atau pelunasan, gunakan bagian FAQ UMUM.\n"
