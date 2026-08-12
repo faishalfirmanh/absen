@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\WaBootMekariController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\Api\WaBootController;
 use App\Http\Controllers\WaScrapController;
@@ -32,6 +33,7 @@ Route::middleware('throttle:5,1')->get('/sync/paket-umroh', SyncGeneralPaketUmro
 
 Route::get('get-paket', [ReportController::class, 'listPaket'])->name('listPaketExcel');
 Route::post('/webhook/fonnte', [WaBootController::class, 'handleV2']);
+Route::post('/webhook/mekari', [WaBootMekariController::class, 'handleMekari']);
 Route::get('tes-kirim/{target}/{message}', [WaBootController::class, 'tesSend']);
 
 
