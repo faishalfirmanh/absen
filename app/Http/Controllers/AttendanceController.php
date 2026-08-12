@@ -119,8 +119,7 @@ class AttendanceController extends Controller
     {
         $ips = $request->ips();
         $today = Carbon::today()->format('Y-m-d');
-        Log::info('absen date ' . $today);
-
+        
         // =================================================================
         // 1. Validasi Request
         // =================================================================
@@ -128,6 +127,8 @@ class AttendanceController extends Controller
             ->where('attendance_date', $today)
             ->count();
 
+ Log::info($request->employee_id . ' absen date ' . $today . " type " . $request->attendance_type . " count " . $attendanceCount);
+ 
         $validator = Validator::make($request->all(), [
             'attendance_type' => [
                 'required',
@@ -186,7 +187,7 @@ class AttendanceController extends Controller
         $selisihJam = null;
         $sel_jam_v1 = null;
 
-        if (env('CONFIG_LIMIT_ABSEN')) {//JIKA BERNILAI FALSE TIDAK DI JALANKAN
+        if (config('app.config_limit_absen')) {//JIKA BERNILAI FALSE TIDAK DI JALANKAN
             if ($request->attendance_type == 'check_out') {
 
                 $checkInUser = Attendance::where('employee_id', $request->employee_id)

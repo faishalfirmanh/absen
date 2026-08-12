@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use Carbon\Carbon;
+
 class Attendance extends Model
 {
     use HasFactory;
@@ -66,6 +68,12 @@ class Attendance extends Model
         return $this->belongsTo(User::class, 'employee_id', 'id');
     }
 
+
+
+protected function serializeDate(\DateTimeInterface $date)
+{
+    return \Illuminate\Support\Carbon::instance($date)->format('Y-m-d H:i:s');
+}
 
 
     public function overtime()

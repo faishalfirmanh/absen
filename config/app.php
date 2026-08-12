@@ -40,6 +40,9 @@ return [
     */
 
     'debug' => (bool) env('APP_DEBUG', false),
+    
+    
+    'config_limit_absen' => env('CONFIG_LIMIT_ABSEN', false),
 
     /*
     |--------------------------------------------------------------------------
