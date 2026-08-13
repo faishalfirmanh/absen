@@ -271,12 +271,17 @@ class WaBootMekariController extends Controller
 
     public function handleMekari(Request $request)
     {
-          ignore_user_abort(true);
+        ignore_user_abort(true);
         Log::info('Mekari webhook masuk', [
             'raw_body' => $request->getContent(),
         ]);
 
         $payload = $request->all();
+        //new
+        \App\Jobs\ProcessMekariChatbotJob::dispatch($payload);
+        return response()->json(['status' => 'success'], 200);
+        //new
+
         $dataEvent = $payload['data_event'] ?? null;
 
         // Verifikasi otomatis saat register webhook (payload verify_info) juga
@@ -344,7 +349,7 @@ class WaBootMekariController extends Controller
             $geminiApiKey = env('GEMINI_API_KEY');
             $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/{$geminiModel}:generateContent?key={$geminiApiKey}";
 
-Log::info('Mekari: context built, calling Gemini', ['room_id' => $roomId]);
+            Log::info('Mekari: context built, calling Gemini', ['room_id' => $roomId]);
             $aiResponse = Http::withHeaders(['Content-Type' => 'application/json'])->post($geminiUrl, [
                 'systemInstruction' => ['parts' => [['text' => $systemPrompt]]],
                 'contents' => [['role' => 'user', 'parts' => [['text' => $message]]]],
@@ -367,25 +372,25 @@ Log::info('Mekari: context built, calling Gemini', ['room_id' => $roomId]);
 
     private function sendMekariMessage(string $roomId, string $message)
     {
-       $message = $this->stripPhoneNumbers($message);
-       
-          Log::info('Mekari: mulai kirim pesan', ['room_id' => $roomId]);
+        $message = $this->stripPhoneNumbers($message);
 
-    $response = Http::withToken(config('mekari.omnichannel_token'))
-        ->timeout(15)
-        ->post(config('mekari.chat_base_url') . '/v1/messages/whatsapp/bot', [
+        Log::info('Mekari: mulai kirim pesan', ['room_id' => $roomId]);
+
+        $response = Http::withToken(config('mekari.omnichannel_token'))
+            ->timeout(15)
+            ->post(config('mekari.chat_base_url') . '/v1/messages/whatsapp/bot', [
+                'room_id' => $roomId,
+                'type' => 'text',
+                'text' => $message,
+            ]);
+
+        Log::info('Mekari send response', [
             'room_id' => $roomId,
-            'type' => 'text',
-            'text' => $message,
+            'status' => $response->status(),
+            'body' => $response->json(),
         ]);
 
-    Log::info('Mekari send response', [
-        'room_id' => $roomId,
-        'status' => $response->status(),
-        'body' => $response->json(),
-    ]);
-
-    return $response;
+        return $response;
     }
 
 
