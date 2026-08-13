@@ -267,7 +267,7 @@ class WaBootMekariController extends Controller
     }
 
 
-    use App\Services\MekariAuthService;
+
 
     public function handleMekari(Request $request)
     {
@@ -354,7 +354,7 @@ class WaBootMekariController extends Controller
                 ?? 'Maaf, sistem AI kami sedang sibuk. Coba lagi nanti.';
 
             $this->sendMekariMessage($roomId, $balasanAI);
-            return response()->json(['status' => 'success',200]);
+            return response()->json(['status' => 'success'], 200);
         } catch (\Throwable $e) {
             Log::error('Error WA Bot Mekari: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             $this->sendMekariMessage($roomId, 'Maaf, terjadi gangguan pada server kami saat memproses permintaan Anda.');
