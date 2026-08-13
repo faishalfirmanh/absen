@@ -366,9 +366,9 @@ class WaBootMekariController extends Controller
     {
         $message = $this->stripPhoneNumbers($message);
 
-
         $response = Http::withToken(config('mekari.omnichannel_token'))
-            ->post(config('mekari.chat_base_url') . "/v1/rooms/{$roomId}/messages", [
+            ->post(config('mekari.chat_base_url') . '/v1/messages/whatsapp/bot', [
+                'room_id' => $roomId,
                 'type' => 'text',
                 'text' => $message,
             ]);
