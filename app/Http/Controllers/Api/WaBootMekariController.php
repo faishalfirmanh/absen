@@ -271,6 +271,7 @@ class WaBootMekariController extends Controller
 
     public function handleMekari(Request $request)
     {
+          ignore_user_abort(true);
         Log::info('Mekari webhook masuk', [
             'raw_body' => $request->getContent(),
         ]);
@@ -343,6 +344,7 @@ class WaBootMekariController extends Controller
             $geminiApiKey = env('GEMINI_API_KEY');
             $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/{$geminiModel}:generateContent?key={$geminiApiKey}";
 
+Log::info('Mekari: context built, calling Gemini', ['room_id' => $roomId]);
             $aiResponse = Http::withHeaders(['Content-Type' => 'application/json'])->post($geminiUrl, [
                 'systemInstruction' => ['parts' => [['text' => $systemPrompt]]],
                 'contents' => [['role' => 'user', 'parts' => [['text' => $message]]]],
@@ -350,6 +352,7 @@ class WaBootMekariController extends Controller
             ]);
 
             $aiResult = $aiResponse->json();
+            Log::info('Mekari: Gemini response received', ['status' => $aiResponse->status()]);
             $balasanAI = $aiResult['candidates'][0]['content']['parts'][0]['text']
                 ?? 'Maaf, sistem AI kami sedang sibuk. Coba lagi nanti.';
 
@@ -364,154 +367,27 @@ class WaBootMekariController extends Controller
 
     private function sendMekariMessage(string $roomId, string $message)
     {
-        $message = $this->stripPhoneNumbers($message);
+       $message = $this->stripPhoneNumbers($message);
+       
+          Log::info('Mekari: mulai kirim pesan', ['room_id' => $roomId]);
 
-        $response = Http::withToken(config('mekari.omnichannel_token'))
-            ->post(config('mekari.chat_base_url') . '/v1/messages/whatsapp/bot', [
-                'room_id' => $roomId,
-                'type' => 'text',
-                'text' => $message,
-            ]);
-
-        Log::info('Mekari send response', [
+    $response = Http::withToken(config('mekari.omnichannel_token'))
+        ->timeout(15)
+        ->post(config('mekari.chat_base_url') . '/v1/messages/whatsapp/bot', [
             'room_id' => $roomId,
-            'status' => $response->status(),
-            'body' => $response->json(),
+            'type' => 'text',
+            'text' => $message,
         ]);
 
-        return $response;
+    Log::info('Mekari send response', [
+        'room_id' => $roomId,
+        'status' => $response->status(),
+        'body' => $response->json(),
+    ]);
+
+    return $response;
     }
 
-
-    public function handleMekariOld(Request $request)
-    {
-        Log::info('Mekari webhook masuk', [
-            'raw_body' => $request->getContent(),
-            'parsed_input' => $request->all(),
-        ]);
-
-        $payload = $request->all();
-        $sender = null;
-        $message = null;
-        $channelId = $payload['channel_id'] ?? null;
-
-        // PARSER WEBHOOK MEKARI / QONTAK
-        // Qontak umumnya mengirim format 'from' dan 'message.body'
-        if (isset($payload['from']) && isset($payload['message']['body'])) {
-            $sender = $payload['from'];
-            $message = $payload['message']['body'];
-        }
-        // Fallback jika Mekari meneruskan format asli Meta (WhatsApp Cloud API)
-        elseif (isset($payload['entry'][0]['changes'][0]['value']['messages'][0])) {
-            $waMessage = $payload['entry'][0]['changes'][0]['value']['messages'][0];
-            $sender = $waMessage['from'] ?? null;
-            $message = $waMessage['text']['body'] ?? null;
-            $channelId = $payload['entry'][0]['changes'][0]['value']['metadata']['phone_number_id'] ?? $channelId;
-        }
-        // Fallback format custom / lainnya
-        else {
-            $sender = $payload['sender'] ?? ($payload['wa_id'] ?? null);
-            $message = $payload['message'] ?? ($payload['text'] ?? null);
-        }
-
-        if (!$sender || !$message) {
-            Log::warning('Webhook Mekari diabaikan: sender/message kosong', ['body' => $request->getContent()]);
-            return response()->json(['status' => 'ignored']);
-        }
-
-        $mekariConfig = $this->resolveMekariConfig($channelId);
-        $pendingKey = 'wa_pending_jamaah_list_' . $this->normalizeNumber($sender);
-        $pending = Cache::get($pendingKey);
-
-        if ($pending) {
-            Cache::forget($pendingKey);
-            if (trim($message) === 'namiroh2002') {
-                $this->sendMekariMessage($sender, $this->buildJamaahListReply($pending['query']), $mekariConfig);
-            } else {
-                $this->sendMekariMessage($sender, 'Maaf, password salah.', $mekariConfig);
-            }
-            return response()->json(['status' => 'success']);
-        }
-
-        if ($this->isJamaahListRequest($message)) {
-            Cache::put($pendingKey, ['query' => $message], now()->addMinutes(5));
-            $this->sendMekariMessage($sender, 'Untuk melihat daftar jamaah, mohon masukkan password terlebih dahulu 🙏', $mekariConfig);
-            return response()->json(['status' => 'success']);
-        }
-
-        try {
-            $context = "=== FAQ UMUM NAMIROH TOUR ===\n"
-                . json_encode($this->loadFaqContext(), JSON_UNESCAPED_UNICODE) . "\n\n";
-
-            if ($this->isJamaahNameQuery($message)) {
-                $matches = $this->findJamaahByNameFuzzy($message);
-                if (!empty($matches)) {
-                    $context .= "=== HASIL PENCARIAN JAMAAH (sudah difilter sesuai nama yang ditanyakan) ===\n" . json_encode($matches, JSON_UNESCAPED_UNICODE) . "\n\n";
-                } else {
-                    $context .= "=== HASIL PENCARIAN JAMAAH ===\nTidak ditemukan jamaah dengan nama tersebut di data.\n\n";
-                }
-            }
-
-            if ($this->isPaketRelated($message)) {
-                $paketData = $this->loadPaketContext();
-                if (!empty($paketData)) {
-                    $context .= "=== DATA PAKET UMROH (real-time, hari ini: " . now()->toDateString() . ") ===\n" . json_encode($paketData, JSON_UNESCAPED_UNICODE) . "\n\n";
-                }
-            }
-
-            $systemPrompt = "Anda adalah Customer Service AI yang ramah dari Namiroh Tour.\n"
-                . "Tugas Anda menjawab pertanyaan jamaah menggunakan data di bawah ini.\n\n" . $context
-                . "ATURAN SUMBER DATA:\n"
-                . "- Jawab HANYA berdasarkan data di atas, jangan mengarang informasi apa pun.\n"
-                . "- Untuk pertanyaan soal harga, jadwal, maskapai, hotel, atau ketersediaan kursi, gunakan bagian DATA PAKET UMROH jika tersedia.\n"
-                . "- Untuk pertanyaan umum soal dokumen, cara daftar, visa, atau pelunasan, gunakan bagian FAQ UMUM.\n"
-                . "- Kalau field 'available' pada suatu paket bernilai 0  paket itu FULL/tidak tersedia, kalau negatif masih tersedia.\n"
-                . "- Kalau ada beberapa paket yang relevan, tampilkan maksimal 3 opsi paling sesuai, jangan semua sekaligus.\n\n"
-                . "ATURAN REKOMENDASI UNTUK LANSIA/ORANG TUA:\n"
-                . "- Prioritaskan paket dengan program_hari (durasi) LEBIH PENDEK, dan harga paling mahal .\n"
-                . "- Di antara paket dengan durasi yang mirip, prioritaskan yang harga (field harga di details_hotels) LEBIH TINGGI — pada data ini, hotel yang lebih mahal umumnya lebih dekat ke Masjidil Haram/Masjid Nabawi sehingga jamaah lebih sedikit berjalan kaki.\n"
-                . "- Sebutkan singkat alasan rekomendasinya, misal: \"durasi lebih singkat jadi tidak terlalu melelahkan, hotelnya juga tergolong lebih dekat ke masjid.\"\n"
-                . "- PENTING: ini perkiraan dari pola harga, BUKAN data jarak yang benar-benar terukur — jangan sebutkan angka jarak spesifik (meter/menit jalan kaki) yang tidak ada di data.\n\n"
-                . "ATURAN JARAK HOTEL KE MASJID:\n"
-                . "- Anda bisa akses internet/Google Maps, untuk cari nama hotel_mekkah -> masjidil haram, dan hotel_madinah -> masjid nabawi .\n"
-                . "- JANGAN PERNAH mengarang angka jarak (meter, kilometer, atau menit jalan kaki) untuk hotel manapun.\n"
-                . "- Kalau ditanya jarak hotel ke Masjidil Haram/Masjid Nabawi analisis dengan google maps jaraknya atau berfikir analisis sendiri:\n"
-                . "- Jika jawabannya benar-benar tidak ada di data manapun di atas, balas PERSIS dengan kalimat berikut, tanpa tambahan apa pun: \"" . self::NO_ANSWER_TEXT . "\"\n"
-                . "- Gunakan Bahasa Indonesia yang ramah dan sopan.\n"
-                . "- Format harga pakai \"Rp\" dan titik ribuan.\n"
-                . "- Untuk teks tebal, gunakan SATU tanda bintang (*contoh*) sesuai format WhatsApp — JANGAN dua bintang (**contoh**) seperti markdown biasa.\n";
-
-            $geminiModel = 'gemini-2.5-flash';
-            $geminiApiKey = env('GEMINI_API_KEY');
-            $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/{$geminiModel}:generateContent?key={$geminiApiKey}";
-
-            $aiResponse = Http::withHeaders(['Content-Type' => 'application/json'])->post($geminiUrl, [
-                'systemInstruction' => ['parts' => [['text' => $systemPrompt]]],
-                'contents' => [['role' => 'user', 'parts' => [['text' => $message]]]],
-                'generationConfig' => ['temperature' => 0.3],
-            ]);
-
-            $aiResult = $aiResponse->json();
-
-            if (!isset($aiResult['candidates'][0]['content']['parts'][0]['text'])) {
-                Log::error('Gemini tidak mengembalikan candidates', ['raw_response' => $aiResult]);
-            }
-
-            $balasanAI = $aiResult['candidates'][0]['content']['parts'][0]['text'] ?? 'Maaf, sistem AI kami sedang sibuk. Coba lagi nanti.';
-
-            if (trim($balasanAI) === self::NO_ANSWER_TEXT) {
-                Log::info('Pertanyaan tidak terjawab oleh AI', ['sender' => $sender, 'message' => $message]);
-            }
-
-            $this->sendMekariMessage($sender, $balasanAI, $mekariConfig);
-            return response()->json(['status' => 'success']);
-
-        } catch (\Throwable $e) {
-            Log::error('Error WA Bot Mekari: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            $this->sendMekariMessage($sender, 'Maaf, terjadi gangguan pada server kami saat memproses permintaan Anda.', $mekariConfig);
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
-        }
-    }
 
     // ======================= HELPER MEKARI =======================
 

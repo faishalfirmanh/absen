@@ -22,6 +22,54 @@ use App\Http\Controllers\Api\SyncGeneralPaketUmrohController;
 */
 
 
+// routes/api.php — SEMENTARA, hapus setelah debugging selesai
+
+
+// routes/api.php — SEMENTARA
+Route::get('/test-gemini', function () {
+    $timings = [];
+    $start = microtime(true);
+
+    $t0 = microtime(true);
+    $faq = json_decode(file_get_contents(base_path('faq_1.json')), true) ?? [];
+    $timings['load_faq_detik'] = round(microtime(true) - $t0, 2);
+
+    $t0 = microtime(true);
+    $paketRes = \Illuminate\Support\Facades\Http::timeout(10)->get('https://absennamiroh.alhidayah.id/api/get-paket', ['key' => 'namiroh123#']);
+    $paketData = $paketRes->json('data', []);
+    $timings['load_paket_detik'] = round(microtime(true) - $t0, 2);
+    $timings['jumlah_paket'] = count($paketData);
+
+    $context = "=== FAQ UMUM ===\n" . json_encode($faq, JSON_UNESCAPED_UNICODE) . "\n\n"
+        . "=== DATA PAKET ===\n" . json_encode($paketData, JSON_UNESCAPED_UNICODE) . "\n\n";
+    $timings['panjang_context_karakter'] = strlen($context);
+
+    // Ganti $systemPrompt di bawah dengan prompt lengkap asli punyamu
+    $systemPrompt = "Anda adalah Customer Service AI...\n\n" . $context;
+
+    $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" . env('GEMINI_API_KEY');
+
+    $t0 = microtime(true);
+    try {
+        $aiResponse = \Illuminate\Support\Facades\Http::timeout(60)
+            ->withHeaders(['Content-Type' => 'application/json'])
+            ->post($geminiUrl, [
+                'systemInstruction' => ['parts' => [['text' => $systemPrompt]]],
+                'contents' => [['role' => 'user', 'parts' => [['text' => 'Info paket murah September 2026']]]],
+                'generationConfig' => ['temperature' => 0.3],
+            ]);
+        $timings['gemini_detik'] = round(microtime(true) - $t0, 2);
+        $timings['gemini_status'] = $aiResponse->status();
+    } catch (\Throwable $e) {
+        $timings['gemini_detik'] = round(microtime(true) - $t0, 2);
+        $timings['gemini_error'] = $e->getMessage();
+    }
+
+    $timings['total_detik'] = round(microtime(true) - $start, 2);
+    return response()->json($timings);
+});
+
+
 Route::post('/error_res_login', [AuthController::class, 'viewLogin'])->name('login');
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 Route::post('login', [AuthController::class, 'login'])->name('login_post');
