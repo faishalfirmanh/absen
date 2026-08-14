@@ -19,6 +19,10 @@ return [
         'secret' => env('MAILGUN_SECRET'),
         'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
     ],
+    
+    'mekari' => [
+        'base_url'       => env('MEKARI_API_BASE_URL', 'https://api.mekari.com')
+    ],
 
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),

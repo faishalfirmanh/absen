@@ -246,8 +246,9 @@ class WaBootMekariController extends Controller
 
     public function chatbotApi(Request $request)
     {
-        Log::info('Mekari Chatbot API masuk', [
-            'body' => $request->all()
+      
+         Log::info('Mekari webhook masuk dari controller WaBootController function chatbotApi ', [
+            'raw_body' => $request->getContent(),
         ]);
 
         $question = $request->input('question');
@@ -272,7 +273,7 @@ class WaBootMekariController extends Controller
     public function handleMekari(Request $request)
     {
         ignore_user_abort(true);
-        Log::info('Mekari webhook masuk', [
+        Log::info('Mekari webhook masuk dari controller WaBootController function handleMekari ', [
             'raw_body' => $request->getContent(),
         ]);
 

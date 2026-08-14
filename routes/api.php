@@ -25,6 +25,24 @@ use App\Http\Controllers\Api\SyncGeneralPaketUmrohController;
 // routes/api.php — SEMENTARA, hapus setelah debugging selesai
 
 
+Route::get('/test-mekari-token', function () {
+    $token = env('MEKARI_TOKEN');
+    $roomId = '45a574cc-f1f4-4c2a-af1c-a87aa2ad1665';
+
+    $response = Illuminate\Support\Facades\Http::withToken($token)
+        ->timeout(15)
+        ->post('https://service-chat.qontak.com/api/open/v1/messages/whatsapp/bot', [
+            'room_id' => $roomId,
+            'type'    => 'text',
+            'text'    => 'Halo, ini tes pakai Bearer Token MEKARI_TOKEN dari route! Jika masuk, bot AI siap live! 🚀',
+        ]);
+
+    return response()->json([
+        'http_status' => $response->status(),
+        'response_body' => $response->json()
+    ]);
+});
+
 // routes/api.php — SEMENTARA
 Route::get('/test-gemini', function () {
     $timings = [];
