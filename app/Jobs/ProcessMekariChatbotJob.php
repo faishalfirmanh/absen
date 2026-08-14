@@ -34,16 +34,16 @@ class ProcessMekariChatbotJob implements ShouldQueue
         $message = $this->stripPhoneNumbers($message);
         $targetNumber = $this->normalizeNumber($targetNumber);
 
-        Log::info('Job Mekari: mulai kirim via Template HMAC sendMekariMessage2Param', ['to' => $targetNumber]);
+        Log::info('Job Mekari: mulai kirim via Template HMAC ProcessMEkariChatBootJob sendMekariMessage2Param', ['to' => $targetNumber]);
 
-        $path = '/v1/messages/whatsapp/bot';//'/qontak/chat/v1/broadcasts/whatsapp/direct';
+        $path = '/qontak/chat/v1/broadcasts/whatsapp/direct';
 
         // Payload Template
         $payload = [
             'to_name' => 'Jamaah',
             'to_number' => $targetNumber,
-            'message_template_id' => config('services.mekari.ai_template_id'),
-            'channel_integration_id' => config('services.mekari.channel_id'),
+            'message_template_id' => config('mekari.template_2'),
+            'channel_integration_id' => config('mekari.channel_id'),
             'language' => ['code' => 'id'],
             'parameters' => [
                 'body' => [
@@ -165,8 +165,8 @@ class ProcessMekariChatbotJob implements ShouldQueue
             $this->sendMekariMessage2Param($sender, $balasanAI);
 
         } catch (\Throwable $e) {
-            Log::error('Error Job Mekari Chatbot: ProcessMekariChatbotJob function handle' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            $this->sendMekariMessage2Param($sender, 'Maaf, terjadi gangguan pada sistem AI kami.');
+            Log::error('Error Job Mekari Chatbot: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            $this->sendMekariMessage($roomId, 'Maaf, terjadi gangguan pada sistem AI kami.', $sender);
         }
     }
 
