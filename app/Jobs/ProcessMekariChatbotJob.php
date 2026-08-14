@@ -36,7 +36,7 @@ class ProcessMekariChatbotJob implements ShouldQueue
 
         Log::info('Job Mekari: mulai kirim via Template HMAC ProcessMEkariChatBootJob sendMekariMessage2Param', ['to' => $targetNumber]);
 
-        $path = '/v1/messages/whatsapp/bot';//'/qontak/chat/v1/broadcasts/whatsapp/direct';
+        $path ='/v1/messages/whatsapp/bot';//'/qontak/chat/v1/broadcasts/whatsapp/direct';
 
         // Payload Template
         $payload = [
@@ -107,15 +107,17 @@ class ProcessMekariChatbotJob implements ShouldQueue
             $reply = trim($message) === 'namiroh2002'
                 ? $this->buildJamaahListReply($pending['query'])
                 : 'Maaf, password salah.';
+                 $this->sendMekariMessage1($roomId, $reply, $sender);
             // $this->sendMekariMessage($roomId, $reply, $sender);
-            $this->sendMekariMessage2Param($sender, $reply);
+            //$this->sendMekariMessage2Param($sender, $reply);
             return;
         }
 
         if ($this->isJamaahListRequest($message)) {
             Cache::put($pendingKey, ['query' => $message], now()->addMinutes(5));
             // $this->sendMekariMessage($roomId, 'Untuk melihat daftar jamaah, mohon masukkan password terlebih dahulu 🙏',$sender);
-            $this->sendMekariMessage2Param($sender, 'untuk melihad daftar masukkan passowrd');
+          //  $this->sendMekariMessage2Param($sender, 'untuk melihad daftar masukkan passowrd');
+            $this->sendMekariMessage1($roomId, 'Untuk melihat daftar jamaah, mohon masukkan password terlebih dahulu 🙏', $sender);
             return;
         }
 
@@ -162,11 +164,13 @@ class ProcessMekariChatbotJob implements ShouldQueue
                 ?? 'Mohon maaf, untuk pertanyaan ini kami belum memiliki jawabannya. Tim CS kami akan segera membantu Anda 🙏';
 
             //$this->sendMekariMessage($roomId, $balasanAI,$sender);
-            $this->sendMekariMessage2Param($sender, $balasanAI);
+          //  $this->sendMekariMessage2Param($sender, $balasanAI);
+          $this->sendMekariMessage1($roomId, $balasanAI, $sender);
 
         } catch (\Throwable $e) {
             Log::error('Error Job Mekari Chatbot: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            $this->sendMekariMessage2Param($sender, 'Maaf, terjadi gangguan pada sistem AI kami.');
+           // $this->sendMekariMessage2Param($sender, 'Maaf, terjadi gangguan pada sistem AI kami.');
+           $this->sendMekariMessage1($roomId, 'Maaf, terjadi gangguan pada sistem AI kami.', $sender);
         }
     }
 
