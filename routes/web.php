@@ -24,6 +24,11 @@ Route::get('/storage/{path}', function ($path) {
 })->where('path', '.*');
 
 
+Route::get('raizza', function () {
+    return view('upload_vaksin');
+});
+
+
 Route::get('/testing', function () {
     return 111; //view('welcome');
 })->name('testing');

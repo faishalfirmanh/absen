@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\JamaahVaksinController;
 use App\Http\Controllers\Api\WaBootMekariController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\Api\WaBootController;
@@ -33,8 +34,8 @@ Route::get('/test-mekari-token', function () {
         ->timeout(15)
         ->post('https://service-chat.qontak.com/api/open/v1/messages/whatsapp/bot', [
             'room_id' => $roomId,
-            'type'    => 'text',
-            'text'    => 'Halo, ini tes pakai Bearer Token MEKARI_TOKEN dari route! Jika masuk, bot AI siap live! 🚀',
+            'type' => 'text',
+            'text' => 'Halo, ini tes pakai Bearer Token MEKARI_TOKEN dari route! Jika masuk, bot AI siap live! 🚀',
         ]);
 
     return response()->json([
@@ -93,6 +94,7 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logo
 Route::post('login', [AuthController::class, 'login'])->name('login_post');
 Route::get('kirim', [AttendanceController::class, 'sendPesan']);
 
+Route::post('/upload_v', [JamaahVaksinController::class, 'uploadV'])->name('up_v');
 
 Route::middleware('throttle:5,1')->get('/sync/paket-umroh', SyncGeneralPaketUmrohController::class);
 
