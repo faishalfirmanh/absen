@@ -154,7 +154,7 @@ class ProcessMekariChatbotJob implements ShouldQueue
                 }
             }
 
-            $systemPrompt = "Anda adalah Customer Service AI yang ramah dari Namiroh Tour.\n"
+             $systemPrompt = "Anda adalah Customer Service AI yang ramah dari Namiroh Tour.\n"
                 . "Tugas Anda menjawab pertanyaan jamaah menggunakan data di bawah ini.\n\n"
                 . $context
                 . "ATURAN SUMBER DATA:\n"
@@ -177,7 +177,31 @@ class ProcessMekariChatbotJob implements ShouldQueue
                 . self::NO_ANSWER_TEXT . "\"\n"
                 . "- Gunakan Bahasa Indonesia yang ramah dan sopan.\n"
                 . "- Format harga pakai \"Rp\" dan titik ribuan.\n"
-                . "- Untuk teks tebal, gunakan SATU tanda bintang (*contoh*) sesuai format WhatsApp — JANGAN dua bintang (**contoh**) seperti markdown biasa.\n";
+                . "- Untuk teks tebal, gunakan SATU tanda bintang (*contoh*) sesuai format WhatsApp — JANGAN dua bintang (**contoh**) seperti markdown biasa.\n"
+                . "\n"
+                . "ATURAN FORMAT BALASAN (WAJIB, KHUSUS WHATSAPP):\n"
+                . "- WhatsApp TIDAK mendukung bullet list markdown. Tanda \"*\" HANYA dipakai untuk bold, JANGAN dipakai sebagai bullet/poin di awal baris.\n"
+                . "- Kalau jawaban berisi LEBIH DARI SATU item (paket, opsi, langkah, dokumen, dll), gunakan list bernomor (1. 2. 3.) dan SETIAP detail item ditulis di baris terpisah (gunakan newline sungguhan), JANGAN digabung jadi satu paragraf panjang.\n"
+                . "- Beri SATU baris kosong sebagai pemisah antar item nomor 1, 2, 3, dst supaya mudah dibaca di WhatsApp.\n"
+                . "- Untuk sub-detail dalam satu item (tanggal, maskapai, harga, dll), tulis masing-masing di baris sendiri, diawali tanda \"-\" (strip biasa, BUKAN bintang).\n"
+                . "- Bahkan untuk jawaban dengan hanya 1 item, kalau informasinya berisi beberapa poin/kalimat, tetap pecah ke beberapa baris — jangan jadi satu paragraf padat tanpa jeda baris.\n"
+                . "- Kalimat pembuka dan penutup boleh tetap dalam bentuk paragraf biasa.\n"
+                . "Contoh format balasan untuk lebih dari satu paket:\n"
+                . "1. *Program AN NAMIROH*\n"
+                . "- Tanggal Keberangkatan: 5 September 2026\n"
+                . "- Maskapai: GARUDA\n"
+                . "- Rute: SUBJED - JEDSUB\n"
+                . "- Durasi: 16 hari\n"
+                . "- Hotel Madinah: ARKAN GOLDEN (9 malam)\n"
+                . "- Hotel Makkah: AL AMEEN AJYAD (5 malam)\n"
+                . "- Harga: Mulai dari Rp37.350.000 (Quad)\n"
+                . "- Ketersediaan: Tersedia 5 seat\n"
+                . "\n"
+                . "2. *Program TAJALLI*\n"
+                . "- Tanggal Keberangkatan: 15 September 2026\n"
+                . "- Maskapai: LION\n"
+                . "- ...(dst)\n";
+ 
 
             // PENTING: Gunakan config() bukan env() di dalam Job
             $geminiModel = 'gemini-2.5-flash';
@@ -221,9 +245,15 @@ class ProcessMekariChatbotJob implements ShouldQueue
 
     private function sendMekariMessage1(string $roomId, string $message, string $senderNumber)
     {
-        $message = str_replace(["\r\n", "\n", "\r"], ' ', $message); // jaga-jaga, walau endpoint ini text biasa harusnya aman newline
+        // FIX: sebelumnya semua newline diganti spasi -> itu penyebab balasan jadi 1 paragraf panjang
+        // padahal endpoint text WhatsApp mendukung newline dengan baik.
+        // Sekarang cukup normalisasi \r\n / \r jadi \n biasa, lalu rapikan baris kosong berlebih.
+        $message = str_replace(["\r\n", "\r"], "\n", $message);
+        $message = preg_replace("/\n{3,}/", "\n\n", $message); // maksimal 1 baris kosong berturut-turut
+        $message = trim($message);
+ 
         $message = $this->stripPhoneNumbers($message);
-
+ 
         $response = Http::withToken(config('mekari.omnichannel_token'))
             ->timeout(15)
             ->post(config('mekari.chat_base_url') . '/v1/messages/whatsapp', [
@@ -231,7 +261,7 @@ class ProcessMekariChatbotJob implements ShouldQueue
                 'type' => 'text',
                 'text' => $message,
             ]);
-
+ 
         Log::info('Job Mekari: Response Bot Message', [
             'room_id' => $roomId,
             'status' => $response->status(),
