@@ -106,7 +106,8 @@ class ProcessMekariChatbotJob implements ShouldQueue
             Cache::forget($pendingKey);
             $reply = trim($message) === 'namiroh2002'
                 ? $this->buildJamaahListReply($pending['query'])
-                : 'Maaf, password salah.';
+                : 'Maaf, password salah. harap hubungi cs https://wa.me/6282245024032 ,  https://wa.me/6289601296887 
+            atau   https://wa.me/6281328745647';
             $this->sendMekariMessage1($roomId, $reply, $sender);
             // $this->sendMekariMessage($roomId, $reply, $sender);
             //$this->sendMekariMessage2Param($sender, $reply);
@@ -154,7 +155,7 @@ class ProcessMekariChatbotJob implements ShouldQueue
                 }
             }
 
-             $systemPrompt = "Anda adalah Customer Service AI yang ramah dari Namiroh Tour.\n"
+            $systemPrompt = "Anda adalah Customer Service AI yang ramah dari Namiroh Tour.\n"
                 . "Tugas Anda menjawab pertanyaan jamaah menggunakan data di bawah ini.\n\n"
                 . $context
                 . "ATURAN SUMBER DATA:\n"
@@ -201,7 +202,7 @@ class ProcessMekariChatbotJob implements ShouldQueue
                 . "- Tanggal Keberangkatan: 15 September 2026\n"
                 . "- Maskapai: LION\n"
                 . "- ...(dst)\n";
- 
+
 
             // PENTING: Gunakan config() bukan env() di dalam Job
             $geminiModel = 'gemini-2.5-flash';
@@ -225,9 +226,10 @@ class ProcessMekariChatbotJob implements ShouldQueue
             $this->sendMekariMessage1($roomId, $balasanAI, $sender);
 
         } catch (\Throwable $e) {
-            Log::error('Error Job Mekari Chatbot: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            Log::error('Error Job Mekari Chatbot: roomid ' . $roomId . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             // $this->sendMekariMessage2Param($sender, 'Maaf, terjadi gangguan pada sistem AI kami.');
-            $this->sendMekariMessage1($roomId, 'Maaf, terjadi gangguan pada sistem AI kami.', $sender);
+            $this->sendMekariMessage1($roomId, 'Maaf, tidak bisa menjawab pertanyaan, harap hubungi https://wa.me/6282245024032 ,  https://wa.me/6289601296887 
+            atau   https://wa.me/6281328745647', $sender);
         }
     }
 
@@ -251,9 +253,9 @@ class ProcessMekariChatbotJob implements ShouldQueue
         $message = str_replace(["\r\n", "\r"], "\n", $message);
         $message = preg_replace("/\n{3,}/", "\n\n", $message); // maksimal 1 baris kosong berturut-turut
         $message = trim($message);
- 
+
         $message = $this->stripPhoneNumbers($message);
- 
+
         $response = Http::withToken(config('mekari.omnichannel_token'))
             ->timeout(15)
             ->post(config('mekari.chat_base_url') . '/v1/messages/whatsapp', [
@@ -261,7 +263,7 @@ class ProcessMekariChatbotJob implements ShouldQueue
                 'type' => 'text',
                 'text' => $message,
             ]);
- 
+
         Log::info('Job Mekari: Response Bot Message', [
             'room_id' => $roomId,
             'status' => $response->status(),
