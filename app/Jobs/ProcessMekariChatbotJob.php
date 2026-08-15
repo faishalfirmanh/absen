@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 class ProcessMekariChatbotJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
+    private const NO_ANSWER_TEXT = 'Mohon maaf, untuk pertanyaan ini kami belum memiliki jawabannya. Tim CS kami akan segera membantu Anda 🙏';
     public $timeout = 120; // Worker boleh jalan sampai 2 menit untuk nunggu AI
     public $tries = 1;     // Jangan retry otomatis jika gagal, biar ga spam chat ke user
 
@@ -36,7 +36,7 @@ class ProcessMekariChatbotJob implements ShouldQueue
 
         Log::info('Job Mekari: mulai kirim via Template HMAC ProcessMEkariChatBootJob sendMekariMessage2Param', ['to' => $targetNumber]);
 
-        $path ='/v1/messages/whatsapp/bot';//'/qontak/chat/v1/broadcasts/whatsapp/direct';
+        $path = '/v1/messages/whatsapp/bot';//'/qontak/chat/v1/broadcasts/whatsapp/direct';
 
         // Payload Template
         $payload = [
@@ -107,7 +107,7 @@ class ProcessMekariChatbotJob implements ShouldQueue
             $reply = trim($message) === 'namiroh2002'
                 ? $this->buildJamaahListReply($pending['query'])
                 : 'Maaf, password salah.';
-                 $this->sendMekariMessage1($roomId, $reply, $sender);
+            $this->sendMekariMessage1($roomId, $reply, $sender);
             // $this->sendMekariMessage($roomId, $reply, $sender);
             //$this->sendMekariMessage2Param($sender, $reply);
             return;
@@ -116,7 +116,7 @@ class ProcessMekariChatbotJob implements ShouldQueue
         if ($this->isJamaahListRequest($message)) {
             Cache::put($pendingKey, ['query' => $message], now()->addMinutes(5));
             // $this->sendMekariMessage($roomId, 'Untuk melihat daftar jamaah, mohon masukkan password terlebih dahulu 🙏',$sender);
-          //  $this->sendMekariMessage2Param($sender, 'untuk melihad daftar masukkan passowrd');
+            //  $this->sendMekariMessage2Param($sender, 'untuk melihad daftar masukkan passowrd');
             $this->sendMekariMessage1($roomId, 'Untuk melihat daftar jamaah, mohon masukkan password terlebih dahulu 🙏', $sender);
             return;
         }
@@ -128,23 +128,56 @@ class ProcessMekariChatbotJob implements ShouldQueue
 
             if ($this->isJamaahNameQuery($message)) {
                 $matches = $this->findJamaahByNameFuzzy($message);
-                $context .= !empty($matches)
-                    ? "=== HASIL PENCARIAN JAMAAH ===\n" . json_encode($matches, JSON_UNESCAPED_UNICODE) . "\n\n"
-                    : "=== HASIL PENCARIAN JAMAAH ===\nTidak ditemukan jamaah dengan nama tersebut di data.\n\n";
+                if (!empty($matches)) {
+                    $context .= "=== HASIL PENCARIAN JAMAAH (sudah difilter sesuai nama yang ditanyakan) ===\n"
+                        . json_encode($matches, JSON_UNESCAPED_UNICODE)
+                        . "\n\n";
+                } else {
+                    $context .= "=== HASIL PENCARIAN JAMAAH ===\n" . json_encode($matches, JSON_UNESCAPED_UNICODE) . "Tidak ditemukan jamaah dengan nama tersebut di data.\n\n";
+                    Log::warning('Pertanyaan nama jamaah tidak ada match di PHP filter', ['message' => $message]);
+                }
+                // $context .= !empty($matches)
+                //     ? "=== HASIL PENCARIAN JAMAAH ===\n" . json_encode($matches, JSON_UNESCAPED_UNICODE) . "\n\n"
+                //     : "=== HASIL PENCARIAN JAMAAH ===\nTidak ditemukan jamaah dengan nama tersebut di data.\n\n";
             }
 
             if ($this->isPaketRelated($message)) {
                 $paketData = $this->loadPaketContext();
                 if (!empty($paketData)) {
                     $context .= "=== DATA PAKET UMROH (real-time, hari ini: " . now()->toDateString() . ") ===\n"
-                        . json_encode($paketData, JSON_UNESCAPED_UNICODE) . "\n\n";
+                        . json_encode($paketData, JSON_UNESCAPED_UNICODE)
+                        . "\n\n";
+                } else {
+                    Log::warning('Pertanyaan terdeteksi soal paket tapi data paket kosong/gagal diambil', [
+                        'message' => $message,
+                    ]);
                 }
             }
 
             $systemPrompt = "Anda adalah Customer Service AI yang ramah dari Namiroh Tour.\n"
-                . "Tugas Anda menjawab pertanyaan jamaah menggunakan data di bawah ini.\n\n" . $context
-                . "ATURAN: Jawab HANYA berdasarkan data. Jika tidak ada, balas PERSIS: Mohon maaf, untuk pertanyaan ini kami belum memiliki jawabannya. Tim CS kami akan segera membantu Anda 🙏\n"
-                . "Gunakan Bahasa Indonesia yang ramah. Format harga pakai Rp dan titik ribuan. Tebal pakai *satu bintang*.";
+                . "Tugas Anda menjawab pertanyaan jamaah menggunakan data di bawah ini.\n\n"
+                . $context
+                . "ATURAN SUMBER DATA:\n"
+                . "anda ai dengan sumber data unlimited dari google :\n"
+                . "- Jawab HANYA berdasarkan data di atas, jangan mengarang informasi apa pun.\n"
+                . "- Untuk pertanyaan soal harga, jadwal, maskapai, hotel, atau ketersediaan kursi, gunakan bagian DATA PAKET UMROH jika tersedia.\n"
+                . "- Untuk pertanyaan umum soal dokumen, cara daftar, visa, atau pelunasan, gunakan bagian FAQ UMUM.\n"
+                . "- Kalau field 'available' pada suatu paket bernilai 0  paket itu FULL/tidak tersedia, kalau negatif masih tersedia.\n"
+                . "- Kalau ada beberapa paket yang relevan, tampilkan maksimal 3 opsi paling sesuai, jangan semua sekaligus.\n\n"
+                . "ATURAN REKOMENDASI UNTUK LANSIA/ORANG TUA:\n"
+                . "- Prioritaskan paket dengan program_hari (durasi) LEBIH PENDEK, dan harga paling mahal .\n"
+                . "- Di antara paket dengan durasi yang mirip, prioritaskan yang harga (field harga di details_hotels) LEBIH TINGGI — pada data ini, hotel yang lebih mahal umumnya lebih dekat ke Masjidil Haram/Masjid Nabawi sehingga jamaah lebih sedikit berjalan kaki.\n"
+                . "- Sebutkan singkat alasan rekomendasinya, misal: \"durasi lebih singkat jadi tidak terlalu melelahkan, hotelnya juga tergolong lebih dekat ke masjid.\"\n"
+                . "- PENTING: ini perkiraan dari pola harga, BUKAN data jarak yang benar-benar terukur — jangan sebutkan angka jarak spesifik (meter/menit jalan kaki) yang tidak ada di data.\n\n"
+                . "ATURAN JARAK HOTEL KE MASJID:\n"
+                . "- Anda bisa akses internet/Google Maps, untuk cari nama hotel_mekkah -> masjidil haram, dan hotel_madinah -> masjid nabawi .\n"
+                . "- JANGAN PERNAH mengarang angka jarak (meter, kilometer, atau menit jalan kaki) untuk hotel manapun.\n"
+                . "- Kalau ditanya jarak hotel ke Masjidil Haram/Masjid Nabawi analisis dengan google maps jaraknya atau berfikir analisis sendiri:\n"
+                . "- Jika jawabannya benar-benar tidak ada di data manapun di atas, balas PERSIS dengan kalimat berikut, tanpa tambahan apa pun: \""
+                . self::NO_ANSWER_TEXT . "\"\n"
+                . "- Gunakan Bahasa Indonesia yang ramah dan sopan.\n"
+                . "- Format harga pakai \"Rp\" dan titik ribuan.\n"
+                . "- Untuk teks tebal, gunakan SATU tanda bintang (*contoh*) sesuai format WhatsApp — JANGAN dua bintang (**contoh**) seperti markdown biasa.\n";
 
             // PENTING: Gunakan config() bukan env() di dalam Job
             $geminiModel = 'gemini-2.5-flash';
@@ -164,13 +197,13 @@ class ProcessMekariChatbotJob implements ShouldQueue
                 ?? 'Mohon maaf, untuk pertanyaan ini kami belum memiliki jawabannya. Tim CS kami akan segera membantu Anda 🙏';
 
             //$this->sendMekariMessage($roomId, $balasanAI,$sender);
-          //  $this->sendMekariMessage2Param($sender, $balasanAI);
-          $this->sendMekariMessage1($roomId, $balasanAI, $sender);
+            //  $this->sendMekariMessage2Param($sender, $balasanAI);
+            $this->sendMekariMessage1($roomId, $balasanAI, $sender);
 
         } catch (\Throwable $e) {
             Log::error('Error Job Mekari Chatbot: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-           // $this->sendMekariMessage2Param($sender, 'Maaf, terjadi gangguan pada sistem AI kami.');
-           $this->sendMekariMessage1($roomId, 'Maaf, terjadi gangguan pada sistem AI kami.', $sender);
+            // $this->sendMekariMessage2Param($sender, 'Maaf, terjadi gangguan pada sistem AI kami.');
+            $this->sendMekariMessage1($roomId, 'Maaf, terjadi gangguan pada sistem AI kami.', $sender);
         }
     }
 
