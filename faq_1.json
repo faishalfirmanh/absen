@@ -336,153 +336,112 @@
     },
     {
         "id": 71,
-        "key": "Bisakah visa umroh digunakan untuk keluar dari kota Makkah dan Madinah (misal ke Jeddah atau Al-Ula)?",
-        "value": "Bisa. Pemegang visa umroh saat ini bebas bepergian ke seluruh wilayah dan kota di Arab Saudi (seperti Jeddah, Taif, Riyadh, Al-Ula, dll.) selama masih dalam masa berlaku visa."
-    },
-    {
-        "id": 72,
-        "key": "Apakah nama di buku nikah/akta lahir harus persis sama dengan paspor?",
-        "value": "Sebaiknya sama atau konsisten. Jika terdapat perbedaan ejaan kecil, biasanya ditoleransi. Namun jika perbedaan nama cukup signifikan, disarankan menyertakan surat keterangan dari instansi terkait atau penyesuaian nama paspor."
-    },
-    {
-        "id": 73,
-        "key": "Siapa yang memegang dokumen asli (paspor & tiket) selama di perjalanan?",
-        "value": "Di Bandara (Check-in/Imigrasi): Dipegang oleh masing-masing jamaah.\nSelama di Arab Saudi: Dalam beberapa kondisi, paspor dikumpulkan dan disimpan secara aman oleh Tour Leader / Mutawwif travel untuk mencegah risiko hilang, dan dibagikan kembali saat akan pulang/kepindahan kota."
-    },
-    {
-        "id": 74,
-        "key": "Apakah jamaah akan diberikan ID card khusus dari pihak travel?",
-        "value": "Ya. Setiap jamaah akan diberikan ID Card resmi dari travel yang berisi identitas, nomor kontak darurat Tour Leader, nama hotel di Makkah & Madinah, serta nomor bus. ID Card wajib dikalungkan/dibawa selama beraktivitas."
-    },
-    {
-        "id": 75,
-        "key": "Apa yang harus dilakukan jika paspor hilang saat berada di Arab Saudi?",
-        "value": "1. Lapor segera ke Tour Leader / Mutawwif pihak travel.\n2. Buat Surat Keterangan Kehilangan dari Kepolisian Arab Saudi setempat.\n3. Travel akan mendampingi jamaah ke KJRI Jeddah atau KBRI Riyadh untuk mengurus SPLP (Surat Perjalanan Laksana Paspor) sebagai dokumen resmi untuk kembali ke Indonesia."
-    },
-    {
-        "id": 76,
-        "key": "Maskapai penerbangan apa yang digunakan?",
-        "value": "Kami menggunakan fasilitas maskapai seperti Saudia Airlines, Garuda Indonesia, Lion Air, Emirates, Qatar Airways, Etihad, Scoot, Batik Air Malaysia, Air Asia, dll."
-    },
-    {
-        "id": 77,
-        "key": "Apakah penerbangan bersifat langsung (direct) atau transit?",
-        "value": "Tergantung jenis paket. Penerbangan direct umumnya menggunakan Saudia, Garuda, atau Lion Air. Penerbangan transit biasanya menggunakan maskapai asing/Timur Tengah (Emirates, Qatar Airways, Etihad, Oman Air, dll)."
-    },
-    {
-        "id": 78,
-        "key": "Jika transit, di negara mana dan berapa lama durasi transitnya?",
-        "value": "Tergantung maskapai (contoh: Emirates transit di Dubai, Qatar di Doha, Oman Air di Muscat). Durasi transit bervariasi, umumnya antara 4 hingga 8 jam."
-    },
-    {
-        "id": 79,
-        "key": "Dari bandara mana grup akan diberangkatkan?",
+        "key": "dari bandara mana grup akan diberangkatkan?",
         "value": "Disesuaikan dengan kota keberangkatan grup Anda (misalnya Bandara Soekarno-Hatta/CGK Jakarta, Juanda/SUB Surabaya, atau Kualanamu/KNO Medan)."
     },
     {
-        "id": 80,
-        "key": "Jam berapa jadwal penerbangan berangkat dan pulang?",
+        "id": 72,
+        "key": "jam berapa jadwal penerbangan berangkat dan pulang?",
         "value": "Waktu pasti tertera di tiket penerbangan (e-ticket) dari travel agent."
     },
     {
-        "id": 81,
-        "key": "Berapa kapasitas bagasi tercatat (checked baggage) yang didapatkan per jamaah?",
+        "id": 73,
+        "key": "berapa kapasitas bagasi tercatat (checked baggage) yang didapatkan per jamaah?",
         "value": "Rata-rata maskapai penerbangan internasional memberikan jatah bagasi tercatat sebesar 25 kg hingga 30 kg."
     },
     {
-        "id": 82,
-        "key": "Berapa batas maksimal berat koper kabin?",
+        "id": 74,
+        "key": "berapa batas maksimal berat koper kabin?",
         "value": "Batas standar koper kabin/tas jinjing adalah 7 kg per orang."
     },
     {
-        "id": 83,
-        "key": "Jenis bus apa yang digunakan untuk transportasi lokal Makkah-Madinah?",
+        "id": 75,
+        "key": "jenis bus apa yang digunakan untuk transportasi lokal makkah-madinah?",
         "value": "Umumnya menggunakan bus pariwisata eksekutif kelas VIP/Standar Arab Saudi."
     },
     {
-        "id": 84,
-        "key": "Apakah bus lokal dilengkapi dengan fasilitas toilet, AC, dan recline seat?",
+        "id": 76,
+        "key": "apakah bus lokal dilengkapi dengan fasilitas toilet, ac, dan recline seat?",
         "value": "Kebanyakan bus pariwisata di Arab Saudi dilengkapi AC dingin dan recline seat (kursi bisa direbahkan). Namun, fasilitas toilet dalam bus tergantung ketersediaan/jenis bus yang disewa oleh pihak travel."
     },
     {
-        "id": 85,
-        "key": "Berapa lama durasi perjalanan darat dari Madinah ke Makkah?",
+        "id": 77,
+        "key": "berapa lama durasi perjalanan darat dari madinah ke makkah?",
         "value": "Sekitar 5 hingga 6 jam perjalanan menggunakan bus (termasuk waktu berhenti sebentar di rest area/titik miqat)."
     },
     {
-        "id": 86,
-        "key": "Apakah jamaah akan naik kereta cepat (Kereta Haramain) antara Makkah dan Madinah?",
+        "id": 78,
+        "key": "apakah jamaah akan naik kereta cepat (kereta haramain) antara makkah dan madinah?",
         "value": "Tergantung kesepakatan fasilitas dalam paket (bisa menggunakan bus atau opsi naik Kereta Haramain Express dengan ketentuan penambahan biaya)."
     },
     {
-        "id": 87,
-        "key": "Apakah tiket Kereta Haramain sudah masuk dalam biaya paket?",
-        "value": "Sesuai paket yang dipilih jamaah. Pada beberapa paket hemat/reguler tiket kereta dijual terpisah (add-on), sedangkan pada paket VIP biasanya sudah include (menyesuaikan paket)."
+        "id": 79,
+        "key": "apakah tiket kereta haramain sudah masuk dalam biaya paket?",
+        "value": "Sesuai paket yang dipilih jamaah. Pada beberapa paket hemat/reguler tiket kereta dijual terpisah (add-on), sedangkan pada paket VIP biasanya sudah include."
     },
     {
-        "id": 88,
-        "key": "Bagaimana proses pengurusan koper dari bandara menuju hotel?",
+        "id": 80,
+        "key": "bagaimana proses pengurusan koper dari bandara menuju hotel?",
         "value": "Biasanya diurus oleh tim handling bandara dari pihak travel/muasasah. Jamaah tidak perlu mengangkut koper besar sendiri dari bandara."
     },
     {
-        "id": 89,
-        "key": "Apakah koper akan diantar langsung sampai depan kamar hotel?",
-        "value": "Ya, layanan standar travel umrah mencakup pengantaran koper oleh bellboy atau tim handling hingga ke depan kamar masing-masing jamaah. Atau pengambilan di lantai tertentu tempat penurunan koper."
+        "id": 81,
+        "key": "apakah koper akan diantar langsung sampai depan kamar hotel?",
+        "value": "Ya, layanan standar travel umrah mencakup pengantaran koper oleh bellboy atau tim handling hingga ke depan kamar masing-masing jamaah, atau pengambilan di lantai tertentu tempat penurunan koper."
     },
     {
-        "id": 90,
-        "key": "Apa regulasi penerbangan mengenai penempatan cairan dalam bagasi/kabin?",
-        "value": "Kabin: Cairan, gel, dan aerosol maksimal 100 ml per wadah dan harus dimuat dalam kantong plastik transparan.\nBagasi Tercatat: Wadah cairan lebih dari 100 ml diperbolehkan selama dikemas dengan aman dan tidak bocor (kecuali Air Zamzam yang memiliki aturan tersendiri)."
+        "id": 82,
+        "key": "apa regulasi penerbangan mengenai penempatan cairan dalam bagasi/kabin?",
+        "value": "Kabin: cairan, gel, dan aerosol maksimal 100 ml per wadah dan harus dimuat dalam kantong plastik transparan. Bagasi tercatat: wadah cairan lebih dari 100 ml diperbolehkan selama dikemas dengan aman dan tidak bocor (kecuali Air Zamzam yang memiliki aturan tersendiri)."
     },
     {
-        "id": 91,
-        "key": "Bolehkah membawa air Zamzam sendiri ke dalam koper bagasi?",
-        "value": "TIDAK BOLEH. Regulasi penerbangan internasional melarang keras memasukkan Air Zamzam ke dalam koper bagasi tercatat maupun kabin demi keamanan penerbangan."
+        "id": 83,
+        "key": "bolehkah membawa air zamzam sendiri ke dalam koper bagasi?",
+        "value": "Tidak boleh. Regulasi penerbangan internasional melarang keras memasukkan Air Zamzam ke dalam koper bagasi tercatat maupun kabin demi keamanan penerbangan."
     },
     {
-        "id": 92,
-        "key": "Berapa liter kuota air Zamzam resmi yang didapat jamaah dari maskapai?",
+        "id": 84,
+        "key": "berapa liter kuota air zamzam resmi yang didapat jamaah dari maskapai?",
         "value": "Kuota resmi bawaan/jatah dari maskapai (jika regulasi Saudi memperbolehkan) adalah 5 liter per jamaah yang akan dibagikan saat tiba di bandara kepulangan Indonesia."
     },
     {
-        "id": 93,
-        "key": "Bagaimana pengaturan tempat duduk di pesawat (apakah bisa berdampingan dengan keluarga)?",
+        "id": 85,
+        "key": "bagaimana pengaturan tempat duduk di pesawat (apakah bisa berdampingan dengan keluarga)?",
         "value": "Pihak travel biasanya melakukan group check-in untuk mengusahakan anggota keluarga duduk berdekatan. Namun, ketersediaan pasti bergantung pada sistem seat selection maskapai."
     },
     {
-        "id": 94,
-        "key": "Apakah disediakan makanan halal di dalam pesawat selama penerbangan?",
+        "id": 86,
+        "key": "apakah disediakan makanan halal di dalam pesawat selama penerbangan?",
         "value": "Ya. Maskapai rute penerbangan umrah/haji (maupun penerbangan dari/ke negara Muslim) menyajikan 100% makanan berlabel halal."
     },
     {
-        "id": 95,
-        "key": "Bagaimana cara melakukan shalat di dalam pesawat selama perjalanan?",
+        "id": 87,
+        "key": "bagaimana cara melakukan shalat di dalam pesawat selama perjalanan?",
         "value": "Shalat dilakukan di kursi pesawat dengan cara duduk (isyarat gerakan) setelah bersuci (wudhu atau tayammum). Beberapa pesawat besar (seperti Saudia) menyediakan area mushola khusus di bagian belakang."
     },
     {
-        "id": 96,
-        "key": "Kapan titik miqat (miqat point) dilakukan jika terbang langsung ke Jeddah?",
-        "value": "Titik miqat diambil di atas udara saat pesawat berada sejajar dengan Yalamlam atau Qarnul Manazil (sekitar 20–30 menit sebelum mendarat di Bandara Jeddah)."
+        "id": 88,
+        "key": "kapan titik miqat (miqat point) dilakukan jika terbang langsung ke jeddah?",
+        "value": "Titik miqat diambil di atas udara saat pesawat berada sejajar dengan Yalamlam atau Qarnul Manazil (sekitar 20-30 menit sebelum mendarat di Bandara Jeddah)."
     },
     {
-        "id": 97,
-        "key": "Apakah pengumuman miqat akan disampaikan oleh pihak maskapai/muthawwif di pesawat?",
+        "id": 89,
+        "key": "apakah pengumuman miqat akan disampaikan oleh pihak maskapai/muthawwif di pesawat?",
         "value": "Ya. Kapten/kru maskapai atau Muthawwif/Pembimbing Ibadah yang mendampingi di pesawat akan memberikan pengumuman beberapa saat sebelum melintasi garis miqat."
     },
     {
-        "id": 98,
-        "key": "Bagaimana jika ada penderita motion sickness (mabuk darat/udara)?",
+        "id": 90,
+        "key": "bagaimana jika ada penderita motion sickness (mabuk darat/udara)?",
         "value": "Jamaah disarankan membawa obat pribadi (seperti Antimo), mengonsumsi makanan ringan sebelum perjalanan, memilih posisi duduk di area tengah, serta menginformasikan ke ketua rombongan/muthawwif."
     },
     {
-        "id": 99,
-        "key": "Apakah ada pendampingan khusus di bandara keberangkatan dan kedatangan?",
+        "id": 91,
+        "key": "apakah ada pendampingan khusus di bandara keberangkatan dan kedatangan?",
         "value": "Ya. Jamaah akan didampingi oleh Tim Handling Bandara keberangkatan di Indonesia serta Tim Handling lokal/Muthawwif saat tiba di Bandara Jeddah/Madinah."
     },
     {
-        "id": 100,
-        "key": "Apa yang dilakukan jika terjadi delay penerbangan yang cukup lama?",
+        "id": 92,
+        "key": "apa yang dilakukan jika terjadi delay penerbangan yang cukup lama?",
         "value": "Pihak maskapai dan travel agent bertanggung jawab memberikan kompensasi sesuai regulasi penerbangan yang berlaku (misalnya penyediaan makanan ringan, makanan berat, hingga fasilitas hotel/penginapan jika delay menginap)."
     }
-
 ]
