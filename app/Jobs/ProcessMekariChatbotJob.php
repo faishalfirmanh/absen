@@ -219,7 +219,8 @@ class ProcessMekariChatbotJob implements ShouldQueue
 
             $aiResult = $aiResponse->json();
             $balasanAI = $aiResult['candidates'][0]['content']['parts'][0]['text']
-                ?? 'Mohon maaf, untuk pertanyaan ini kami belum memiliki jawabannya. Tim CS kami akan segera membantu Anda 🙏';
+                ?? 'Mohon maaf, untuk pertanyaan ini kami belum memiliki jawabannya. harap hubungi https://wa.me/6282245024032 ,  https://wa.me/6289601296887 
+            atau   https://wa.me/6281328745647 ';
 
             //$this->sendMekariMessage($roomId, $balasanAI,$sender);
             //  $this->sendMekariMessage2Param($sender, $balasanAI);
