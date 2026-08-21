@@ -24,7 +24,7 @@ class PengajuanIzin extends Model
         'tgl_surat',
         'isi_surat_cust',
         'ttd_user',
-        'status ',
+        'status',
         'tgl_approval',
         'created_at',
         'divisi_custom',
@@ -32,8 +32,8 @@ class PengajuanIzin extends Model
     ];
 
     protected $casts = [
-        'tgl_mulai' => 'date',
-        'tgl_selesai' => 'date',
+        'tgl_mulai' => 'date:Y-m-d',
+        'tgl_selesai' => 'date:Y-m-d',
         'tgl_surat' => 'date',
         'tgl_approval' => 'datetime',
         'created_at' => 'datetime',
