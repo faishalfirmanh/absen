@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\AiMonitoringController;
 use App\Http\Controllers\Api\JamaahVaksinController;
 use App\Http\Controllers\Api\WaBootMekariController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\Api\WaBootController;
 use App\Http\Controllers\WaScrapController;
+use App\Http\Middleware\AiMonitoringApiKey;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -44,6 +46,7 @@ Route::get('/test-mekari-token', function () {
     ]);
 });
 
+Route::post('/ai-monitoring/analyze', [AiMonitoringController::class, 'analyze']);//->middleware(AiMonitoringApiKey::class);
 // routes/api.php — SEMENTARA
 Route::get('/test-gemini', function () {
     $timings = [];
