@@ -15,7 +15,16 @@ use Illuminate\Support\Str;
 class ProcessMekariChatbotJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     private const NO_ANSWER_TEXT = 'Mohon maaf, untuk pertanyaan ini kami belum memiliki jawabannya. Tim CS kami akan segera membantu Anda 🙏';
+
+    // FIX: nomor CS dipusatkan di satu tempat, biar konsisten & gampang diubah.
+    // Jangan pernah dilewatkan ke stripPhoneNumbers().
+    private const CS_CONTACT_TEXT = "harap hubungi cs berikut:\n"
+        . "- https://wa.me/6282245024032\n"
+        . "- https://wa.me/6289601296887\n"
+        . "- https://wa.me/6281328745647";
+
     public $timeout = 120; // Worker boleh jalan sampai 2 menit untuk nunggu AI
     public $tries = 1;     // Jangan retry otomatis jika gagal, biar ga spam chat ke user
 
@@ -26,10 +35,6 @@ class ProcessMekariChatbotJob implements ShouldQueue
         $this->payload = $payload;
     }
 
-
-
-
-
     public function handle()
     {
         $message = trim($this->payload['text'] ?? '');
@@ -37,13 +42,15 @@ class ProcessMekariChatbotJob implements ShouldQueue
         $sender = $this->payload['room']['account_uniq_id'] ?? null;
         $messageId = $this->payload['id'] ?? null;
 
-        if ($message === '' || !$roomId)
+        if ($message === '' || !$roomId) {
             return;
+        }
 
         // 1. Deduplikasi (Cegah dobel proses kalau Mekari retry)
         $dedupKey = 'mekari_wh_processed_' . $messageId;
-        if (Cache::has($dedupKey))
+        if (Cache::has($dedupKey)) {
             return;
+        }
         Cache::put($dedupKey, true, now()->addMinutes(10));
 
         // 2. Logic Pending Password Jamaah
@@ -54,26 +61,31 @@ class ProcessMekariChatbotJob implements ShouldQueue
             Cache::forget($pendingKey);
             $reply = trim($message) === 'namiroh2002'
                 ? $this->buildJamaahListReply($pending['query'])
-                : 'Maaf, password salah. harap hubungi cs https://wa.me/6282245024032 ,  https://wa.me/6289601296887 
-            atau   https://wa.me/6281328745647';
+                : "Maaf, password salah. " . self::CS_CONTACT_TEXT;
             $this->sendMekariMessage1($roomId, $reply, $sender);
-            // $this->sendMekariMessage($roomId, $reply, $sender);
-            //$this->sendMekariMessage2Param($sender, $reply);
             return;
         }
 
         if ($this->isJamaahListRequest($message)) {
             Cache::put($pendingKey, ['query' => $message], now()->addMinutes(5));
-            // $this->sendMekariMessage($roomId, 'Untuk melihat daftar jamaah, mohon masukkan password terlebih dahulu 🙏',$sender);
-            //  $this->sendMekariMessage2Param($sender, 'untuk melihad daftar masukkan passowrd');
             $this->sendMekariMessage1($roomId, 'Untuk melihat daftar jamaah, mohon masukkan password terlebih dahulu 🙏', $sender);
             return;
         }
 
         // 3. Proses AI Gemini
         try {
+            $faqData = $this->loadFaqContext();
             $context = "=== FAQ UMUM NAMIROH TOUR ===\n"
-                . json_encode($this->loadFaqContext(), JSON_UNESCAPED_UNICODE) . "\n\n";
+                . json_encode($faqData, JSON_UNESCAPED_UNICODE) . "\n\n";
+
+            if (empty($faqData)) {
+                // FIX: kalau FAQ kosong (file tidak ketemu / cache basi), catat di log
+                // supaya kelihatan jelas ini yang bikin AI "tidak tahu jawabannya",
+                // bukan disangka masalah lain.
+                Log::warning('Job Mekari: FAQ context kosong saat memproses pertanyaan', [
+                    'message' => $message,
+                ]);
+            }
 
             if ($this->isJamaahNameQuery($message)) {
                 $matches = $this->findJamaahByNameFuzzy($message);
@@ -82,12 +94,9 @@ class ProcessMekariChatbotJob implements ShouldQueue
                         . json_encode($matches, JSON_UNESCAPED_UNICODE)
                         . "\n\n";
                 } else {
-                    $context .= "=== HASIL PENCARIAN JAMAAH ===\n" . json_encode($matches, JSON_UNESCAPED_UNICODE) . "Tidak ditemukan jamaah dengan nama tersebut di data.\n\n";
+                    $context .= "=== HASIL PENCARIAN JAMAAH ===\nTidak ditemukan jamaah dengan nama tersebut di data.\n\n";
                     Log::warning('Pertanyaan nama jamaah tidak ada match di PHP filter', ['message' => $message]);
                 }
-                // $context .= !empty($matches)
-                //     ? "=== HASIL PENCARIAN JAMAAH ===\n" . json_encode($matches, JSON_UNESCAPED_UNICODE) . "\n\n"
-                //     : "=== HASIL PENCARIAN JAMAAH ===\nTidak ditemukan jamaah dengan nama tersebut di data.\n\n";
             }
 
             if ($this->isPaketRelated($message)) {
@@ -151,10 +160,25 @@ class ProcessMekariChatbotJob implements ShouldQueue
                 . "- Maskapai: LION\n"
                 . "- ...(dst)\n";
 
+            // FIX UTAMA: pakai config(), BUKAN env(), di dalam Job/queue worker.
+            // env() bisa mengembalikan null kalau config sudah di-cache (php artisan config:cache),
+            // dan queue worker adalah proses long-running yang paling sering kena masalah ini.
+            // Tambahkan dulu ke config/services.php:
+            //   'gemini' => [
+            //       'key'   => env('GEMINI_API_KEY'),
+            //       'model' => env('GEMINI_MODEL', 'gemini-2.5-flash'),
+            //   ],
+            $geminiModel = config('services.gemini.model', 'gemini-2.5-flash');
+            $geminiApiKey = config('services.gemini.key');
 
-            // PENTING: Gunakan config() bukan env() di dalam Job
-            $geminiModel = 'gemini-2.5-flash';
-            $geminiApiKey = env('GEMINI_API_KEY');
+            if (empty($geminiApiKey)) {
+                // FIX: gagal cepat & jelas di log kalau API key memang belum ke-set,
+                // daripada diam-diam request ke Gemini gagal lalu user dapat balasan generik.
+                Log::error('Job Mekari: GEMINI_API_KEY kosong, cek config/services.php dan .env, lalu jalankan php artisan config:clear');
+                $this->sendMekariMessage1($roomId, 'Maaf, sedang ada gangguan konfigurasi sistem kami. ' . self::CS_CONTACT_TEXT, $sender);
+                return;
+            }
+
             $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/{$geminiModel}:generateContent?key={$geminiApiKey}";
 
             Log::info('Job Mekari: memanggil Gemini', ['room_id' => $roomId]);
@@ -166,23 +190,41 @@ class ProcessMekariChatbotJob implements ShouldQueue
             ]);
 
             $aiResult = $aiResponse->json();
-            $balasanAI = $aiResult['candidates'][0]['content']['parts'][0]['text']
-                ?? 'Mohon maaf hamba allah yang terhormat, untuk pertanyaan ini kami belum memiliki jawabannya. harap hubungi https://wa.me/6282245024032 ,  https://wa.me/6289601296887 
-            atau   https://wa.me/6281328745647 ';
+            $candidateText = $aiResult['candidates'][0]['content']['parts'][0]['text'] ?? null;
 
-            //$this->sendMekariMessage($roomId, $balasanAI,$sender);
-            //  $this->sendMekariMessage2Param($sender, $balasanAI);
+            if ($candidateText === null) {
+                // FIX: sebelumnya kalau kandidat tidak ada, langsung diam-diam pakai teks
+                // fallback tanpa dicatat kenapa gagalnya. Sekarang dilog detail supaya
+                // ke depan gampang ketahuan penyebabnya (API key salah, kena safety filter,
+                // kuota habis, model salah, dll).
+                Log::error('Job Mekari: Gemini tidak mengembalikan kandidat jawaban', [
+                    'room_id' => $roomId,
+                    'http_status' => $aiResponse->status(),
+                    'block_reason' => $aiResult['promptFeedback']['blockReason'] ?? null,
+                    'raw_response' => $aiResult,
+                ]);
+
+                $balasanAI = "Mohon maaf, untuk pertanyaan ini kami belum bisa memberi jawaban otomatis. "
+                    . self::CS_CONTACT_TEXT;
+            } else {
+                $balasanAI = $candidateText;
+            }
+
+            // FIX: stripPhoneNumbers HANYA diterapkan ke teks yang datang dari AI,
+            // supaya tidak ikut menghapus nomor CS yang memang sengaja kita tampilkan
+            // di pesan-pesan statis (password salah, fallback, error).
+            $balasanAI = $this->stripPhoneNumbers($balasanAI);
+
             $this->sendMekariMessage1($roomId, $balasanAI, $sender);
 
         } catch (\Throwable $e) {
-            Log::error('Error Job Mekari Chatbot: roomid ' . $roomId . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            // $this->sendMekariMessage2Param($sender, 'Maaf, terjadi gangguan pada sistem AI kami.');
-            $this->sendMekariMessage1($roomId, 'Maaf :), tidak bisa menjawab pertanyaan, harap hubungi no ini https://wa.me/6282245024032 ,  https://wa.me/6289601296887 
-            atau   https://wa.me/6281328745647', $sender);
+            Log::error('Error Job Mekari Chatbot: roomid ' . $roomId . ' - ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            $this->sendMekariMessage1($roomId, "Maaf, tidak bisa menjawab pertanyaan saat ini. " . self::CS_CONTACT_TEXT, $sender);
         }
     }
 
     // ======================= HELPER METHODS =======================
+
     private function normalizeNumber(?string $number): string
     {
         return preg_replace('/\D/', '', (string) $number);
@@ -196,14 +238,14 @@ class ProcessMekariChatbotJob implements ShouldQueue
 
     private function sendMekariMessage1(string $roomId, string $message, string $senderNumber)
     {
-        // FIX: sebelumnya semua newline diganti spasi -> itu penyebab balasan jadi 1 paragraf panjang
-        // padahal endpoint text WhatsApp mendukung newline dengan baik.
-        // Sekarang cukup normalisasi \r\n / \r jadi \n biasa, lalu rapikan baris kosong berlebih.
+        // Normalisasi \r\n / \r jadi \n biasa, lalu rapikan baris kosong berlebih.
         $message = str_replace(["\r\n", "\r"], "\n", $message);
         $message = preg_replace("/\n{3,}/", "\n\n", $message); // maksimal 1 baris kosong berturut-turut
         $message = trim($message);
 
-        $message = $this->stripPhoneNumbers($message);
+        // FIX: stripPhoneNumbers() DIHAPUS dari sini. Method ini sekarang hanya mengirim
+        // apa adanya — penyaringan nomor (kalau diperlukan) dilakukan di sumbernya
+        // (khusus teks dari AI), bukan di sini secara membabi buta ke semua pesan.
 
         $response = Http::withToken(config('mekari.omnichannel_token'))
             ->timeout(15)
@@ -220,9 +262,6 @@ class ProcessMekariChatbotJob implements ShouldQueue
         ]);
     }
 
-
-
-
     private function isJamaahNameQuery(string $message): bool
     {
         $text = Str::lower($message);
@@ -233,16 +272,19 @@ class ProcessMekariChatbotJob implements ShouldQueue
     private function findJamaahByNameFuzzy(string $message): array
     {
         $jamaah = $this->loadJamaahContext();
-        if (empty($jamaah))
+        if (empty($jamaah)) {
             return [];
+        }
         $needle = Str::lower($message);
         $stripPhrases = ['apakah ada jamaah atas nama', 'apakah ada nama jamaah', 'cari jamaah atas nama', 'terdaftar atas nama', 'status pendaftaran', 'jamaah bernama', 'status jamaah', 'atas nama', 'cek jamaah', 'sudah terdaftar', 'sudah daftar', 'apakah nama', 'cek nama', 'a.n'];
         $needle = trim(preg_replace('/\s+/', ' ', str_replace($stripPhrases, '', $needle)));
-        if ($needle === '')
+        if ($needle === '') {
             return [];
+        }
         return collect($jamaah)->filter(function ($j) use ($needle) {
-            if (empty($j['nama']))
+            if (empty($j['nama'])) {
                 return false;
+            }
             $nama = Str::lower($j['nama']);
             return Str::contains($nama, $needle) || Str::contains($needle, $nama);
         })->values()->all();
@@ -252,13 +294,15 @@ class ProcessMekariChatbotJob implements ShouldQueue
     {
         return Cache::remember('wa_bot_jamaah_data', now()->addHours(6), function () {
             $files = glob(base_path('data_jamaah/jamaah_*.json'));
-            if (empty($files))
+            if (empty($files)) {
                 return [];
+            }
             $allJamaah = [];
             foreach ($files as $file) {
                 $data = json_decode(file_get_contents($file), true);
-                if (is_array($data))
+                if (is_array($data)) {
                     $allJamaah = array_merge($allJamaah, $data);
+                }
             }
             return array_map(function ($j) {
                 return ['nama' => $j['nama_jamaah'] ?? ($j['nama'] ?? null), 'nama_program' => $j['paket'] ?? ($j['nama_program'] ?? null)];
@@ -277,9 +321,16 @@ class ProcessMekariChatbotJob implements ShouldQueue
     {
         return Cache::remember('wa_bot_faq_data', now()->addHours(6), function () {
             $path = base_path('faq_1.json');
-            if (!file_exists($path))
+            if (!file_exists($path)) {
+                Log::warning('Job Mekari: file faq_1.json tidak ditemukan di ' . $path);
                 return [];
-            return json_decode(file_get_contents($path), true) ?? [];
+            }
+            $decoded = json_decode(file_get_contents($path), true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                Log::error('Job Mekari: faq_1.json gagal di-decode', ['error' => json_last_error_msg()]);
+                return [];
+            }
+            return $decoded ?? [];
         });
     }
 
@@ -287,8 +338,9 @@ class ProcessMekariChatbotJob implements ShouldQueue
     {
         return Cache::remember('wa_bot_paket_data', now()->addMinutes(5), function () {
             $response = Http::timeout(10)->get('https://absennamiroh.alhidayah.id/api/get-paket', ['key' => 'namiroh123#']);
-            if ($response->failed())
+            if ($response->failed()) {
                 return [];
+            }
             return $response->json('data', []);
         });
     }
@@ -303,14 +355,16 @@ class ProcessMekariChatbotJob implements ShouldQueue
     private function buildJamaahListReply(string $originalQuery): string
     {
         $jamaah = $this->loadJamaahContext();
-        if (empty($jamaah))
+        if (empty($jamaah)) {
             return 'Maaf, data jamaah belum tersedia saat ini.';
+        }
         $text = Str::lower($originalQuery);
         $filtered = collect($jamaah)->filter(function ($j) use ($text) {
             return $j['nama_program'] && Str::contains($text, Str::lower($j['nama_program']));
         })->values();
-        if ($filtered->isEmpty())
+        if ($filtered->isEmpty()) {
             return 'Mohon sebutkan nama paket yang dimaksud, misal: "daftar jamaah paket AN NAMIROH".';
+        }
         $lines = $filtered->map(fn($j, $i) => ($i + 1) . '. ' . ($j['nama'] ?? '-') . ' — ' . ($j['nama_program'] ?? '-'));
         return "Berikut daftar jamaah:\n" . $lines->implode("\n");
     }
