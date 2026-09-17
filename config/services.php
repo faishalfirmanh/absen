@@ -27,6 +27,11 @@ return [
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],
+    
+     'nara' => [
+       'key'   => env('NARA_API_KEY'),
+       'model' => env('NARA_MODEL', 'deepseek-v4-flash'),
+   ],
 
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),

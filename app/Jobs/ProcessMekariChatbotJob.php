@@ -160,47 +160,56 @@ class ProcessMekariChatbotJob implements ShouldQueue
                 . "- Maskapai: LION\n"
                 . "- ...(dst)\n";
 
-            // FIX UTAMA: pakai config(), BUKAN env(), di dalam Job/queue worker.
-            // env() bisa mengembalikan null kalau config sudah di-cache (php artisan config:cache),
-            // dan queue worker adalah proses long-running yang paling sering kena masalah ini.
+            // GANTI PROVIDER: sebelumnya Gemini, sekarang Router by Nara (kompatibel format OpenAI
+            // chat/completions: header Authorization Bearer + body {model, messages}).
+            // Tetap pakai config(), BUKAN env(), di dalam Job/queue worker — env() bisa
+            // mengembalikan null kalau config sudah di-cache (php artisan config:cache).
             // Tambahkan dulu ke config/services.php:
-            //   'gemini' => [
-            //       'key'   => env('GEMINI_API_KEY'),
-            //       'model' => env('GEMINI_MODEL', 'gemini-2.5-flash'),
+            //   'nara' => [
+            //       'key'   => env('NARA_API_KEY'),
+            //       'model' => env('NARA_MODEL', 'deepseek-v4-flash'),
             //   ],
-            $geminiModel = config('services.gemini.model', 'gemini-2.5-flash');
-            $geminiApiKey = config('services.gemini.key');
+            // Lalu isi .env: NARA_API_KEY=isi_key_asli_anda (BUKAN string "env('key_nara')" —
+            // itu di curl contoh Anda cuma nama variabel, bukan key aslinya).
+            $naraModel = config('services.nara.model', 'deepseek-v4-flash');
+            $naraApiKey = config('services.nara.key');
 
-            if (empty($geminiApiKey)) {
+            if (empty($naraApiKey)) {
                 // FIX: gagal cepat & jelas di log kalau API key memang belum ke-set,
-                // daripada diam-diam request ke Gemini gagal lalu user dapat balasan generik.
-                Log::error('Job Mekari: GEMINI_API_KEY kosong, cek config/services.php dan .env, lalu jalankan php artisan config:clear');
+                // daripada diam-diam request ke Nara gagal lalu user dapat balasan generik.
+                Log::error('Job Mekari: NARA_API_KEY kosong, cek config/services.php dan .env, lalu jalankan php artisan config:clear');
                 $this->sendMekariMessage1($roomId, 'Maaf, sedang ada gangguan konfigurasi sistem kami. ' . self::CS_CONTACT_TEXT, $sender);
                 return;
             }
 
-            $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/{$geminiModel}:generateContent?key={$geminiApiKey}";
+            $naraUrl = 'https://router.bynara.id/v1/chat/completions';
 
-            Log::info('Job Mekari: memanggil Gemini', ['room_id' => $roomId]);
+            Log::info('Job Mekari: memanggil Router by Nara', ['room_id' => $roomId, 'model' => $naraModel]);
 
-            $aiResponse = Http::timeout(60)->withHeaders(['Content-Type' => 'application/json'])->post($geminiUrl, [
-                'systemInstruction' => ['parts' => [['text' => $systemPrompt]]],
-                'contents' => [['role' => 'user', 'parts' => [['text' => $message]]]],
-                'generationConfig' => ['temperature' => 0.3],
-            ]);
+            $aiResponse = Http::timeout(60)
+                ->withToken($naraApiKey) // otomatis set header: Authorization: Bearer {key}
+                ->withHeaders(['Content-Type' => 'application/json'])
+                ->post($naraUrl, [
+                    'model' => $naraModel,
+                    'messages' => [
+                        ['role' => 'system', 'content' => $systemPrompt],
+                        ['role' => 'user', 'content' => $message],
+                    ],
+                    'temperature' => 0.3,
+                ]);
 
             $aiResult = $aiResponse->json();
-            $candidateText = $aiResult['candidates'][0]['content']['parts'][0]['text'] ?? null;
+            $candidateText = $aiResult['choices'][0]['message']['content'] ?? null;
 
             if ($candidateText === null) {
                 // FIX: sebelumnya kalau kandidat tidak ada, langsung diam-diam pakai teks
                 // fallback tanpa dicatat kenapa gagalnya. Sekarang dilog detail supaya
-                // ke depan gampang ketahuan penyebabnya (API key salah, kena safety filter,
-                // kuota habis, model salah, dll).
-                Log::error('Job Mekari: Gemini tidak mengembalikan kandidat jawaban', [
+                // ke depan gampang ketahuan penyebabnya (API key salah, kuota habis,
+                // nama model salah, dll).
+                Log::error('Job Mekari: Nara tidak mengembalikan jawaban', [
                     'room_id' => $roomId,
                     'http_status' => $aiResponse->status(),
-                    'block_reason' => $aiResult['promptFeedback']['blockReason'] ?? null,
+                    'error' => $aiResult['error'] ?? null,
                     'raw_response' => $aiResult,
                 ]);
 
