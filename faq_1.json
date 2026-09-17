@@ -1,447 +1,1202 @@
 [
     {
         "id": 1,
-        "key": "Apa saja dokumen yang dibutuhkan untuk mendaftar umroh?",
-        "value": "Dokumen yang diperlukan: (1) Paspor asli dengan nama minimal 2 kata (contoh: MOHAMMAD AMIN), masih berlaku minimal 6 bulan sebelum tanggal keberangkatan; (2) Fotokopi KTP dan Kartu Keluarga (KK); (3) Buku Nikah bagi pasangan suami istri atau Akta Kelahiran bagi jamaah anak/remaja; (4) Pasfoto terbaru dengan latar belakang putih, fokus wajah 80%; (5) Sertifikat/Kartu Vaksin Meningitis."
+        "key": "Apakah travel ini memiliki izin PPIU resmi dari Kementerian Agama RI?",
+        "value": "Travel Umroh resmi wajib memiliki izin operasional sebagai Penyelenggara Perjalanan Ibadah Umrah (PPIU) yang diterbitkan secara resmi oleh Kementerian Agama (Kemenag) RI dan statusnya masih aktif."
     },
     {
         "id": 2,
+        "key": "Bisakah saya melihat bukti sertifikat dan nomor izin PPIU travel ini?",
+        "value": "Bisa. Travel profesional akan secara transparan menayangkan salinan Sertifikat Akreditasi PPIU beserta Nomor SK Izin yang dapat dicek validitasnya."
+    },
+    {
+        "id": 3,
+        "key": "Apakah travel ini terdaftar di aplikasi SISKOPATUH?",
+        "value": "Ya, travel PT An Namiroh Travelindo resmi terintegrasi langsung dengan sistem pengawasan SISKOPATUH (Sistem Komputerisasi Pengawasan Umrah dan Haji Khusus) Kemenag RI."
+    },
+    {
+        "id": 4,
+        "key": "Sudah berapa lama travel ini berdiri dan berapa jamaah yang diberangkatkan tiap tahunnya?",
+        "value": "PT An Namiroh sudah berdiri sejak 2005 dan sudah memberangkatkan ribuan jamaah setiap tahun."
+    },
+    {
+        "id": 5,
+        "key": "Apakah travel ini pernah mengalami penundaan atau kegagalan keberangkatan jamaah?",
+        "value": "Travel kredibel tidak memiliki riwayat penundaan sepihak atau kegagalan keberangkatan (zero failure rate). Rekam jejak ini juga dapat dipantau dari ulasan publik dan media informasi Kemenag."
+    },
+    {
+        "id": 6,
+        "key": "Apa jaminan bahwa jadwal keberangkatan tidak akan berubah/ditunda?",
+        "value": "Kami menjamin jamaah tetap berangkat jika tidak ada perubahan jadwal dari maskapai."
+    },
+    {
+        "id": 7,
+        "key": "Berapa minimal jumlah jamaah dalam satu grup keberangkatan?",
+        "value": "Umumnya berkisar antara 10 hingga 49 jamaah per grup (menyesuaikan kapasitas 1 bus dan alokasi blok kursi pesawat)."
+    },
+    {
+        "id": 8,
+        "key": "Bagaimana kebijakan travel jika jumlah minimal jamaah tidak terpenuhi?",
+        "value": "Kebijakan standar yang adil meliputi: Penggabungan (merging) ke jadwal penerbangan terdekat lain. Penawaran penyesuaian harga (jika sepakat berangkat dalam grup kecil)."
+    },
+    {
+        "id": 9,
+        "key": "Bisakah saya meminta kontak atau testimoni alumni jamaah keberangkatan sebelumnya?",
+        "value": "Travel terpercaya dengan senang hati menyediakan ulasan, video dokumentasi, atau review terbuka di platform publik (seperti Google Maps atau media sosial)."
+    },
+    {
+        "id": 10,
+        "key": "Apakah ada kantor fisik resmi yang bisa saya kunjungi sewaktu-waktu?",
+        "value": "Ya. Travel PT An Namiroh Travelindo memiliki kantor operasional fisik dengan alamat Jl. Raya Gajah Mada - Ds. Menanggal Kec. Mojosari Kab. Mojokerto dan dapat dikunjungi langsung untuk konsultasi maupun pendaftaran."
+    },
+    {
+        "id": 11,
+        "key": "Apakah travel menyediakan surat rekomendasi untuk pembuatan paspor?",
+        "value": "Ya. Travel akan menerbitkan Surat Rekomendasi PPIU resmi yang ditujukan ke Kantor Imigrasi bagi jamaah yang memproses paspor baru atau perpanjangan."
+    },
+    {
+        "id": 12,
+        "key": "Bagaimana sistem pengaduan jika pelayanan di Tanah Suci tidak sesuai janjinya?",
+        "value": "Pengaduan dapat disampaikan bertahap melalui: 1. Tour Leader (TL) / Muthawwif pendamping di lokasi. 2. Tim Customer Care / Perwakilan Ground Handling travel di Makkah & Madinah. 3. Melalui Admin di Kantor Perwakilan/Kantor Pusat yang akan menghubungkan ke Tim Mekkah/Madinah."
+    },
+    {
+        "id": 13,
+        "key": "Apakah ada garansi refund jika visa ditolak atau perjalanan dibatalkan pihak travel?",
+        "value": "Dibatalkan Travel: Pengembalian dana (refund) 100%. Visa Ditolak Sistem Saudi: Pengembalian dana diproses dikurangi biaya sistem/administrasi visa yang sudah terlanjur tidak bisa ditarik kembali (non-refundable) oleh otoritas Saudi."
+    },
+    {
+        "id": 14,
+        "key": "Berapa persen potongan biaya jika jamaah mengundurkan diri atas alasan pribadi?",
+        "value": "Besaran potongan bergantung pada jarak waktu pembatalan sebelum keberangkatan (misal: H-30 dikenakan pemotongan DP admin Rp. 250.000, H-14 pemotongan 50%, H-7 ke bawah pemotongan hingga 80-100% menyesuaikan tiket & hotel yang sudah di-issuance). Ketentuan ini wajib tertera di surat perjanjian."
+    },
+    {
+        "id": 15,
+        "key": "Bagaimana mekanisme pertanggungjawaban jika terjadi force majeure (bencana/kebijakan negara)?",
+        "value": "Penanganan mengikuti aturan force majeure internasional: travel memfasilitasi penjadwalan ulang (reschedule) tanggal keberangkatan atau refund dana parsial sesuai jumlah dana yang berhasil diselamatkan dari maskapai, pihak hotel, atau pihak lain yang masih bisa dikembalikan."
+    },
+    {
+        "id": 16,
+        "key": "Apakah travel menyediakan pembimbing ibadah (muthawwif) yang tersertifikasi?",
+        "value": "Ya. Muthawwif yang disediakan umumnya telah berpengalaman dan tersertifikasi (misal: BNSP/Kemenag) serta berpengalaman mendampingi tata cara ibadah sesuai syariat dan regulasi lokal Arab Saudi."
+    },
+    {
+        "id": 17,
+        "key": "Berapa perbandingan jumlah muthawwif dengan jumlah jamaah dalam satu grup?",
+        "value": "Idealnya 1 orang Muthawwif mendampingi 30-45 jamaah (1 bus), didampingi pula oleh 1 orang Tour Leader (TL) dari Indonesia."
+    },
+    {
+        "id": 18,
+        "key": "Apakah ada perwakilan atau tim operasional kantor di Makkah dan Madinah?",
+        "value": "Ya. Travel profesional memiliki tim handling darat (ground handling) di Arab Saudi untuk mengurus penjemputan bandara, check-in hotel, serta penanganan kondisi darurat jamaah."
+    },
+    {
+        "id": 19,
+        "key": "Apakah travel ini juga menyelenggarakan program Umroh Plus?",
+        "value": "Ya, PT An Namiroh Travelindo menyediakan paket Umroh Plus (seperti Plus Turki, Al-Aqsa, Dubai, Thaif, atau Mesir)."
+    },
+    {
+        "id": 20,
+        "key": "Apa bedanya paket Umroh Reguler, VIP, dan Umroh Plus di travel ini?",
+        "value": "Reguler: Menggunakan hotel bintang 3 sampai bintang 4 (jarak 200 meter ke masjid hingga 700m, jarak hotel terjauh 1km lebih dengan fasilitas shuttle) dengan rute penerbangan direct/transit. VIP: Menggunakan hotel bintang 5 (pelataran masjid), penerbangan langsung (direct flight), dan layanan makanan/bus kelas premium. Umroh Plus: Ibadah Umroh yang dikombinasikan dengan tur wisata sejarah/mancanegara sebelum atau sesudah ibadah."
+    },
+    {
+        "id": 21,
+        "key": "Apakah bisa mengajukan kustomisasi jadwal (Umroh Mandiri/Private Group)?",
+        "value": "Bisa. Layanan ini biasanya dinamakan paket LA (Land Arrangement) Only atau Umroh Custom/Private, di mana tanggal, jenis maskapai, dan hotel disesuaikan khusus untuk grup/keluarga tersebut."
+    },
+    {
+        "id": 22,
+        "key": "Bagaimana cara mengecek legalitas paket yang dijual secara daring?",
+        "value": "1. Cek nomor izin PPIU travel di situs SIMPU Kemenag (simpu.kemenag.go.id) atau aplikasi Pusaka Kemenag. 2. Pastikan transaksi pembayaran dikirimkan ke VA (Virtual Account) & rekening bank resmi atas nama perusahaan (PT An Namiroh Travelindo), bukan rekening perorangan."
+    },
+    {
+        "id": 23,
+        "key": "Apakah travel bekerja sama dengan pihak bank resmi untuk pembayaran?",
+        "value": "Ya. Seluruh transaksi wajib disalurkan melalui Rekening Penampungan (Escrow/Corporate Account) atas nama perusahaan pada bank syariah atau bank nasional resmi."
+    },
+    {
+        "id": 24,
+        "key": "Bisakah pendaftaran dilakukan secara penuh melalui daring (online)?",
+        "value": "Bisa. Pendaftaran melalui aplikasi Whatsapp, unggah dokumen KTP/Paspor, dan pembayaran DP dapat dilakukan online. Pengiriman paspor asli dan dokumen fisik dapat dilakukan melalui jasa kurir terpercaya."
+    },
+    {
+        "id": 25,
+        "key": "Apa bukti transaksi atau kontrak tertulis yang diterima jamaah setelah membayar DP?",
+        "value": "Jamaah berhak menerima: 1. Kuitansi Pembayaran Resmi bertanda tangan dan berstempel PT/elektronik. 2. Surat Perjanjian Kerja Sama (PKS) Ibadah Umroh yang memuat rincian fasilitas, hak, kewajiban, dan ketentuan pembatalan."
+    },
+    {
+        "id": 26,
+        "key": "Berapa total harga paket umroh yang ditawarkan?",
+        "value": "Estimasi: Paket Reguler/Ekonomi umumnya berkisar antara Rp 29.000.000 - Rp 40.000.000, sedangkan Paket VIP/Bintang 5 berkisar Rp 40.000.000 - Rp 45.000.000+ per jamaah (harga pasti tergantung standar travel, hotel, dan maskapai)."
+    },
+    {
+        "id": 27,
+        "key": "Berapa besar uang muka (DP) yang harus dibayarkan saat mendaftar?",
+        "value": "Estimasi: Rata-rata sebesar Rp 5.000.000 per jamaah untuk mengamankan tiket pesawat dan reservasi hotel."
+    },
+    {
+        "id": 28,
+        "key": "Kapan batas akhir pelunasan biaya umroh?",
+        "value": "Umumnya 30 hingga 45 hari sebelum tanggal keberangkatan."
+    },
+    {
+        "id": 29,
+        "key": "Apa saja komponen biaya yang sudah termasuk dalam harga paket?",
+        "value": "Tiket pesawat PP, visa umroh, akomodasi hotel di Makkah & Madinah, makan 3x sehari (kecuali Ramadhan makan 2x sehari), transportasi bus lokal, air zamzam (jika diizinkan penerbangan), serta bimbingan ibadah (Tour Leader dan Muthawwif), Handling Indonesia & Saudi, Siskopatuh, Asuransi perjalanan."
+    },
+    {
+        "id": 30,
+        "key": "Apa saja biaya yang belum termasuk dalam paket?",
+        "value": "Pembuatan paspor, vaksinasi wajib, pengeluaran pribadi (laundry, belanja, komunikasi), sewa kursi roda pribadi, upgrade kamar/penerbangan, serta tour di luar program, 1 set perlengkapan umroh (koper, ihram/mukenah, batik dll)."
+    },
+    {
+        "id": 31,
+        "key": "Apakah ada biaya tambahan di luar harga paket?",
+        "value": "Ada. Travel menyampaikan jika terjadi adanya tambahan biaya dikarenakan kenaikan biaya maskapai, akomodasi, atau dikarenakan hal lain diluar biaya harga paket awal."
+    },
+    {
+        "id": 32,
+        "key": "Apakah biaya pembuatan paspor ditanggung oleh jamaah sendiri?",
+        "value": "Ya, biaya pembuatan paspor ditanggung dan diurus mandiri oleh jamaah di kantor imigrasi."
+    },
+    {
+        "id": 33,
+        "key": "Apakah biaya vaksinasi wajib (seperti Meningitis) sudah masuk dalam paket?",
+        "value": "Belum. Biaya vaksinasi ditanggung dan diurus mandiri oleh jamaah di fasilitas kesehatan resmi."
+    },
+    {
+        "id": 34,
+        "key": "Apakah biaya handling bandara dan pengiriman perlengkapan sudah termasuk?",
+        "value": "Handling bandara: Umumnya sudah termasuk. Pengiriman perlengkapan: Sudah termasuk jika diambil di kantor/bandara, namun dikenakan ongkos kirim jika dikirim ke masing-masing alamat jamaah."
+    },
+    {
+        "id": 35,
+        "key": "Apakah harga paket menggunakan mata uang Rupiah atau US Dollar?",
+        "value": "Di Indonesia, harga dipublikasikan dalam Rupiah (IDR) sesuai regulasi Bank Indonesia."
+    },
+    {
+        "id": 36,
+        "key": "Jika menggunakan Dollar, bagaimana perhitungan kurs saat pelunasan?",
+        "value": "Menggunakan nilai kurs jual transaksi bank pada hari H pelunasan dilakukan."
+    },
+    {
+        "id": 37,
+        "key": "Apakah harga paket dapat mendadak naik jika ada kebijakan baru dari Arab Saudi?",
+        "value": "Bisa. Kenaikan harga darurat hanya terjadi jika ada perubahan regulasi pemerintah (seperti kenaikan pajak SAR, harga visa, atau surcharge bahan bakar maskapai)."
+    },
+    {
+        "id": 38,
+        "key": "Apakah ada diskon khusus untuk pendaftaran grup/keluarga?",
+        "value": "Tergantung paket yang dipilih jamaah. Kami memberikan diskon mulai Rp. 500.000 - Rp. 2.000.000 setiap jamaah."
+    },
+    {
+        "id": 39,
+        "key": "Apakah pendaftaran anak-anak/balita mendapat potongan harga?",
+        "value": "Ya. Untuk anak usia 23 bulan ke atas yang tidak menggunakan tempat tidur sendiri (child no bed) biasanya mendapat potongan harga dari tarif dewasa."
+    },
+    {
+        "id": 40,
+        "key": "Bagaimana kebijakan pembayaran untuk bayi (infant)?",
+        "value": "Bayi di bawah usia 2 tahun hanya dikenakan biaya tiket pesawat bayi (sekitar 10%-20% dari tiket dewasa) plus biaya visa & handling, tanpa biaya kamar dan makan."
+    },
+    {
+        "id": 41,
+        "key": "Apakah travel menyediakan fasilitas cicilan atau tabungan umroh bekerja sama dengan bank syariah?",
+        "value": "Ya. Travel An Namiroh Travelindo bekerja sama dengan Amitra Syariah/FIF Grup untuk program tabungan maupun cicilan umroh."
+    },
+    {
+        "id": 42,
+        "key": "Bolehkah membayar pelunasan tunai di kantor atau harus transfer bank?",
+        "value": "Sangat disarankan transfer bank demi keamanan dan bukti rekam jejak keuangan resmi. Pembayaran tunai biasanya hanya dilayani langsung di kasir kantor pusat."
+    },
+    {
+        "id": 43,
+        "key": "Ke mana rekening tujuan pembayaran harus ditransfer?",
+        "value": "Pembayaran wajib ke Rekening Resmi Atas Nama PT An Namiroh Travelindo, bukan ke rekening pribadi staf, sales, atau pemilik."
+    },
+    {
+        "id": 44,
+        "key": "Apakah tips untuk muthawwif/driver bersifat wajib atau sukarela?",
+        "value": "Umumnya biaya jasa sudah termasuk dalam paket (all-in), sehingga pemberian tips bersifat sukarela sebagai bentuk apresiasi."
+    },
+    {
+        "id": 45,
+        "key": "Berapa uang saku Real (SAR) ideal yang harus dibawa dari Indonesia?",
+        "value": "Idealnya membawa 1.000 - 2.000 SAR (sekitar Rp 4.000.000 - Rp 8.000.000) per jamaah untuk jajan, oleh-oleh sedang, dan kebutuhan darurat. Atau menyesuaikan jamaah masing-masing sesuai kebutuhan."
+    },
+    {
+        "id": 46,
+        "key": "Apakah pembayaran di Arab Saudi lebih baik menggunakan uang tunai atau kartu kredit/debit?",
+        "value": "Kombinasi keduanya. Uang tunai untuk pedagang kecil/pasar tradisional, sedangkan kartu debit/kredit (Visa/Mastercard) untuk supermarket, restoran besar, atau toko ritel modern."
+    },
+    {
+        "id": 47,
+        "key": "Di mana tempat terbaik menukarkan mata uang Rupiah ke Real?",
+        "value": "Di Money Changer resmi di Indonesia sebelum berangkat (biasanya kurs lebih kompetitif) atau di Money Changer resmi sekitar Masjidil Haram / Masjid Nabawi."
+    },
+    {
+        "id": 48,
+        "key": "Apakah kartu ATM bank Indonesia bisa digunakan untuk tarik tunai di Arab Saudi?",
+        "value": "Bisa, selama kartu berlogo Visa, Mastercard, Cirrus, atau Plus. Pastikan fitur transaksi internasional sudah aktif melalui mobile banking."
+    },
+    {
+        "id": 49,
+        "key": "Berapa estimasi biaya untuk oleh-oleh atau kebutuhan pribadi di sana?",
+        "value": "Estimasi rata-rata berkisar antara Rp 2.000.000 - Rp 5.000.000 per orang, tergantung volume belanja yang diinginkan."
+    },
+    {
+        "id": 50,
+        "key": "Bagaimana cara mengamankan uang dan barang berharga selama di perjalanan?",
+        "value": "Gunakan tas pinggang / tas dada yang selalu menempel di badan saat beraktivitas. Simpan paspor, dokumen penting, dan sisa uang tunai di dalam Safety Deposit Box (SDB) kamar hotel. Jangan membawa uang tunai atau perhiasan berlebihan saat tawaf dan sa'i. Simpan fotokopi atau salinan digital (foto/PDF) paspor, KTP, dan visa di ponsel/cloud."
+    },
+    {
+        "id": 51,
+        "key": "Apa saja syarat dokumen awal untuk pendaftaran umroh?",
+        "value": "Paspor (asli dan/atau fotokopi) dengan masa berlaku yang sesuai. KTP dan Kartu Keluarga (KK). Buku Nikah (bagi suami istri) atau Akta Kelahiran (bagi anak/jamaah yang membutuhkan). Sertifikat Vaksin Meningitis + Polio (buku kuning/E-Kartu Vaksin)."
+    },
+    {
+        "id": 52,
+        "key": "Berapa bulan sisa masa berlaku paspor minimal sebelum tanggal berangkat?",
+        "value": "Minimal 8 bulan dari tanggal rencana keberangkatan dari Indonesia."
+    },
+    {
+        "id": 53,
+        "key": "Berapa jumlah kata nama pada paspor yang dibutuhkan untuk umroh?",
+        "value": "Ketentuan internasional dan Arab Saudi saat ini secara umum menerima nama paspor dengan 2 kata. Kami menyarankan 2-3 kata untuk kemudahan administrasi."
+    },
+    {
+        "id": 54,
+        "key": "Bagaimana jika nama di paspor saya hanya terdiri dari 1 atau 2 kata?",
+        "value": "Jika terdiri dari 2 kata, sudah memenuhi syarat umum penerbitan visa dan tiket. Jika hanya 1 kata (misal: Siti), Anda perlu mengajukan Endorsement Nama (penambahan nama ayah) di kantor imigrasi atau saat pembuatan paspor baru sehingga menjadi 2 atau 3 kata (misal: Siti Ahmad)."
+    },
+    {
+        "id": 55,
+        "key": "Apakah saya diuruskan pembuatan/perpanjangan paspor oleh pihak travel?",
+        "value": "Pembuatan atau perpanjangan paspor dilakukan secara mandiri oleh jamaah di Kantor Imigrasi (melalui aplikasi M-Paspor). Namun, pihak travel biasanya memberikan surat rekomendasi penerbitan paspor sebagai syarat pembuatan paspor umroh."
+    },
+    {
+        "id": 56,
+        "key": "Jenis visa apa yang digunakan untuk paket umroh ini (Visa Umroh / Visa Turis)?",
+        "value": "Secara umum menggunakan Visa Umroh resmi (Visa Nusuk/Umrah)."
+    },
+    {
+        "id": 57,
+        "key": "Berapa lama proses pengurusan visa umroh?",
+        "value": "Setelah seluruh dokumen lengkap dan disetujui dalam sistem, proses penerbitan e-Visa umroh secara teknis sangat cepat, yaitu sekitar 1 hingga 3 hari kerja (jika tidak ada kendala di sistem visa)."
+    },
+    {
+        "id": 58,
+        "key": "Syarat apa saja yang harus dipenuhi agar visa umroh diterbitkan?",
+        "value": "Paspor aktif minimal 8 bulan. Paket umroh terkonfirmasi (tiket pesawat PP, hotel di Makkah & Madinah, serta transportasi lokal yang terdaftar dalam sistem kementerian/MOFA Saudi). Asuransi perjalanan/kesehatan Arab Saudi. Perekaman biometrik (jika disyaratkan)."
+    },
+    {
+        "id": 59,
+        "key": "Kapan visa umroh biasanya resmi keluar sebelum hari keberangkatan?",
+        "value": "Biasanya diselesaikan dan dicetak oleh pihak travel sekitar 3 hingga 7 hari sebelum jadwal keberangkatan."
+    },
+    {
+        "id": 60,
+        "key": "Apakah wanita di bawah usia tertentu masih memerlukan mahram?",
+        "value": "Tidak lagi. Pemerintah Arab Saudi telah membebaskan aturan mahram bagi wanita untuk semua usia saat melaksanakan ibadah umroh, selama bepergian dalam kelompok/travel yang terdaftar."
+    },
+    {
+        "id": 61,
+        "key": "Apa saja dokumen pendukung jika berangkat bersama pasangan/keluarga?",
+        "value": "Fotokopi Buku Nikah (untuk suami istri). Fotokopi Kartu Keluarga (KK) dan Akta Kelahiran anak/saudara."
+    },
+    {
+        "id": 62,
+        "key": "Dokumen apa yang dibutuhkan jika anak-anak ikut serta?",
+        "value": "Paspor anak yang masih berlaku. Akta Kelahiran anak. Kartu Keluarga (KK). Sertifikat vaksinasi (sesuai ketentuan usia dari pemerintah)."
+    },
+    {
+        "id": 63,
+        "key": "Apakah pasfoto untuk visa memiliki kriteria khusus (background/ukuran)?",
+        "value": "Background: Warna putih polos. Ukuran: 4x6 cm (atau sesuai spesifikasi digital travel/sistem visa). Ketentuan: Wajah terlihat jelas 80%, tidak menggunakan kacamata hitam, dan bagi wanita wajib menggunakan jilbab."
+    },
+    {
+        "id": 64,
+        "key": "Apakah sertifikat vaksinasi COVID-19 masih diperlukan?",
+        "value": "Saat ini Pemerintah Arab Saudi tidak lagi mewajibkan sertifikat/bukti vaksinasi COVID-19 sebagai syarat masuk dan penerbitan visa. Namun, Vaksin Meningitis dan Polio tetap menjadi kewajiban bagi jamaah dari Indonesia."
+    },
+    {
+        "id": 65,
+        "key": "Apakah ada syarat rekam biometrik (seperti aplikasi Saudi Bio) sebelum berangkat?",
+        "value": "Untuk aturan umroh sekarang, Pemerintah Arab Saudi tidak menerapkan sistem biometrik mandiri melalui aplikasi resmi (seperti Saudi Visa Bio) untuk perekaman wajah dan sidik jari sebelum pengajuan visa. Untuk rekam Biometrik ditujukan kepada Jamaah Haji saja."
+    },
+    {
+        "id": 66,
+        "key": "Bagaimana jika hasil perekaman biometrik gagal atau bermasalah?",
+        "value": "Jika terjadi kegagalan sistem atau kendala fisik (misal: sidik jari aus/tidak terbaca): Coba kembali dengan pencahayaan dan perangkat yang lebih baik. Pihak travel akan membantu memberikan opsi ulang atau pelaporan kendala teknis ke sistem penerbitan visa."
+    },
+    {
+        "id": 67,
+        "key": "Apakah identitas jamaah lansia mendapat penanganan dokumen khusus?",
+        "value": "Secara administratif dokumennya sama, namun pihak travel biasanya memberikan pendampingan ekstra saat proses verifikasi data, pencetakan ID Card, dan penanganan bagasi/boarding. Dan kami meminta ada keluarga yang ikut mendampingi berangkat umroh."
+    },
+    {
+        "id": 68,
+        "key": "Bagaimana jika visa saya ditolak oleh Pemerintah Arab Saudi?",
+        "value": "Penolakan visa umroh relatif jarang terjadi selama dokumen asli dan tidak memiliki riwayat pelanggaran hukum/imigrasi di Arab Saudi (deportasi/overstay). Jika ditolak, travel akan melakukan pengecekan alasan penolakan dan mengajukan permohonan ulang setelah kendala diperbaiki."
+    },
+    {
+        "id": 69,
+        "key": "Apakah biaya visa hangus jika pengajuan ditolak?",
+        "value": "Secara umum, biaya pengajuan visa dan asuransi yang sudah disetorkan ke sistem Pemerintah Arab Saudi bersifat non-refundable (hangus/tidak bisa ditarik kembali) jika terjadi penolakan dari pihak imigrasi Saudi."
+    },
+    {
+        "id": 70,
+        "key": "Berapa lama masa berlaku visa umroh setelah diterbitkan?",
+        "value": "Masa berlaku stay (izin tinggal) visa umroh umumnya 90 hari sejak tanggal diterbitkan/pemasukan ke Arab Saudi (sesuai dengan aturan e-Visa terkini)."
+    },
+    {
+        "id": 71,
+        "key": "Bisakah visa umroh digunakan untuk keluar dari kota Makkah dan Madinah (misal ke Jeddah atau Al-Ula)?",
+        "value": "Bisa. Pemegang visa umroh saat ini bebas bepergian ke seluruh wilayah dan kota di Arab Saudi (seperti Jeddah, Taif, Riyadh, Al-Ula, dll.) selama masih dalam masa berlaku visa."
+    },
+    {
+        "id": 72,
+        "key": "Apakah nama di buku nikah/akta lahir harus persis sama dengan paspor?",
+        "value": "Sebaiknya sama atau konsisten. Jika terdapat perbedaan ejaan kecil, biasanya ditoleransi. Namun jika perbedaan nama cukup signifikan, disarankan menyertakan surat keterangan dari instansi terkait atau penyesuaian nama paspor."
+    },
+    {
+        "id": 73,
+        "key": "Siapa yang memegang dokumen asli (paspor & tiket) selama di perjalanan?",
+        "value": "Di Bandara (Check-in/Imigrasi): Dipegang oleh masing-masing jamaah. Selama di Arab Saudi: Dalam beberapa kondisi, paspor dikumpulkan dan disimpan secara aman oleh Tour Leader / Mutawwif travel untuk mencegah risiko hilang, dan dibagikan kembali saat akan pulang/kepindahan kota."
+    },
+    {
+        "id": 74,
+        "key": "Apakah jamaah akan diberikan ID card khusus dari pihak travel?",
+        "value": "Ya. Setiap jamaah akan diberikan ID Card resmi dari travel yang berisi identitas, nomor kontak darurat Tour Leader, nama hotel di Makkah & Madinah, serta nomor bus. ID Card wajib dikalungkan/dibawa selama beraktivitas."
+    },
+    {
+        "id": 75,
+        "key": "Apa yang harus dilakukan jika paspor hilang saat berada di Arab Saudi?",
+        "value": "1. Lapor segera ke Tour Leader / Mutawwif pihak travel. 2. Buat Surat Keterangan Kehilangan dari Kepolisian Arab Saudi setempat. 3. Travel akan mendampingi jamaah ke KJRI Jeddah atau KBRI Riyadh untuk mengurus SPLP (Surat Perjalanan Laksana Paspor) sebagai dokumen resmi untuk kembali ke Indonesia."
+    },
+    {
+        "id": 76,
+        "key": "Maskapai penerbangan apa yang digunakan?",
+        "value": "Kami menggunakan fasilitas maskapai seperti Saudia Airlines, Garuda Indonesia, Lion Air, Emirates, Qatar Airways, Etihad, Scoot, Batik Air Malaysia, Air Asia, dll."
+    },
+    {
+        "id": 77,
+        "key": "Apakah penerbangan bersifat langsung (direct) atau transit?",
+        "value": "Tergantung jenis paket. Penerbangan direct umumnya menggunakan Saudia, Garuda, atau Lion Air. Penerbangan transit biasanya menggunakan maskapai asing/Timur Tengah (Emirates, Qatar Airways, Etihad, Oman Air, dll)."
+    },
+    {
+        "id": 78,
+        "key": "Jika transit, di negara mana dan berapa lama durasi transitnya?",
+        "value": "Tergantung maskapai (contoh: Emirates transit di Dubai, Qatar di Doha, Oman Air di Muscat). Durasi transit bervariasi, umumnya antara 4 hingga 8 jam."
+    },
+    {
+        "id": 79,
+        "key": "Dari bandara mana grup akan diberangkatkan?",
+        "value": "Disesuaikan dengan kota keberangkatan grup Anda (misalnya Bandara Soekarno-Hatta/CGK Jakarta, Juanda/SUB Surabaya, atau Kualanamu/KNO Medan)."
+    },
+    {
+        "id": 80,
+        "key": "Jam berapa jadwal penerbangan berangkat dan pulang?",
+        "value": "Waktu pasti tertera di tiket penerbangan (e-ticket) dari travel agent."
+    },
+    {
+        "id": 81,
+        "key": "Berapa kapasitas bagasi tercatat (checked baggage) yang didapatkan per jamaah?",
+        "value": "Rata-rata maskapai penerbangan internasional memberikan jatah bagasi tercatat sebesar 25 kg hingga 30 kg."
+    },
+    {
+        "id": 82,
+        "key": "Berapa batas maksimal berat koper kabin?",
+        "value": "Batas standar koper kabin/tas jinjing adalah 7 kg per orang."
+    },
+    {
+        "id": 83,
+        "key": "Jenis bus apa yang digunakan untuk transportasi lokal Makkah-Madinah?",
+        "value": "Umumnya menggunakan bus pariwisata eksekutif kelas VIP/Standar Arab Saudi."
+    },
+    {
+        "id": 84,
+        "key": "Apakah bus lokal dilengkapi dengan fasilitas toilet, AC, dan recline seat?",
+        "value": "Kebanyakan bus pariwisata di Arab Saudi dilengkapi AC dingin dan recline seat (kursi bisa direbahkan). Namun, fasilitas toilet dalam bus tergantung ketersediaan/jenis bus yang disewa oleh pihak travel."
+    },
+    {
+        "id": 85,
+        "key": "Berapa lama durasi perjalanan darat dari Madinah ke Makkah?",
+        "value": "Sekitar 5 hingga 6 jam perjalanan menggunakan bus (termasuk waktu berhenti sebentar di rest area/titik miqat)."
+    },
+    {
+        "id": 86,
+        "key": "Apakah jamaah akan naik kereta cepat (Kereta Haramain) antara Makkah dan Madinah?",
+        "value": "Tergantung kesepakatan fasilitas dalam paket (bisa menggunakan bus atau opsi naik Kereta Haramain Express dengan ketentuan penambahan biaya)."
+    },
+    {
+        "id": 87,
+        "key": "Apakah tiket Kereta Haramain sudah masuk dalam biaya paket?",
+        "value": "Sesuai paket yang dipilih jamaah. Pada beberapa paket hemat/reguler tiket kereta dijual terpisah (add-on), sedangkan pada paket VIP biasanya sudah include."
+    },
+    {
+        "id": 88,
+        "key": "Bagaimana proses pengurusan koper dari bandara menuju hotel?",
+        "value": "Biasanya diurus oleh tim handling bandara dari pihak travel/muasasah. Jamaah tidak perlu mengangkut koper besar sendiri dari bandara."
+    },
+    {
+        "id": 89,
+        "key": "Apakah koper akan diantar langsung sampai depan kamar hotel?",
+        "value": "Ya, layanan standar travel umrah mencakup pengantaran koper oleh bellboy atau tim handling hingga ke depan kamar masing-masing jamaah, atau pengambilan di lantai tertentu tempat penurunan koper."
+    },
+    {
+        "id": 90,
+        "key": "Apa regulasi penerbangan mengenai penempatan cairan dalam bagasi/kabin?",
+        "value": "Kabin: Cairan, gel, dan aerosol maksimal 100 ml per wadah dan harus dimuat dalam kantong plastik transparan. Bagasi Tercatat: Wadah cairan lebih dari 100 ml diperbolehkan selama dikemas dengan aman dan tidak bocor (kecuali Air Zamzam yang memiliki aturan tersendiri)."
+    },
+    {
+        "id": 91,
+        "key": "Bolehkah membawa air Zamzam sendiri ke dalam koper bagasi?",
+        "value": "Tidak boleh. Regulasi penerbangan internasional melarang keras memasukkan Air Zamzam ke dalam koper bagasi tercatat maupun kabin demi keamanan penerbangan."
+    },
+    {
+        "id": 92,
+        "key": "Berapa liter kuota air Zamzam resmi yang didapat jamaah dari maskapai?",
+        "value": "Kuota resmi bawaan/jatah dari maskapai (jika regulasi Saudi memperbolehkan) adalah 5 liter per jamaah yang akan dibagikan saat tiba di bandara kepulangan Indonesia."
+    },
+    {
+        "id": 93,
+        "key": "Bagaimana pengaturan tempat duduk di pesawat (apakah bisa berdampingan dengan keluarga)?",
+        "value": "Pihak travel biasanya melakukan group check-in untuk mengusahakan anggota keluarga duduk berdekatan. Namun, ketersediaan pasti bergantung pada sistem seat selection maskapai."
+    },
+    {
+        "id": 94,
+        "key": "Apakah disediakan makanan halal di dalam pesawat selama penerbangan?",
+        "value": "Ya. Maskapai rute penerbangan umrah/haji (maupun penerbangan dari/ke negara Muslim) menyajikan 100% makanan berlabel halal."
+    },
+    {
+        "id": 95,
+        "key": "Bagaimana cara melakukan shalat di dalam pesawat selama perjalanan?",
+        "value": "Shalat dilakukan di kursi pesawat dengan cara duduk (isyarat gerakan) setelah bersuci (wudhu atau tayammum). Beberapa pesawat besar (seperti Saudia) menyediakan area mushola khusus di bagian belakang."
+    },
+    {
+        "id": 96,
+        "key": "Kapan titik miqat (miqat point) dilakukan jika terbang langsung ke Jeddah?",
+        "value": "Titik miqat diambil di atas udara saat pesawat berada sejajar dengan Yalamlam atau Qarnul Manazil (sekitar 20-30 menit sebelum mendarat di Bandara Jeddah)."
+    },
+    {
+        "id": 97,
+        "key": "Apakah pengumuman miqat akan disampaikan oleh pihak maskapai/muthawwif di pesawat?",
+        "value": "Ya. Kapten/kru maskapai atau Muthawwif/Pembimbing Ibadah yang mendampingi di pesawat akan memberikan pengumuman beberapa saat sebelum melintasi garis miqat."
+    },
+    {
+        "id": 98,
+        "key": "Bagaimana jika ada penderita motion sickness (mabuk darat/udara)?",
+        "value": "Jamaah disarankan membawa obat pribadi (seperti Antimo), mengonsumsi makanan ringan sebelum perjalanan, memilih posisi duduk di area tengah, serta menginformasikan ke ketua rombongan/muthawwif."
+    },
+    {
+        "id": 99,
+        "key": "Apakah ada pendampingan khusus di bandara keberangkatan dan kedatangan?",
+        "value": "Ya. Jamaah akan didampingi oleh Tim Handling Bandara keberangkatan di Indonesia serta Tim Handling lokal/Muthawwif saat tiba di Bandara Jeddah/Madinah."
+    },
+    {
+        "id": 100,
+        "key": "Apa yang dilakukan jika terjadi delay penerbangan yang cukup lama?",
+        "value": "Pihak maskapai dan travel agent bertanggung jawab memberikan kompensasi sesuai regulasi penerbangan yang berlaku (misalnya penyediaan makanan ringan, makanan berat, hingga fasilitas hotel/penginapan jika delay menginap)."
+    },
+    {
+        "id": 101,
+        "key": "Hotel bintang berapa yang digunakan di Makkah dan Madinah?",
+        "value": "Bervariasi tergantung paket umrah/haji yang dipilih (umumnya Bintang 3, 4, atau 5)."
+    },
+    {
+        "id": 102,
+        "key": "Berapa jarak pasti hotel di Makkah ke pelataran Masjidil Haram?",
+        "value": "Jarak tergantung paket: Bintang 5: +/-50 m (dapat dijangkau langsung dari pelataran/plataran masjid). Bintang 3/4: 500 meter hingga 1 km dari area pelataran."
+    },
+    {
+        "id": 103,
+        "key": "Berapa jarak pasti hotel di Madinah ke Masjid Nabawi?",
+        "value": "Sebagian besar hotel di Madinah berada di dalam lingkup Ring 1 atau Ring 2 (sekitar 50-500 meter) langsung ke pintu/pelataran Masjid Nabawi."
+    },
+    {
+        "id": 104,
+        "key": "Apakah lokasi hotel memungkinkan untuk berjalan kaki ke masjid?",
+        "value": "Ya, jika berada di Ring 1/dekat. Untuk hotel yang jaraknya di atas 1 km (biasanya di Makkah), jemaah disarankan menggunakan bus ramah/shuttle."
+    },
+    {
+        "id": 105,
+        "key": "Jika jarak hotel jauh, apakah disediakan shuttle bus 24 jam?",
+        "value": "Ya, untuk hotel Makkah yang letaknya agak jauh (seperti daerah Mahbas Jin atau Syisah), pemerintah Arab Saudi menyediakan Bus Shalawat / Shuttle Bus 24 Jam secara gratis menuju Terminal."
+    },
+    {
+        "id": 106,
+        "key": "Apa jenis kamar yang dipilih (Quad / Triple / Double)?",
+        "value": "Dipilih saat pendaftaran awal: Quad: 1 kamar untuk 4 orang. Triple: 1 kamar untuk 3 orang. Double: 1 kamar untuk 2 orang (biasanya untuk suami-istri atau pasangan jemaah)."
+    },
+    {
+        "id": 107,
+        "key": "Apakah kamar Quad diisi oleh jamaah dari keluarga yang berbeda?",
+        "value": "Ya, jika pendaftar tidak mencukupi 4 orang dari 1 keluarga, kamar Quad akan digabung dengan jemaah lain yang sesuai jenis kelaminnya/gender."
+    },
+    {
+        "id": 108,
+        "key": "Bisakah mengajukan peningkatan kamar (upgrade) menjadi Double (2 orang)?",
+        "value": "Bisa, mengajukan permintaan upgrade sebelum keberangkatan (tergantung ketersediaan kamar di hotel)."
+    },
+    {
+        "id": 109,
+        "key": "Berapa biaya tambahan untuk upgrade kamar?",
+        "value": "Biaya bervariasi sesuai tarif hotel (kisaran tambahan Rp 3.000.000 - Rp 10.000.000+ per orang tergantung level bintang hotel dan durasi menginap)."
+    },
+    {
+        "id": 110,
+        "key": "Apakah fasilitas hotel menyediakan Wi-Fi gratis di kamar?",
+        "value": "Sebagian besar hotel bintang 4 dan 5 menyediakan Wi-Fi gratis di kamar. Namun, beberapa hotel bintang 3 hanya menyediakan Wi-Fi gratis di area lobby."
+    },
+    {
+        "id": 111,
+        "key": "Makanan jenis apa yang disajikan selama berada di hotel (Indonesian Food / Middle Eastern)?",
+        "value": "Mayoritas travel umrah/haji Indonesia menyajikan Indonesian Food (Menu Nusantara) yang diolah oleh koki Indonesia atau catering lokal berstandar Indonesia."
+    },
+    {
+        "id": 112,
+        "key": "Berapa kali sehari makan disajikan di hotel?",
+        "value": "3 kali sehari (Makan Pagi/Sarapan, Makan Siang, dan Makan Malam)."
+    },
+    {
+        "id": 113,
+        "key": "Bagaimana sistem penyajian makanan (buffet/prasmanan atau nasi boks)?",
+        "value": "Di hotel Makkah & Madinah umumnya menggunakan sistem Buffet / Prasmanan di restoran hotel. Ada juga hotel yang menyediakan makan dengan nasi box."
+    },
+    {
+        "id": 114,
+        "key": "Bagaimana konsumsi untuk jamaah yang memiliki alergi makanan atau diet khusus?",
+        "value": "Jemaah wajib menginformasikan ke pihak travel sebelum berangkat agar dapat dikoordinasikan ke tim konsumsi/katering hotel. Atau membawa tambahan yang biasanya jamaah konsumsi."
+    },
+    {
+        "id": 115,
+        "key": "Apakah hotel menyediakan fasilitas teko listrik/pemanas air di kamar?",
+        "value": "Ya, mayoritas kamar hotel di Makkah dan Madinah menyediakan pemanas air (electric kettle), cangkir, serta teh/kopi saset. Tetapi beberapa hotel setaraf Bintang 3 tidak menyediakan."
+    },
+    {
+        "id": 116,
+        "key": "Apakah ada layanan laundry gratis dari hotel atau travel?",
+        "value": "Tergantung paket travel. Umumnya tidak gratis (dikenakan biaya per potong pakaian). Jemaah bisa mencuci sendiri di kamar mandi atau menggunakan jasa laundry berbayar di sekitar hotel."
+    },
+    {
+        "id": 117,
+        "key": "Bagaimana ketersediaan air bersih dan kamar mandi di hotel?",
+        "value": "Air bersih (shower hangat/dingin, kloset duduk, keran) berjalan lancar 24 jam."
+    },
+    {
+        "id": 118,
+        "key": "Apakah kunci kamar berupa kartu magnetik (keycard) atau kunci manual?",
+        "value": "Hampir seluruh hotel di Arab Saudi saat ini menggunakan kartu magnetik (keycard)."
+    },
+    {
+        "id": 119,
+        "key": "Berapa kartu kunci yang diberikan untuk satu kamar?",
+        "value": "Umumnya diberikan 1 kartu kunci per kamar untuk dipegang bersama penghuni kamar."
+    },
+    {
+        "id": 120,
+        "key": "Apakah di area hotel dekat dengan minimarket, apotek, atau pedagang makanan?",
+        "value": "Ya, kawasan sekitar hotel di Makkah dan Madinah sangat ramah pejalan kaki dan dikelilingi oleh minimarket (Bin Dawood, Superstore), apotek (Nahdi), dan toko buah/makanan."
+    },
+    {
+        "id": 121,
+        "key": "Bagaimana pemisahan kamar antara jamaah laki-laki dan perempuan yang bukan muhrim?",
+        "value": "Jemaah laki-laki dan perempuan yang bukan mahram dipisah total di kamar yang berbeda (Kamar Khusus Pria dan Kamar Khusus Wanita)."
+    },
+    {
+        "id": 122,
+        "key": "Bisakah pasangan suami istri berada di kamar yang sama jika mengambil tipe Quad?",
+        "value": "Tidak bisa, kecuali jika tipe Quad tersebut diisi oleh satu keluarga penuh (misal: Suami, Istri, dan 2 Anak/Keluarga Mahram). Jika digabung jemaah lain, suami dan istri akan dipisah ke kamar khusus laki-laki dan khusus perempuan."
+    },
+    {
+        "id": 123,
+        "key": "Apakah hotel di Makkah/Madinah menyediakan fasilitas aksesibel untuk pengguna kursi roda?",
+        "value": "Ya, hotel-hotel dilengkapi dengan ramp/akses jalan landai, lift berkapasitas besar, dan area pintu yang luas untuk pengguna kursi roda."
+    },
+    {
+        "id": 124,
+        "key": "Kapan waktu check-in dan check-out hotel disesuaikan dengan jadwal penerbangan?",
+        "value": "Prosedur umum Arab Saudi: Check-in: Pukul 16.00 / 17.00 waktu setempat. Check-out: Pukul 12.00 / 13.00 waktu setempat. (Jadwal ini telah disesuaikan oleh Tour Leader/Handling travel)."
+    },
+    {
+        "id": 125,
+        "key": "Apa yang harus dilakukan jika ada fasilitas kamar hotel yang rusak atau tidak berfungsi?",
+        "value": "Segera laporkan ke Ketua Rombongan / Tour Leader / Handling Travel, atau langsung menghubungi bagian Housekeeping / Receptionist di lobby hotel."
+    },
+    {
+        "id": 126,
+        "key": "Berapa kali kegiatan manasik umroh diadakan sebelum keberangkatan?",
+        "value": "Umumnya diadakan 1 hingga 2 kali, terdiri dari teori/pembekalan materi dan praktik lapangan."
+    },
+    {
+        "id": 127,
+        "key": "Di mana lokasi pelaksanaan manasik umroh?",
+        "value": "Berlokasi di Masjid An Namiroh Firdaus (Kutorejo, Mojokerto) yang sudah dilengkapi dengan miniature Ka'bah dan Sa'i."
+    },
+    {
+        "id": 128,
+        "key": "Apakah manasik wajib dihadiri oleh seluruh calon jamaah?",
+        "value": "Sangat dianjurkan / Wajib, agar jemaah memahami rukun, syarat, larangan ihram, serta teknis perjalanan demi kelancaran ibadah."
+    },
+    {
+        "id": 129,
+        "key": "Apakah ada bimbingan manasik secara dalam jaringan (online/Zoom) bagi yang di luar kota?",
+        "value": "Ada, travel umumnya memfasilitasi rekaman video manasik atau menyelenggarakan sesi live streaming / Zoom Meeting bagi jemaah luar kota."
+    },
+    {
+        "id": 130,
+        "key": "Materi apa saja yang diberikan saat manasik?",
+        "value": "Fikih umrah (syarat, rukun, wajib umrah, & larangan ihram). Praktik mengenakan kain ihram (pria) dan tata cara tawaf, sai, serta tahallul. Pembekalan kondisi fisik, kesehatan, dan alur perjalanan udara/darat. Tata tertib serta tips keselamatan selama di tanah suci."
+    },
+    {
+        "id": 131,
+        "key": "Apakah jamaah mendapatkan buku panduan doa dan tata cara umroh?",
+        "value": "Ya, buku panduan manasik & himpunan doa (berupa buku saku atau aplikasi) diberikan dalam paket fasilitas travel."
+    },
+    {
+        "id": 132,
+        "key": "Berapa kali ibadah umroh (tawaf & sai) dipandu langsung oleh muthawwif selama di sana?",
+        "value": "Minimal 1 kali untuk umrah utama (wajib). Umrah sunnah berikutnya biasanya tetap didampingi muthawwif sesuai jadwal program travel."
+    },
+    {
+        "id": 133,
+        "key": "Di titik mana pendaftaran niat ihram (miqat) dilakukan?",
+        "value": "Rute Madinah dulu baru Makkah: Ber-ihram/niat dari Bir Ali (Zulhulaifah), Qarn Al Manazil atau As Sail, Juhfah. Rute Langsung Makkah (Landing Jeddah): Niat ihram dilakukan di atas pesawat saat mendekati area Yalamlam atau saat tiba di Bandara King Abdulaziz Jeddah."
+    },
+    {
+        "id": 134,
+        "key": "Apakah diperbolehkan mengambil umroh sunnah berulang kali (badal/umroh kedua)?",
+        "value": "Boleh, selama kondisi fisik jemaah fit dan tidak mengganggu waktu pelaksanaan ibadah harian."
+    },
+    {
+        "id": 135,
+        "key": "Bagaimana prosedur pelaksanaan umroh sunnah tambahan dari Miqat Ji'ranah/Tan'im?",
+        "value": "Jemaah mengambil miqat terdekat (Masjid Aisyah Tan'im atau Ji'ranah) menggunakan bus/taksi, berniat ihram di sana, lalu kembali ke Masjidil Haram untuk tawaf, sai, dan tahallul."
+    },
+    {
+        "id": 136,
+        "key": "Siapa pimpinan rombongan (tour leader) dan muthawwif yang mendampingi grup kami?",
+        "value": "Pembagian Tour Leader (penanggung jawab teknis dari Indonesia) dan Muthawwif (pembimbing ibadah lokal) akan diinfokan pada grup WhatsApp sebelum keberangkatan."
+    },
+    {
+        "id": 137,
+        "key": "Apakah muthawwif fasih berbahasa Indonesia dan Arab?",
+        "value": "Ya, muthawwif yang disediakan biasanya adalah mahasiswa Indonesia yang menuntut ilmu di Arab Saudi atau WNI yang sudah lama menetap di sana."
+    },
+    {
+        "id": 138,
+        "key": "Bagaimana jika ada jamaah yang terpisah dari rombongan saat tawaf atau sai?",
+        "value": "Tetap tenang, gunakan ID card identitas travel. Sepakati titik kumpul (meeting point) sebelum ibadah dimulai, atau hubungi Tour Leader/Muthawwif via telepon/WhatsApp."
+    },
+    {
+        "id": 139,
+        "key": "Apakah ada bimbingan ibadah khusus untuk jamaah wanita saat mengalami haid?",
+        "value": "Ada, pembimbing akan memberikan pengarahan terkait penundaan ibadah umrah, penggunaan obat penunda haid (jika diperlukan), atau tata cara beriktikaf/berdoa di luar area utama masjid."
+    },
+    {
+        "id": 140,
+        "key": "Bagaimana tata cara ibadah di Raudhah (Masjid Nabawi)?",
+        "value": "Jemaah masuk sesuai jam/jadwal yang ditentukan dokumen resmi (Tasrih). Di dalam Raudhah, jemaah dapat melaksanakan salat sunnah, berdoa, dan bersalawat di dekat makam Rasulullah SAW."
+    },
+    {
+        "id": 141,
+        "key": "Apakah masuk ke Raudhah menggunakan izin aplikasi Taspermits/Nusuk?",
+        "value": "Ya, masuk ke Raudhah mewajibkan izin resmi (Tasrih) melalui aplikasi Nusuk atau izin kelompok (Group Permit) yang diurus oleh pihak penyelenggara."
+    },
+    {
+        "id": 142,
+        "key": "Siapa yang memproses pendaftaran izin (tasrih) masuk Raudhah?",
+        "value": "Pihak travel / muthawwif yang mengurus pengajuan Tasrih kolektif untuk seluruh rombongan jemaah."
+    },
+    {
+        "id": 143,
+        "key": "Berapa kali jatah masuk Raudhah yang didapatkan oleh setiap jamaah?",
+        "value": "Sesuai regulasi Pemerintah Arab Saudi, jemaah mendapatkan jatah 1 kali izin masuk Raudhah per penerbitan visa/periode menginap."
+    },
+    {
+        "id": 144,
+        "key": "Bagaimana jika jadwal masuk Raudhah bentrok dengan jadwal lainnya?",
+        "value": "Jadwal kunjungan ke Raudhah bersifat prioritas utama. Dari pihak travel memilihkan jadwal masuk Raudhah tidak bersamaan dengan kegiatan lain."
+    },
+    {
+        "id": 145,
+        "key": "Apakah ada alat bantu komunikasi (seperti radio transmitter/audio receiver) saat tawaf/sai?",
+        "value": "Untuk aturan terbaru tidak menggunakan alat bantu."
+    },
+    {
+        "id": 146,
+        "key": "Bagaimana hukum dan solusi jika melanggar larangan ihram secara tidak sengaja?",
+        "value": "Jika tidak sengaja atau karena lupa/ketidaktahuan, pelanggaran tersebut diampuni dan tidak terkena dosa/denda (Dam). Namun, jemaah wajib langsung menghentikan pelanggaran tersebut seketika setelah sadar."
+    },
+    {
+        "id": 147,
+        "key": "Bagaimana tata cara pembayaran dam (denda) jika terjadi pelanggaran ihram?",
+        "value": "Pelanggaran disengaja dikenakan denda (Dam), bisa berupa menyembelih seekor kambing, memberi makan fakir miskin, atau berpuasa. Pembayaran dikoodinasikan melalui muthawwif untuk penyaluran hewan kurban lokal di Makkah."
+    },
+    {
+        "id": 148,
+        "key": "Apakah ada bimbingan mengenai keutamaan tempat-tempat bersejarah di Makkah & Madinah?",
+        "value": "Ya, muthawwif akan memandu dan menceritakan nilai sejarah dari tiap lokasi saat kegiatan Ziarah/City Tour (seperti Jabal Uhud, Masjid Quba, Jabal Tsur, Jabal Rahmah, dll.)."
+    },
+    {
+        "id": 149,
+        "key": "Bolehkah membayarkan ibadah umroh untuk kerabat yang sudah meninggal (Badal Umroh)?",
+        "value": "Boleh, menurut fikih Islam seseorang dapat membadalkan (mewakilkan) umrah untuk orang tua atau kerabat yang telah meninggal dunia, atau orang tua yang sakit tua/tidak mampu berpergian (uzur syar'i)."
+    },
+    {
+        "id": 150,
+        "key": "Apakah travel menyediakan jasa badal umroh resmi bagi keluarga yang tidak ikut?",
+        "value": "Ya, sebagian besar travel menyediakan layanan Badal Umrah yang dilaksanakan oleh muthawwif/alumni mahasiswa teologi lokal yang tepercaya, lengkap dengan bukti sertifikat dan dokumentasi video."
+    },
+    {
+        "id": 151,
+        "key": "Vaksinasi apa saja yang diwajibkan oleh Pemerintah Indonesia dan Arab Saudi?",
+        "value": "Wajib Utama: Vaksin Meningitis Meningokokus dan Polio."
+    },
+    {
+        "id": 152,
+        "key": "Di mana tempat resmi untuk melakukan suntik vaksin Meningitis?",
+        "value": "Di Kantor Kesehatan Pelabuhan (KKP), Rumah Sakit Daerah/Swasta, atau Klinik Kesehatan yang melayani vaksinasi internasional terintegrasi dengan portal SATUSEHAT / e-KTA (Sertifikat Vaksin Internasional)."
+    },
+    {
+        "id": 153,
+        "key": "Kapan waktu terbaik untuk melakukan vaksinasi sebelum jadwal berangkat?",
+        "value": "Maksimal 10-14 hari sebelum tanggal keberangkatan, agar kekebalan/antibodi tubuh sudah terbentuk secara optimal."
+    },
+    {
+        "id": 154,
+        "key": "Apakah asuransi perjalanan kesehatan sudah termasuk dalam biaya paket?",
+        "value": "Ya, biaya paket umrah umumnya sudah mencakup asuransi perjalanan sesuai regulasi penerbitan visa dari Kementerian Haji & Umrah Arab Saudi."
+    },
+    {
+        "id": 155,
+        "key": "Apa saja yang ditanggung (cover) oleh asuransi kesehatan selama di Tanah Suci?",
+        "value": "Menanggung perawatan darurat (emergency room), rawat inap rumah sakit akibat sakit mendadak/kecelakaan, tindakan medis darurat, hingga pemulangan jenazah (repatriasi)."
+    },
+    {
+        "id": 156,
+        "key": "Bagaimana jika jamaah mendadak sakit dan perlu dirawat di rumah sakit di Arab Saudi?",
+        "value": "Jemaah akan segera diantar oleh tim Handling / Muthawwif travel ke RS terdekat. RS pemerintah Arab Saudi dan jaringannya melayani tindakan medis darurat bagi jemaah pemegang visa resmi/asuransi."
+    },
+    {
+        "id": 157,
+        "key": "Apakah ada dokter atau tenaga medis yang mendampingi rombongan dari Indonesia?",
+        "value": "Untuk perjalanan umrah reguler, pendampingan medis bersifat koordinasi dengan Muthawwif/Tour Leader serta memanfaatkan fasilitas kesehatan lokal. (Untuk grup/paket umrah khusus/VIP, beberapa travel menyediakan dokter pendamping internal)."
+    },
+    {
+        "id": 158,
+        "key": "Obat-obatan pribadi apa saja yang wajib dibawa dari rumah?",
+        "value": "Obat penyakit kronis (obat darah tinggi, diabetes, jantung, asma, dll.), obat pertolongan pertama (parasetamol, batuk/pilek, obat lambung, antimuntah, antidiarea, koyo, dan suplemen/vitamin)."
+    },
+    {
+        "id": 159,
+        "key": "Bagaimana aturan membawa obat resep dokter melalui pemeriksaan imigrasi bandara?",
+        "value": "Simpan obat dalam kemasan aslinya dan sertakan surat resep / salinan resep resmi dari dokter (sebaiknya diterjemahkan dalam bahasa Inggris) untuk ditunjukkan jika ada pemeriksaan dari petugas imigrasi/bea cukai."
+    },
+    {
+        "id": 160,
+        "key": "Apakah ada pembatasan usia minimal atau maksimal untuk jamaah umroh saat ini?",
+        "value": "Tidak ada pembatasan usia khusus. Anak-anak maupun lansia diperbolehkan berangkat selama kondisi fisik sehat dan memenuhi syarat medis (istitha'ah)."
+    },
+    {
+        "id": 161,
+        "key": "Bagaimana penanganan bagi jamaah lanjut usia (lansia)?",
+        "value": "Lansia disarankan didampingi oleh anggota keluarga. Pihak travel memprioritaskan bantuan pendampingan fisik, alokasi tempat duduk, dan koordinasi penggunaan alat bantu seperti kursi roda."
+    },
+    {
+        "id": 162,
+        "key": "Apakah travel menyediakan sewa kursi roda untuk tawaf dan sai?",
+        "value": "Travel membantu mengordinasikan pendaftaran dan penyewaan kursi roda resmi lokal di Masjidil Haram, baik dengan pendamping pendorong maupun penggunaan skuter mandiri."
+    },
+    {
+        "id": 163,
+        "key": "Berapa kisaran biaya sewa kursi roda beserta pendorong resminya di Masjidil Haram?",
+        "value": "Kisaran tarif pendorong resmi (berpakaian seragam khusus) di Makkah adalah sekitar SAR 150 - SAR 250 (sekitar Rp 2.500.000 untuk paket lengkap Tawaf & Sai, tergantung tingkat kepadatan jemaah)."
+    },
+    {
+        "id": 164,
+        "key": "Bisakah jamaah membawa kursi roda pribadi dari Indonesia?",
+        "value": "Bisa, jemaah diizinkan membawa kursi roda lipat pribadi dari rumah untuk mobilitas harian di hotel dan perjalanan."
+    },
+    {
+        "id": 165,
+        "key": "Bagaimana prosedur membawa kursi roda di pesawat (bagasi khusus)?",
+        "value": "Kursi roda didaftarkan saat check-in di bandara. Jemaah tetap bisa menggunakannya hingga ke pintu pesawat (gate), kemudian petugas maskapai akan memasukkannya ke bagasi pesawat secara gratis (free baggage Allowance/Special Baggage)."
+    },
+    {
+        "id": 166,
+        "key": "Apakah boleh menggunakan pendorong kursi roda non-resmi (liar) di Makkah?",
+        "value": "Sangat tidak disarankan / Dilarang. Menggunakan pendorong liar berisiko ditangkap oleh petugas keamanan (Asykar) serta berpotensi menimbulkan pemerasan atau jemaah ditinggalkan di tengah ibadah."
+    },
+    {
+        "id": 167,
+        "key": "Bagaimana memfungsikan skuter listrik untuk tawaf dan sai di lantai atas Masjidil Haram?",
+        "value": "Jemaah menuju area khusus skuter (Lantai Mezzanine/Lantai Atas Masjidil Haram), menyewa unit skuter di loket resmi, dan mengendarainya secara mandiri mengikuti jalur khusus Tawaf dan Sai."
+    },
+    {
+        "id": 168,
+        "key": "Berapa biaya sewa skuter listrik untuk ibadah umroh?",
+        "value": "Tarif resmi di Masjidil Haram: Skuter 1 Kursi (Single): Sekitar SAR 115 (Tawaf + Sai). Skuter 2 Kursi (Double): Sekitar SAR 230 (Tawaf + Sai)."
+    },
+    {
+        "id": 169,
+        "key": "Bagaimana jika jamaah wanita mengalami haid tepat sebelum ibadah umroh dimulai?",
+        "value": "Jemaah tetap berniat ihram di Miqat dan menjaga larangan ihram, tetapi menunda pelaksanaan Tawaf hingga suci. Jika rombongan harus berpindah kota, wajib berkonsultasi dengan Muthawwif terkait hukum dan solusi fikihnya."
+    },
+    {
+        "id": 170,
+        "key": "Bolehkah jamaah wanita mengonsumsi obat penunda haid sesuai saran dokter?",
+        "value": "Boleh, berdasarkan fatwa mayoritas ulama, mengonsumsi obat penunda haid hukumnya mubah (diizinkan) selama aman bagi kesehatan dan atas rekomendasi dokter medis."
+    },
+    {
+        "id": 171,
+        "key": "Bagaimana mengatasi kondisi cuaca ekstrem (sangat panas/dingin) di Arab Saudi?",
+        "value": "Minum air zamzam/mineral secara teratur tanpa menunggu haus, gunakan pelembap/kulit (lip balm & lotion), gunakan kacamata hitam, serta semprotan air saat panas terik, dan bawa jaket/pakaian hangat jika musim dingin."
+    },
+    {
+        "id": 172,
+        "key": "Pertolongan pertama apa yang disiapkan travel jika ada jamaah dehidrasi/kelelahan?",
+        "value": "Tim medis/pendamping memindahkan jemaah ke area teduh/ber-AC, memberikan oralit/minuman elektrolit, kompres air dingin, dan memfasilitasi penanganan medis darurat jika diperlukan."
+    },
+    {
+        "id": 173,
+        "key": "Apakah jamaah hamil diperbolehkan mengikuti perjalanan umroh?",
+        "value": "Boleh, selama kondisi kandungan dinyatakan sehat dan kuat oleh dokter spesialis kandungan serta mendapat surat izin terbang."
+    },
+    {
+        "id": 174,
+        "key": "Batas usia kehamilan berapa minggu yang ditoleransi untuk terbang?",
+        "value": "Umumnya maskapai penerbangan mengizinkan usia kehamilan antara 14 hingga 28 minggu (Trimester ke-2). Kehamilan di bawah 12 minggu atau di atas 32-36 minggu biasanya dilarang demi keselamatan."
+    },
+    {
+        "id": 175,
+        "key": "Apa yang harus dilakukan jika ada jamaah yang meninggal dunia di Tanah Suci?",
+        "value": "Pihak travel bersama Maktab, KJRI/KBRI, dan pihak keluarga akan mengurus pemulasaraan jenazah, salat jenazah (biasanya di Masjidil Haram/Masjid Nabawi), dan pemakaman di pemakaman umum setempat (seperti Ma'la di Makkah atau Baqi di Madinah). Kebijakan Pemerintah Arab Saudi tidak mengizinkan pemulangan jenazah ke negara asal."
+    },
+    {
+        "id": 176,
+        "key": "Perlengkapan umroh yang dibagikan travel",
+        "value": "Biasanya mencakup koper besar (bagasi), koper kecil/kabin, tas paspor/selempang, kain ihram + sabuk (pria), mukena + jilbab (wanita), seragam batik travel, buku panduan doa, serta penanda koper (tagging), bantal leher, tas sandal."
+    },
+    {
+        "id": 177,
+        "key": "Waktu distribusi perlengkapan",
+        "value": "Umumnya didistribusikan 2-4 minggu sebelum jadwal keberangkatan atau saat kegiatan manasik umroh."
+    },
+    {
+        "id": 178,
+        "key": "Jumlah set ihram / mukena",
+        "value": "Pria: Minimal 2 set kain ihram (1 digunakan, 1 cadangan jika kotor/terkena najis). Wanita: Minimal 2 set mukena dan 4-5 stel busana syar'i harian."
+    },
+    {
+        "id": 179,
+        "key": "Pakaian harian yang disarankan",
+        "value": "Pakaian berbahan katun/kaos tebal yang menyerap keringat, longgar, tidak menerawang, dan menutup aurat. Bawa jaket/sweater jika berangkat pada musim dingin (November-Februari)."
+    },
+    {
+        "id": 180,
+        "key": "Jenis alas kaki yang nyaman",
+        "value": "Sandal atau sepatu sandal yang empuk, tidak licin, dan mudah dilepas-pasang. Untuk pria, pastikan alas kaki tidak menutupi mata kaki dan jemari kaki saat dalam kondisi berihram. Untuk perempuan alas kaki tertutup rapat."
+    },
+    {
+        "id": 181,
+        "key": "Perlengkapan mandi berwewangian",
+        "value": "Boleh dibawa dan digunakan sebelum berniat ihram. Setelah berniat dan melafalkan talbiyah (berada dalam kondisi ihram), larangan memakai wewangian berlaku total hingga tahallul."
+    },
+    {
+        "id": 182,
+        "key": "Akses internet / komunikasi",
+        "value": "Dapat menggunakan jaringan Wi-Fi hotel/bandara, mengaktifkan paket roaming dari operator Indonesia (Telkomsel, Indosat, XL), atau membeli kartu SIM lokal Arab Saudi."
+    },
+    {
+        "id": 183,
+        "key": "Pilihan SIM lokal vs Paket Roaming",
+        "value": "Roaming: Praktis, tidak perlu lepas kartu/registrasi ulang paspor, cocok untuk rombongan keluarga atau kebutuhan singkat. SIM Lokal: Kuota internet lebih murah dan sinyal lebih stabil untuk penggunaan data besar."
+    },
+    {
+        "id": 184,
+        "key": "Tempat pembelian kartu SIM lokal resmi",
+        "value": "Di konter resmi operator (STC, Mobily, Zain) yang berada di area kedatangan Bandara Jeddah/Madinah, atau gerai resmi di sekitar pelataran masjid utama."
+    },
+    {
+        "id": 185,
+        "key": "Status nomor WhatsApp jika memakai kartu lokal",
+        "value": "Nomor WhatsApp Indonesia tetap aktif dan bisa digunakan seperti biasa selama memilih opsi Keep/Gunakan Nomor Lama saat pertama kali mengganti SIM card."
+    },
+    {
+        "id": 186,
+        "key": "Jenis colokan/steker listrik",
+        "value": "Menggunakan steker Tipe G (kaki tiga berbentuk persegi). Disarankan membawa universal adaptor."
+    },
+    {
+        "id": 187,
+        "key": "Batas kapasitas powerbank di pesawat",
+        "value": "Maksimal kapasitas 10.000 mAh (100 Wh) yang diizinkan masuk ke dalam kabin (dilarang keras dimasukkan ke dalam bagasi terdaftar). Powerbank kapasitas 20.000-32.000 mAh memerlukan persetujuan maskapai."
+    },
+    {
+        "id": 188,
+        "key": "Lokasi ziarah di Madinah",
+        "value": "Masjid Quba, Jabal Uhud & Pemakaman Syuhada Uhud, Masjid Qiblatain, dan Kebun Kurma, Jabal Magnet + Percetakan Al Quran."
+    },
+    {
+        "id": 189,
+        "key": "Lokasi ziarah di Makkah",
+        "value": "Jabal Tsur, Padang Arafah (Jabal Rahmah), Muzdalifah, Mina, dan Jabal Nur (Gua Hira)."
+    },
+    {
+        "id": 190,
+        "key": "Fasilitas bus dan pemandu ziarah",
+        "value": "Ya, kegiatan ziarah/city tour resmi dari travel sudah include bus AC dan bimbingan mutawwif (pemandu)."
+    },
+    {
+        "id": 191,
+        "key": "Durasi rata-rata ziarah per hari",
+        "value": "Sekitar 3 hingga 5 jam (biasanya dilaksanakan pagi hari setelah sarapan agar tidak bentrok dengan waktu sholat fardhu di masjid)."
+    },
+    {
+        "id": 192,
+        "key": "Kunjungan ke peternakan unta / museum",
+        "value": "Beberapa travel memasukkan museum kebudayaan/wahana sejarah (seperti Museum Wahyu atau Museum Al-Amoudi) ke dalam program. Namun, kunjungan ke peternakan unta saat ini sering dibatasi oleh otoritas setempat demi alasan kesehatan."
+    },
+    {
+        "id": 193,
+        "key": "Destinasi tambahan paket Umroh Plus",
+        "value": "Tergantung paket yang dipilih: Turki (Istanbul/Cappadocia), Aqsa/Palestina (via Yordania), Dubai/UEA, Mesir, atau Thaif."
+    },
+    {
+        "id": 194,
+        "key": "Aturan hukum & norma budaya lokal",
+        "value": "Dilarang membuang sampah sembarangan, merokok di area terlarang, memotret orang lokal tanpa izin (terutama wanita), berdua-duaan dengan non-mahram di tempat sepi, serta memicu keributan."
+    },
+    {
+        "id": 195,
+        "key": "Aturan foto/video di Masjidil Haram & Nabawi",
+        "value": "Diperbolehkan menggunakan kamera ponsel untuk dokumentasi pribadi secara terbatas. Dilarang membawa kamera profesional (DSLR/Mirrorless), tripod, atau membentang spanduk/bendera."
+    },
+    {
+        "id": 196,
+        "key": "Sanksi pembentangan bendera/spanduk",
+        "value": "Dapat berakibat penahanan oleh askar (tata tertib masjid), interogasi, penyitaan barang, hingga deportasi atau sanksi hukum dari otoritas Arab Saudi."
+    },
+    {
+        "id": 197,
+        "key": "Tempat membeli oleh-oleh terjangkau",
+        "value": "Madinah: Pasar Kurma Central, Souq Chakiya, atau toko grosir di sekitar Masjid Quba. Makkah: Pasar Kakiyah (Toko Grosir), area Kakia, atau pertokoan di dalam kompleks Tower Zamzam (untuk kenyamanan)."
+    },
+    {
+        "id": 198,
+        "key": "Memaketkan oleh-oleh agar tidak over-bagasi",
+        "value": "Gunakan jasa kargo/ekspedisi khusus umroh yang ada di Makkah/Madinah untuk mengirim barang/oleh-oleh berat (seperti sajadah tebal atau air Zamzam ekstra) langsung ke alamat rumah di Indonesia dengan biaya pengiriman ditanggung masing-masing jamaah."
+    },
+    {
+        "id": 199,
+        "key": "Pengurusan air Zamzam tambahan",
+        "value": "Jemaah umumnya mendapat jatah 5 liter air Zamzam gratis dari pihak Saudi yang dibagikan saat tiba di bandara Indonesia. Pembelian air Zamzam tambahan hanya bisa dilakukan melalui prosedur resmi di bandara sebelum kepulangan (tergantung regulasi maskapai yang berlaku)."
+    },
+    {
+        "id": 200,
+        "key": "Alur kepulangan jamaah",
+        "value": "1. Tawaf Wada' (tawaf perpisahan) di Masjidil Haram sebelum keluar kota Makkah. 2. Check-out hotel dan penimbangan bagasi (sweeping barang). 3. Perjalanan bus menuju Bandara Jeddah / Madinah. 4. Proses check-in, pemeriksaan imigrasi, dan pengembalian tax refund (jika ada). 5. Boarding dan penerbangan kembali ke Indonesia. 6. Tiba di bandara tujuan Indonesia, proses imigrasi, pengambilan bagasi & air Zamzam, lalu kepulangan ke rumah masing-masing."
+    },
+    {
+        "id": 201,
         "key": "Bagaimana tata cara dan tahapan pendaftaran umroh?",
         "value": "Tahapannya: (1) Pilih jadwal dan paket umroh yang diinginkan; (2) Serahkan dokumen persyaratan (atau fotokopi awal untuk pendataan); (3) Bayar DP (Down Payment) untuk mengunci seat pesawat; (4) Urus paspor dan vaksinasi jika belum ada; (5) Lakukan pelunasan dan serahkan dokumen asli sesuai batas waktu (deadline) yang ditentukan."
     },
     {
-        "id": 3,
-        "key": "Bagaimana jika nama di paspor saya baru terdiri dari 1 kata?",
-        "value": "Anda wajib melakukan penambahan nama di kantor imigrasi setempat hingga menjadi minimal 2 kata, karena ini adalah syarat wajib untuk pengurusan Visa Umroh."
-    },
-    {
-        "id": 4,
+        "id": 202,
         "key": "Apakah pengurusan visa umroh disiapkan oleh pihak travel?",
         "value": "Ya, seluruh proses pengajuan dan penerbitan Visa Umroh diproses langsung oleh tim legalitas PT. An Namiroh Travelindo."
     },
     {
-        "id": 5,
+        "id": 203,
         "key": "Berapa harga pembuatan Visa Umroh?",
         "value": "Visa Only (hanya visa): 123 USD. Visa Plus Bus (termasuk Bus Bandara serta Mazarat Madinah & Makkah, minimal 35 pax): 134 USD."
     },
     {
-        "id": 6,
-        "key": "Apa saja syarat pengajuan Visa Umroh?",
-        "value": "(1) Scan paspor format JPEG; (2) Tiket pesawat pulang-pergi (PP); (3) Booking hotel resmi di aplikasi Nusuk; (4) Manifest jamaah beserta detail paket info; (5) Pembayaran penuh (full payment)."
-    },
-    {
-        "id": 7,
-        "key": "Kapan batas waktu pelunasan biaya umroh?",
-        "value": "Pelunasan biaya umroh dan penyerahan berkas fisik asli dilakukan paling lambat 30 hari sebelum tanggal keberangkatan, atau sesuai ketentuan masing-masing program."
-    },
-    {
-        "id": 8,
+        "id": 204,
         "key": "Apakah DP dapat dikembalikan (refund) jika batal berangkat?",
         "value": "Pengembalian dana (refund) akibat pembatalan sepihak dari jamaah akan diproses sesuai ketentuan dan regulasi pembatalan yang berlaku, dikurangi biaya pendaftaran, pemesanan tiket, serta visa yang telah diterbitkan."
     },
     {
-        "id": 9,
+        "id": 205,
         "key": "Metode pembayaran apa saja yang diterima untuk pendaftaran dan pelunasan?",
         "value": "Pembayaran dilakukan melalui transfer ke rekening resmi perusahaan, misalnya BCA, Bank Mega Syariah, BSI, atau bank syariah mitra lainnya. Bukti transfer kemudian dikonfirmasi ke bagian Accounting. Pastikan transfer hanya dilakukan ke rekening resmi atas nama PT. An Namiroh Travelindo, bukan ke rekening pribadi perorangan/agen."
     },
     {
-        "id": 10,
+        "id": 206,
         "key": "Apa itu Program Talangan Haji/Umroh dan apa beda versi Normal dengan Promo?",
         "value": "Program talangan membantu membiayai porsi/keberangkatan jamaah terlebih dahulu. Varian Normal dan Promo berbeda pada besaran uang muka (DP), skema angsuran, serta syarat administrasi. Ketentuan lengkap dapat dikonsultasikan langsung dengan tim CS/marketing."
     },
     {
-        "id": 11,
+        "id": 207,
         "key": "Berapa durasi perjalanan umroh yang tersedia?",
         "value": "Tersedia berbagai pilihan durasi program: 9, 10, 11, 12, 13, 15, 16, hingga 30 hari. Beberapa program juga menawarkan promo seperti '2 Free 1' atau '3 Free 1' serta kelas VIP/Gold."
     },
     {
-        "id": 12,
+        "id": 208,
         "key": "Apa beda program Reguler dan Arbain?",
-        "value": "Program Reguler (10–12 hari) berfokus pada ibadah umroh di Makkah dan ziarah/city tour di Madinah & Makkah. Program Arbain (16 hari atau lebih) memberikan kesempatan jamaah melaksanakan shalat fardhu 40 waktu berjamaah tanpa terputus di Masjid Nabawi, Madinah."
+        "value": "Program Reguler (10-12 hari) berfokus pada ibadah umroh di Makkah dan ziarah/city tour di Madinah & Makkah. Program Arbain (16 hari atau lebih) memberikan kesempatan jamaah melaksanakan shalat fardhu 40 waktu berjamaah tanpa terputus di Masjid Nabawi, Madinah."
     },
     {
-        "id": 13,
-        "key": "Apa saja fasilitas yang sudah termasuk dalam harga paket umroh?",
-        "value": "Tiket pesawat pulang-pergi sesuai rute & maskapai; Visa Umroh resmi; akomodasi hotel di Makkah dan Madinah sesuai kelas paket; makan 3x sehari menu Indonesia (buffet/box); transportasi bus AC standar internasional selama di Arab Saudi; pembimbing ibadah (mutawwif) dan tour leader berpengalaman; air zamzam sesuai regulasi penerbangan; serta perlengkapan umroh lengkap dan bimbingan manasik."
-    },
-    {
-        "id": 14,
-        "key": "Apakah harga paket sudah termasuk pembuatan paspor dan vaksinasi?",
-        "value": "Belum. Biaya pembuatan paspor pribadi, penambahan nama di imigrasi, serta vaksin meningitis/COVID (jika diwajibkan) menjadi tanggung jawab jamaah masing-masing."
-    },
-    {
-        "id": 15,
-        "key": "Perlengkapan apa saja yang didapatkan jamaah saat mendaftar?",
-        "value": "Jamaah mendapatkan set perlengkapan lengkap: koper utama, koper kabin/tas paspor, kain ihram + sabuk (untuk pria) atau mukena + jilbab (untuk wanita), batik seragam, serta buku panduan doa."
-    },
-    {
-        "id": 16,
+        "id": 209,
         "key": "Kapan bimbingan manasik umroh dilaksanakan?",
         "value": "Bimbingan manasik biasanya diadakan H-7 sampai H-14 sebelum keberangkatan, mencakup teori maupun praktik tata cara ibadah umroh sesuai sunnah."
     },
     {
-        "id": 17,
-        "key": "Bagaimana penyediaan makanan untuk jamaah selama di Arab Saudi?",
-        "value": "Makanan disajikan 3x sehari dengan menu masakan khas Indonesia yang disesuaikan dengan lidah jamaah, disajikan secara buffet/prasmanan atau box sesuai ketentuan hotel."
-    },
-    {
-        "id": 18,
-        "key": "Apakah tersedia makanan khusus untuk jamaah dengan kebutuhan diet atau lansia?",
-        "value": "Jamaah dengan pantangan makanan tertentu atau kebutuhan khusus disarankan menginformasikan kepada tim/mutawwif saat pendaftaran agar dapat dikoordinasikan dengan pihak penyedia katering."
-    },
-    {
-        "id": 19,
+        "id": 210,
         "key": "Apakah bisa mendaftar atau bertanya melalui agen/mitra resmi?",
         "value": "Bisa. Kami memiliki jaringan agen dan mitra resmi di berbagai daerah yang siap membantu proses konsultasi, pendaftaran, penyerahan berkas, hingga koordinasi keberangkatan."
     },
     {
-        "id": 20,
+        "id": 211,
         "key": "Bagaimana cara memastikan agen/mitra yang saya hubungi resmi?",
         "value": "Anda dapat mengonfirmasi identitas atau nomor ID agen ke layanan Customer Service pusat sebelum melakukan transaksi atau pembayaran apa pun."
     },
     {
-        "id": 21,
+        "id": 212,
         "key": "Bagaimana cara mendaftar sebagai agen/mitra An Namiroh?",
         "value": "Anda dapat menghubungi tim Marketing/CS untuk pendaftaran kemitraan. Mitra akan mendapatkan flyer, materi promosi harian, serta panduan pendaftaran jamaah."
     },
     {
-        "id": 22,
+        "id": 213,
         "key": "Apakah An Namiroh Travelindo memiliki kantor cabang atau agen di luar daerah?",
         "value": "Ya, kami memiliki jaringan kantor cabang serta ribuan mitra/agen resmi yang tersebar di berbagai kota/kabupaten. Silakan hubungi CS untuk mengetahui lokasi agen atau cabang terdekat dari wilayah tempat tinggal Anda."
     },
     {
-        "id": 23,
-        "key": "Bagaimana jika ada jamaah yang membutuhkan kursi roda atau pendampingan khusus?",
-        "value": "Harap diinfokan sejak awal pendaftaran. Kami dapat membantu koordinasi penyediaan kursi roda dan jasa pendorong di Makkah/Madinah; biaya jasa pendorong lokal/mutawwif khusus mengikuti ketentuan yang berlaku di lokasi."
-    },
-    {
-        "id": 24,
-        "key": "Apakah jamaah wanita yang berangkat sendiri tanpa mahram diperbolehkan?",
-        "value": "Sesuai regulasi terbaru dari Pemerintah Arab Saudi, jamaah wanita kini diperbolehkan menunaikan ibadah umroh tanpa mahram laki-laki, selama berada dalam kelompok pembimbingan travel yang resmi."
-    },
-    {
-        "id": 25,
-        "key": "Apakah ada batasan usia untuk mengikuti program umroh?",
-        "value": "Tidak ada batasan usia resmi. Namun bagi jamaah lansia atau yang memiliki riwayat kesehatan khusus (risti), sangat disarankan didampingi oleh anggota keluarga serta membawa obat-obatan pribadi yang cukup."
-    },
-    {
-        "id": 26,
-        "key": "Bagaimana penanganan medis jika jamaah sakit selama di Arab Saudi?",
-        "value": "Mutawwif dan tim operasional lapangan akan mendampingi jamaah ke klinik/rumah sakit terdekat di Makkah atau Madinah. Layanan kesehatan diproses sesuai ketentuan asuransi perjalanan umroh yang berlaku."
-    },
-    {
-        "id": 27,
-        "key": "Apakah ibu hamil boleh berangkat umroh?",
-        "value": "Boleh, dengan syarat usia kehamilan memenuhi regulasi maskapai (umumnya antara 14–28 minggu) serta melampirkan surat izin/rekomendasi dokter."
-    },
-    {
-        "id": 28,
-        "key": "Berapa biaya paket untuk bayi (infant) atau anak-anak?",
-        "value": "Bayi di bawah 2 tahun biasanya dikenakan biaya tiket/visa khusus tanpa bed. Anak di bawah 12 tahun bisa memilih paket dengan atau tanpa bed."
-    },
-    {
-        "id": 29,
+        "id": 214,
         "key": "Apakah ada fasilitas antar-jemput menuju bandara keberangkatan?",
         "value": "Tergantung paket dan koordinasi titik kumpul regional (cabang/agen). Kebanyakan kelompok rombongan dikoordinasikan berangkat bersama dari titik kumpul yang telah disepakati menuju bandara."
     },
     {
-        "id": 30,
-        "key": "Berapa batas maksimal kapasitas bagasi pesawat?",
-        "value": "Umumnya bagasi terdaftar (checked baggage) 25–30 kg per jamaah dan bagasi kabin maksimal 7 kg, menyesuaikan regulasi maskapai penerbangan yang digunakan."
-    },
-    {
-        "id": 31,
-        "key": "Apakah jamaah diperbolehkan membawa power bank di dalam koper?",
-        "value": "Tidak. Power bank dilarang keras diletakkan di dalam koper besar maupun koper kecil (bagasi terdaftar). Power bank wajib dibawa di dalam tas kabin sesuai regulasi penerbangan."
-    },
-    {
-        "id": 32,
-        "key": "Apakah jamaah perlu membeli kartu SIM Arab Saudi atau memakai paket roaming?",
-        "value": "Bebas memilih. Jamaah dapat mengaktifkan paket roaming data internasional dari provider Indonesia sebelum berangkat, atau membeli kartu SIM lokal (seperti STC, Mobily, Zain) setibanya di Arab Saudi."
-    },
-    {
-        "id": 33,
+        "id": 215,
         "key": "Bagaimana cara mengaktifkan roaming data saat berada di Arab Saudi?",
         "value": "Samsung: Pengaturan HP > Koneksi > Jaringan Seluler > Aktifkan Data Roaming. Android lain: Pengaturan HP > SIM Card > Pilih Data Roaming > Aktifkan. iPhone/iOS: Pengaturan > Seluler > Pilihan Data Seluler > Aktifkan Data Roaming."
     },
     {
-        "id": 34,
-        "key": "Bagaimana cara membawa uang saku selama di Makkah & Madinah?",
-        "value": "Disarankan membawa uang tunai Riyal secukupnya untuk keperluan harian/belanja kecil, serta kartu ATM bersimbol Visa/Mastercard yang sudah diaktifkan untuk transaksi luar negeri."
-    },
-    {
-        "id": 35,
+        "id": 216,
         "key": "Kapan jamaah menerima informasi jadwal perjalanan (itinerary) dan pembagian kamar (roomlist)?",
         "value": "Dokumen itinerary perjalanan dan roomlist hotel akan dibagikan oleh tim operasional di grup WhatsApp koordinasi mendekati jadwal keberangkatan."
     },
     {
-        "id": 36,
-        "key": "Apa perbedaan tipe kamar Quad, Triple, dan Double di hotel?",
-        "value": "Quad: 1 kamar diisi 4 orang (4 tempat tidur). Triple: 1 kamar diisi 3 orang. Double: 1 kamar diisi 2 orang, biasanya untuk pasangan suami-istri atau jamaah yang ingin lebih privat, dengan tambahan biaya upgrade kamar."
-    },
-    {
-        "id": 37,
-        "key": "Seberapa jauh jarak hotel ke Masjidil Haram dan Masjid Nabawi?",
-        "value": "Jarak bervariasi tergantung hotel yang dipilih, mulai dari sekitar 100–300 meter (berjalan kaki sekitar 5 menit) hingga hotel yang menggunakan shuttle bus gratis."
-    },
-    {
-        "id": 38,
+        "id": 217,
         "key": "Berapa kisaran harga hotel tipe Quad (isi 4 orang) di Makkah?",
-        "value": "Referensi rate hotel Makkah tipe Quad Full Board dalam SAR (dapat berubah sesuai musim & ketersediaan, cek harga terbaru ke CS): Makkah Towers (16 Jun–14 Ags) 1130; Movenpick (16 Jun–8 Jul) 1300; Snood Ajyad (16 Jun–31 Jul) 490; Nada Ajyad (25 Jun–9 Sep) 450; Waha Ajyad (25 Jun–9 Sep) 430; Badr Al Masa (25 Jun–9 Sep) 360; Manazil Wisam 350; Al Ameen Ajyad (Jul–Okt) 320–340; Mather Jiwar 320; Muhajidin Al-Masih 310; Manazil Hijrah 285; Olayan Palace (Jun–Ags) 220–240. Tersedia juga tipe kamar Triple, Double, dan hitungan per-bed untuk beberapa hotel."
+        "value": "Referensi rate hotel Makkah tipe Quad Full Board dalam SAR (dapat berubah sesuai musim & ketersediaan, cek harga terbaru ke CS): Makkah Towers (16 Jun-14 Ags) 1130; Movenpick (16 Jun-8 Jul) 1300; Snood Ajyad (16 Jun-31 Jul) 490; Nada Ajyad (25 Jun-9 Sep) 450; Waha Ajyad (25 Jun-9 Sep) 430; Badr Al Masa (25 Jun-9 Sep) 360; Manazil Wisam 350; Al Ameen Ajyad (Jul-Okt) 320-340; Mather Jiwar 320; Muhajidin Al-Masih 310; Manazil Hijrah 285; Olayan Palace (Jun-Ags) 220-240. Tersedia juga tipe kamar Triple, Double, dan hitungan per-bed untuk beberapa hotel."
     },
     {
-        "id": 39,
-        "key": "Apakah penerbangan umroh bersifat direct (langsung) atau transit?",
-        "value": "Tergantung maskapai yang dipakai. Contoh direct: Saudia Airlines, Lion Air, Batik Air. Contoh dengan transit: Etihad, Emirates, Qatar Airways."
-    },
-    {
-        "id": 40,
+        "id": 218,
         "key": "Di mana titik mendarat pesawat, Jeddah atau Madinah?",
-        "value": "Tergantung rute program keberangkatan yang dipilih — bisa mendarat di Madinah terlebih dahulu, atau di Makkah via Bandara Jeddah."
+        "value": "Tergantung rute program keberangkatan yang dipilih - bisa mendarat di Madinah terlebih dahulu, atau di Makkah via Bandara Jeddah."
     },
     {
-        "id": 41,
+        "id": 219,
         "key": "Apakah ada penawaran tiket pesawat umroh dari Surabaya?",
         "value": "Ya, tersedia Combo Seat Surabaya (Malindo + Saudia Airlines) dengan estimasi harga mulai dari Rp16.xxx.xxx untuk berbagai pilihan durasi program (11D, 12D, 13D, hingga 16D), untuk keberangkatan bulan Agustus 2026."
     },
     {
-        "id": 42,
+        "id": 220,
         "key": "Berapa kali pelaksanaan ibadah umroh (miqat) selama program?",
-        "value": "Umumnya paket menyediakan 2–3 kali kesempatan umroh, dengan miqat utama di Bir Ali/Yalamlam, serta miqat tambahan seperti Ji'ranah atau Tan'im."
+        "value": "Umumnya paket menyediakan 2-3 kali kesempatan umroh, dengan miqat utama di Bir Ali/Yalamlam, serta miqat tambahan seperti Ji'ranah atau Tan'im."
     },
     {
-        "id": 43,
-        "key": "Lokasi mana saja yang didatangi saat ziarah/city tour?",
-        "value": "Di Madinah: Masjid Quba, Jabal Uhud, Kebun Kurma, dan Raudhah. Di Makkah: Jabal Tsur, Padang Arafah, Jabal Rahmah, Muzdalifah, Mina, dan Jabal Nur."
-    },
-    {
-        "id": 44,
-        "key": "Apakah pengurusan izin masuk Raudhah di Masjid Nabawi sudah diurus oleh travel?",
-        "value": "Ya, jadwal dan pengurusan izin (Tasrih/aplikasi Nusuk) untuk masuk Raudhah, baik untuk jamaah pria maupun wanita, akan dikoordinasikan oleh tim mutawwif."
-    },
-    {
-        "id": 45,
+        "id": 221,
         "key": "Program Haji apa saja yang tersedia di An Namiroh Travelindo?",
         "value": "Tersedia program Haji Khusus/PIHK (Haji Plus), serta pendampingan Haji Reguler melalui KBIHU An Namiroh."
     },
     {
-        "id": 46,
+        "id": 222,
         "key": "Bagaimana cara mendaftar program Haji Plus?",
         "value": "Jamaah dapat menghubungi tim Customer Service (CS) atau agen resmi An Namiroh dengan memberikan data diri (KTP, KK, dan Paspor) untuk diproses pendaftaran porsi serta pemesanan paketnya."
     },
     {
-        "id": 47,
+        "id": 223,
         "key": "Bagaimana cara mendaftar bimbingan KBIHU An Namiroh?",
         "value": "Pendaftaran dilakukan melalui CS/tim pendaftaran haji dengan memberikan nama lengkap jamaah untuk dimasukkan ke dalam pendataan serta grup koordinasi manasik."
     },
     {
-        "id": 48,
+        "id": 224,
         "key": "Apa fungsi Surat Rekomendasi Travel/Kemenag dan bagaimana cara mendapatkannya?",
         "value": "Surat rekomendasi diperlukan untuk pembuatan atau perpanjangan paspor di kantor imigrasi. Tim CS akan membantu menerbitkan surat rekomendasi resmi sesuai porsi/jamaah."
     },
     {
-        "id": 49,
+        "id": 225,
         "key": "Bagaimana prosedur penyerahan paspor asli jamaah haji yang sudah jadi?",
         "value": "Paspor fisik yang sudah jadi diserahkan langsung ke kantor travel/CS untuk dicatat dalam pendataan berkas dan disimpan di tempat penyimpanan resmi yang aman."
     },
     {
-        "id": 50,
+        "id": 226,
         "key": "Bagaimana cara konfirmasi kehadiran acara manasik atau tasyakuran haji?",
         "value": "Konfirmasi kehadiran dapat diisi mandiri melalui link/barcode undangan digital yang dibagikan Kemenag/Travel, atau dengan mencantumkan nama pada list konfirmasi di grup WhatsApp angkatan."
     },
     {
-        "id": 51,
-        "key": "Apakah ada seragam batik khusus untuk jamaah haji/umroh?",
-        "value": "Ya, jamaah dipersiapkan kain/baju batik resmi haji/umroh agar tampil kompak dan terkoordinasi selama kegiatan manasik maupun saat berada di Tanah Suci."
-    },
-    {
-        "id": 52,
+        "id": 227,
         "key": "Apakah travel menyediakan layanan penukaran mata uang Riyal (SAR)?",
         "value": "Ya, tim operasional menyediakan penawaran transaksi mata uang Riyal (SAR) serta informasi estimasi kurs spesial harian dari bank mitra (seperti BSI regional) untuk kemudahan dan kenyamanan jamaah."
     },
     {
-        "id": 53,
+        "id": 228,
         "key": "Bagaimana prosedur bagi calon jamaah haji yang terdaftar sebagai kuota cadangan?",
         "value": "Jamaah dengan status cadangan akan masuk dalam pendataan khusus dan tetap mengikuti prosedur manasik serta pengurusan berkas, sambil menunggu konfirmasi ketersediaan porsi utama dari Kemenag."
     },
     {
-        "id": 54,
+        "id": 229,
         "key": "Bagaimana penanganan atau pendaftaran bagi jamaah lansia untuk program haji?",
         "value": "Jamaah lansia mendapatkan perhatian khusus dari tim CS dan pembimbing ibadah. Kebutuhan khusus, pendamping keluarga, atau fasilitas tambahan dapat dikoordinasikan sejak awal pendaftaran."
     },
     {
-        "id": 55,
+        "id": 230,
         "key": "Kapan jam operasional kantor pelayanan An Namiroh Travelindo?",
-        "value": "Senin–Jumat pukul 08.00–16.00 WIB, Sabtu pukul 08.00–12.00 WIB. Hari Minggu dan tanggal merah nasional libur."
+        "value": "Senin-Jumat pukul 08.00-16.00 WIB, Sabtu pukul 08.00-12.00 WIB. Hari Minggu dan tanggal merah nasional libur."
     },
     {
-        "id": 56,
+        "id": 231,
         "key": "Nomor berapa saja yang bisa dihubungi untuk pemesanan paket dan layanan umum?",
         "value": "0857-3531-8057, 0813-2874-5647, dan 0812-1697-6330."
     },
     {
-        "id": 57,
+        "id": 232,
         "key": "Siapa kontak untuk pemesanan hotel dan LA (Land Arrangement)?",
         "value": "Fahrul: 0812-3315-2607, Hana: 0812-3315-2603, Hilda: 0856-5589-8776."
     },
     {
-        "id": 58,
+        "id": 233,
         "key": "Siapa kontak untuk layanan ticketing?",
         "value": "Evita: 0813-1215-9386, Yoga: 0857-3531-8057, Angga: 0895-3516-50650."
     },
     {
-        "id": 59,
-        "key": "Apa saja biaya yang belum termasuk dalam harga paket promo umroh?",
-        "value": "Harga paket promo belum termasuk: perlengkapan umroh, pembuatan paspor, dan vaksinasi (vaksin meningitis)."
-    },
-    {
-        "id": 63,
+        "id": 234,
         "key": "Apa saja produk oleh-oleh haji dan umroh yang tersedia di Toko Zam Zami?",
         "value": "Tersedia Piring Susun Estetik yang cocok untuk hampers, kado, atau oleh-oleh haji dan umroh, serta 'Paket Oleh-oleh Haji & Umroh Paket B'."
     },
     {
-        "id": 64,
+        "id": 235,
         "key": "Berapa harga suvenir piring susun estetik dan Paket B di Toko Zam Zami?",
         "value": "Piring susun estetik: Rp90.000. Paket Oleh-oleh Haji & Umroh Paket B: Rp1.250.000."
     },
     {
-        "id": 65,
+        "id": 236,
         "key": "Di mana lokasi Toko Zam Zami untuk membeli oleh-oleh?",
         "value": "Jl. Gajah Mada No. 101, Krewengan, Menanggal, Kec. Mojosari, Kab. Mojokerto, Jawa Timur."
     },
     {
-        "id": 66,
+        "id": 237,
         "key": "Apakah pesanan oleh-oleh dari Toko Zam Zami bisa diantar ke bandara?",
         "value": "Bisa. Pesanan dapat diambil langsung di toko atau dibawakan saat kepulangan jamaah di bandara."
     },
     {
-        "id": 67,
+        "id": 238,
         "key": "Ke mana saya harus menghubungi untuk memesan suvenir piring susun di Toko Zam Zami?",
         "value": "Order dapat dilakukan melalui WhatsApp di nomor 081330057323 atau 085856409919."
     },
     {
-        "id": 68,
+        "id": 239,
         "key": "apa ada video tutorial manasik umroh ?",
         "value": "berikut link video tutorial manasik https://www.youtube.com/watch?v=e1XsLF6aUaA"
     },
     {
-        "id": 69,
-        "key": "apa travel an namiroh sudah memiliki izin ?",
-        "value": "berikut SK AN NAMIROH SK Umroh PPIU Kemenag RI Nomor 949/2019"
-    },
-    {
-        "id": 70,
+        "id": 240,
         "key": "apa travel tajalli sudah memiliki izin ?",
         "value": "berikut SK tajalli 30122200048760001"
-    },
-    {
-        "id": 71,
-        "key": "dari bandara mana grup akan diberangkatkan?",
-        "value": "Disesuaikan dengan kota keberangkatan grup Anda (misalnya Bandara Soekarno-Hatta/CGK Jakarta, Juanda/SUB Surabaya, atau Kualanamu/KNO Medan)."
-    },
-    {
-        "id": 72,
-        "key": "jam berapa jadwal penerbangan berangkat dan pulang?",
-        "value": "Waktu pasti tertera di tiket penerbangan (e-ticket) dari travel agent."
-    },
-    {
-        "id": 73,
-        "key": "berapa kapasitas bagasi tercatat (checked baggage) yang didapatkan per jamaah?",
-        "value": "Rata-rata maskapai penerbangan internasional memberikan jatah bagasi tercatat sebesar 25 kg hingga 30 kg."
-    },
-    {
-        "id": 74,
-        "key": "berapa batas maksimal berat koper kabin?",
-        "value": "Batas standar koper kabin/tas jinjing adalah 7 kg per orang."
-    },
-    {
-        "id": 75,
-        "key": "jenis bus apa yang digunakan untuk transportasi lokal makkah-madinah?",
-        "value": "Umumnya menggunakan bus pariwisata eksekutif kelas VIP/Standar Arab Saudi."
-    },
-    {
-        "id": 76,
-        "key": "apakah bus lokal dilengkapi dengan fasilitas toilet, ac, dan recline seat?",
-        "value": "Kebanyakan bus pariwisata di Arab Saudi dilengkapi AC dingin dan recline seat (kursi bisa direbahkan). Namun, fasilitas toilet dalam bus tergantung ketersediaan/jenis bus yang disewa oleh pihak travel."
-    },
-    {
-        "id": 77,
-        "key": "berapa lama durasi perjalanan darat dari madinah ke makkah?",
-        "value": "Sekitar 5 hingga 6 jam perjalanan menggunakan bus (termasuk waktu berhenti sebentar di rest area/titik miqat)."
-    },
-    {
-        "id": 78,
-        "key": "apakah jamaah akan naik kereta cepat (kereta haramain) antara makkah dan madinah?",
-        "value": "Tergantung kesepakatan fasilitas dalam paket (bisa menggunakan bus atau opsi naik Kereta Haramain Express dengan ketentuan penambahan biaya)."
-    },
-    {
-        "id": 79,
-        "key": "apakah tiket kereta haramain sudah masuk dalam biaya paket?",
-        "value": "Sesuai paket yang dipilih jamaah. Pada beberapa paket hemat/reguler tiket kereta dijual terpisah (add-on), sedangkan pada paket VIP biasanya sudah include."
-    },
-    {
-        "id": 80,
-        "key": "bagaimana proses pengurusan koper dari bandara menuju hotel?",
-        "value": "Biasanya diurus oleh tim handling bandara dari pihak travel/muasasah. Jamaah tidak perlu mengangkut koper besar sendiri dari bandara."
-    },
-    {
-        "id": 81,
-        "key": "apakah koper akan diantar langsung sampai depan kamar hotel?",
-        "value": "Ya, layanan standar travel umrah mencakup pengantaran koper oleh bellboy atau tim handling hingga ke depan kamar masing-masing jamaah, atau pengambilan di lantai tertentu tempat penurunan koper."
-    },
-    {
-        "id": 82,
-        "key": "apa regulasi penerbangan mengenai penempatan cairan dalam bagasi/kabin?",
-        "value": "Kabin: cairan, gel, dan aerosol maksimal 100 ml per wadah dan harus dimuat dalam kantong plastik transparan. Bagasi tercatat: wadah cairan lebih dari 100 ml diperbolehkan selama dikemas dengan aman dan tidak bocor (kecuali Air Zamzam yang memiliki aturan tersendiri)."
-    },
-    {
-        "id": 83,
-        "key": "bolehkah membawa air zamzam sendiri ke dalam koper bagasi?",
-        "value": "Tidak boleh. Regulasi penerbangan internasional melarang keras memasukkan Air Zamzam ke dalam koper bagasi tercatat maupun kabin demi keamanan penerbangan."
-    },
-    {
-        "id": 84,
-        "key": "berapa liter kuota air zamzam resmi yang didapat jamaah dari maskapai?",
-        "value": "Kuota resmi bawaan/jatah dari maskapai (jika regulasi Saudi memperbolehkan) adalah 5 liter per jamaah yang akan dibagikan saat tiba di bandara kepulangan Indonesia."
-    },
-    {
-        "id": 85,
-        "key": "bagaimana pengaturan tempat duduk di pesawat (apakah bisa berdampingan dengan keluarga)?",
-        "value": "Pihak travel biasanya melakukan group check-in untuk mengusahakan anggota keluarga duduk berdekatan. Namun, ketersediaan pasti bergantung pada sistem seat selection maskapai."
-    },
-    {
-        "id": 86,
-        "key": "apakah disediakan makanan halal di dalam pesawat selama penerbangan?",
-        "value": "Ya. Maskapai rute penerbangan umrah/haji (maupun penerbangan dari/ke negara Muslim) menyajikan 100% makanan berlabel halal."
-    },
-    {
-        "id": 87,
-        "key": "bagaimana cara melakukan shalat di dalam pesawat selama perjalanan?",
-        "value": "Shalat dilakukan di kursi pesawat dengan cara duduk (isyarat gerakan) setelah bersuci (wudhu atau tayammum). Beberapa pesawat besar (seperti Saudia) menyediakan area mushola khusus di bagian belakang."
-    },
-    {
-        "id": 88,
-        "key": "kapan titik miqat (miqat point) dilakukan jika terbang langsung ke jeddah?",
-        "value": "Titik miqat diambil di atas udara saat pesawat berada sejajar dengan Yalamlam atau Qarnul Manazil (sekitar 20-30 menit sebelum mendarat di Bandara Jeddah)."
-    },
-    {
-        "id": 89,
-        "key": "apakah pengumuman miqat akan disampaikan oleh pihak maskapai/muthawwif di pesawat?",
-        "value": "Ya. Kapten/kru maskapai atau Muthawwif/Pembimbing Ibadah yang mendampingi di pesawat akan memberikan pengumuman beberapa saat sebelum melintasi garis miqat."
-    },
-    {
-        "id": 90,
-        "key": "bagaimana jika ada penderita motion sickness (mabuk darat/udara)?",
-        "value": "Jamaah disarankan membawa obat pribadi (seperti Antimo), mengonsumsi makanan ringan sebelum perjalanan, memilih posisi duduk di area tengah, serta menginformasikan ke ketua rombongan/muthawwif."
-    },
-    {
-        "id": 91,
-        "key": "apakah ada pendampingan khusus di bandara keberangkatan dan kedatangan?",
-        "value": "Ya. Jamaah akan didampingi oleh Tim Handling Bandara keberangkatan di Indonesia serta Tim Handling lokal/Muthawwif saat tiba di Bandara Jeddah/Madinah."
-    },
-    {
-        "id": 92,
-        "key": "apa yang dilakukan jika terjadi delay penerbangan yang cukup lama?",
-        "value": "Pihak maskapai dan travel agent bertanggung jawab memberikan kompensasi sesuai regulasi penerbangan yang berlaku (misalnya penyediaan makanan ringan, makanan berat, hingga fasilitas hotel/penginapan jika delay menginap)."
     }
 ]

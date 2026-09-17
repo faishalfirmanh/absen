@@ -29,58 +29,6 @@ class ProcessMekariChatbotJob implements ShouldQueue
 
 
 
-    private function sendMekariMessage2Param(string $targetNumber, string $message)
-    {
-        $message = $this->stripPhoneNumbers($message);
-        $targetNumber = $this->normalizeNumber($targetNumber);
-
-        Log::info('Job Mekari: mulai kirim via Template HMAC ProcessMEkariChatBootJob sendMekariMessage2Param', ['to' => $targetNumber]);
-
-        $path = '/v1/messages/whatsapp/bot';//'/qontak/chat/v1/broadcasts/whatsapp/direct';
-
-        // Payload Template
-        $payload = [
-            'to_name' => 'Jamaah',
-            'to_number' => $targetNumber,
-            'message_template_id' => config('mekari.template_2'),
-            'channel_integration_id' => config('mekari.channel_id'),
-            'language' => ['code' => 'id'],
-            'parameters' => [
-                'body' => [
-                    ['key' => '1', 'value_text' => $message, 'value' => $message]
-                ]
-            ]
-        ];
-
-        // Ambil credentials via config() BUKAN env()
-        $clientId = config('mekari.client_id_2');
-        $clientSecret = config('mekari.client_secret_2');
-
-        if (!$clientId || !$clientSecret) {
-            Log::error('Job Mekari: Client ID atau Secret KOSONG! Cek config/services.php');
-            return;
-        }
-
-        // Generate HMAC Signature
-        $datetime = \Carbon\Carbon::now()->toRfc7231String();
-        $requestLine = "POST " . $path . " HTTP/1.1";
-        $hmacPayload = implode("\n", ["date: {$datetime}", $requestLine]);
-        $digest = hash_hmac('sha256', $hmacPayload, $clientSecret, true);
-        $signature = base64_encode($digest);
-        $authHeader = 'hmac username="' . $clientId . '", algorithm="hmac-sha256", headers="date request-line", signature="' . $signature . '"';
-
-        $response = Http::withHeaders([
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json',
-            'Date' => $datetime,
-            'Authorization' => $authHeader,
-        ])->timeout(15)->post(config('services.mekari.base_url') . $path, $payload);
-
-        Log::info('Job Mekari: Response HMAC Broadcast', [
-            'status' => $response->status(),
-            'body' => $response->json()
-        ]);
-    }
 
     public function handle()
     {
@@ -229,7 +177,7 @@ class ProcessMekariChatbotJob implements ShouldQueue
         } catch (\Throwable $e) {
             Log::error('Error Job Mekari Chatbot: roomid ' . $roomId . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             // $this->sendMekariMessage2Param($sender, 'Maaf, terjadi gangguan pada sistem AI kami.');
-            $this->sendMekariMessage1($roomId, 'Maaf, tidak bisa menjawab pertanyaan, harap hubungi https://wa.me/6282245024032 ,  https://wa.me/6289601296887 
+            $this->sendMekariMessage1($roomId, 'Maaf :), tidak bisa menjawab pertanyaan, harap hubungi no ini https://wa.me/6282245024032 ,  https://wa.me/6289601296887 
             atau   https://wa.me/6281328745647', $sender);
         }
     }
@@ -273,53 +221,7 @@ class ProcessMekariChatbotJob implements ShouldQueue
     }
 
 
-    private function sendMekariMessage(string $targetNumber, string $message)
-    {
-        $message = $this->stripPhoneNumbers($message);
-        $targetNumber = $this->normalizeNumber($targetNumber);
 
-        Log::info('Job Mekari: mulai kirim via Template HMAC', ['to' => $targetNumber]);
-
-        // 1. Path API Broadcast Direct (HMAC)
-        $path = '/qontak/chat/v1/broadcasts/whatsapp/direct';
-
-        // 2. Payload Template (Memasukkan teks AI ke dalam variabel {{1}})
-        $payload = [
-            'to_name' => 'Jamaah',
-            'to_number' => $targetNumber, // Nomor HP jamaah dari payload webhook
-            'message_template_id' => env('MEKARI_TEMPLATE_2'),
-            'channel_integration_id' => env('MEKARI_WA_CHANNEL_ID'), // ID Channel WA Anda
-            'language' => ['code' => 'id'],
-            'parameters' => [
-                'body' => [
-                    ['key' => '1', 'value_text' => $message, 'value' => $message]
-                ]
-            ]
-        ];
-
-        // 3. Generate HMAC Signature (Sama persis seperti sistem VA Anda)
-        $clientId = config('mekari.client_id_2');
-        $clientSecret = config('mekari.client_secret_2');
-        $datetime = \Carbon\Carbon::now()->toRfc7231String();
-        $requestLine = "POST " . $path . " HTTP/1.1";
-        $hmacPayload = implode("\n", ["date: {$datetime}", $requestLine]);
-        $digest = hash_hmac('sha256', $hmacPayload, $clientSecret, true);
-        $signature = base64_encode($digest);
-        $authHeader = 'hmac username="' . $clientId . '", algorithm="hmac-sha256", headers="date request-line", signature="' . $signature . '"';
-
-        // 4. Kirim Request
-        $response = Http::withHeaders([
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json',
-            'Date' => $datetime,
-            'Authorization' => $authHeader,
-        ])->timeout(15)->post(env('MEKARI_API_BASE_URL', 'https://api.mekari.com') . $path, $payload);
-
-        Log::info('Job Mekari: Response HMAC Broadcast', [
-            'status' => $response->status(),
-            'body' => $response->json()
-        ]);
-    }
 
     private function isJamaahNameQuery(string $message): bool
     {
