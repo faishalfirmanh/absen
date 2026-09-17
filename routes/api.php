@@ -104,7 +104,7 @@ Route::middleware('throttle:5,1')->get('/sync/paket-umroh', SyncGeneralPaketUmro
 
 Route::get('get-paket', [ReportController::class, 'listPaket'])->name('listPaketExcel');
 Route::post('/webhook/fonnte', [WaBootController::class, 'handleV2']);
-Route::post('/webhook/mekari', [WaBootMekariController::class, 'handleMekari']);
+Route::post('/webhook/mekari', [WaBootMekariController::class, 'handleMekari']);//used
 Route::post('/chatbot/mekari', [WaBootMekariController::class, 'chatbotApi']);
 
 
